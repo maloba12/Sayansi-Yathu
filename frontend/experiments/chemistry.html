@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Lab - Sayansi Yathu</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <link rel="stylesheet" href="../css/experiments.css">
+</head>
+<body>
+    <div class="experiment-container">
+        <h1>Chemistry Laboratory</h1>
+        
+        <div class="experiment-selector">
+            <button onclick="loadChemistryExperiment('titration')">Acid-Base Titration</button>
+            <button onclick="loadChemistryExperiment('reaction')">Chemical Reactions</button>
+            <button onclick="loadChemistryExperiment('molecular')">Molecular Models</button>
+        </div>
+
+        <div class="simulation-area">
+            <div id="chemistry-canvas"></div>
+        </div>
+
+        <div class="chemical-controls">
+            <select id="chemical-select">
+                <option value="hcl">Hydrochloric Acid</option>
+                <option value="naoh">Sodium Hydroxide</option>
+            </select>
+            <button onclick="runReaction()">Start Reaction</button>
+        </div>
+    </div>
+
+    <script src="../js/chemistry-simulations.js"></script>
+</body>
+</html>
