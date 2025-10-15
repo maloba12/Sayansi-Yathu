@@ -53,12 +53,12 @@ class AuthAPI {
 // Experiment data
 class ExperimentAPI {
     static async getExperiments(userId) {
-        const response = await fetch(`${PHP_BASE_URL}/getExperiments.php?userId=${userId}`);
+        const response = await fetch(`${PHP_BASE_URL}/api/getExperiment.php?userId=${userId}`);
         return response.json();
     }
 
     static async saveProgress(experimentId, progress) {
-        const response = await fetch(`${PHP_BASE_URL}/saveProgress.php`, {
+        const response = await fetch(`${PHP_BASE_URL}/api/saveProgress.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ experimentId, progress })

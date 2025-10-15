@@ -32,3 +32,16 @@ function checkAuth() {
 }
 
 checkAuth();
+
+// Backend connectivity test used by index.html button
+async function testBackend() {
+    const resultEl = document.getElementById('api-result');
+    resultEl.textContent = 'Checking backend...';
+    try {
+        const res = await fetch('http://localhost:5000/api/health');
+        const data = await res.json();
+        resultEl.textContent = `Backend: ${data.status} | Features: ${data.features?.join(', ')}`;
+    } catch (err) {
+        resultEl.textContent = 'Failed to reach backend. Is Flask running on port 5000?';
+    }
+}

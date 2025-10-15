@@ -1,5 +1,6 @@
 from typing import Dict, List
 import random
+import math
 
 class ChemistryEngine:
     def simulate(self, experiment_type, parameters):

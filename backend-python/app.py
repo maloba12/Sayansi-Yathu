@@ -6,18 +6,15 @@ import os
 # Add the current directory to the path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# Import our modules
+# Import our modules (only ones that exist)
 try:
     from simulations.physics_engine import PhysicsEngine
     from simulations.chemistry_engine import ChemistryEngine
     from simulations.biology_engine import BiologyEngine
     from ai.tutor import AITutor
-    from ai.virtual_assistant import VirtualLabAssistant
-    from ai.adaptive import AdaptiveLearningEngine
-    from analytics.dashboard import AnalyticsDashboard
 except ImportError as e:
     print(f"Import error: {e}")
-    print("Please install required packages: pip install flask flask-cors pandas scikit-learn numpy")
+    print("Please install required packages: pip install flask flask-cors numpy")
     sys.exit(1)
 
 app = Flask(__name__)
@@ -28,9 +25,6 @@ physics_engine = PhysicsEngine()
 chemistry_engine = ChemistryEngine()
 biology_engine = BiologyEngine()
 ai_tutor = AITutor()
-virtual_assistant = VirtualLabAssistant()
-adaptive_engine = AdaptiveLearningEngine(None)  # Placeholder for DB
-analytics = AnalyticsDashboard(None)  # Placeholder for DB
 
 @app.route('/')
 def home():
@@ -43,7 +37,7 @@ def home():
         <li>POST /api/chemistry/simulate</li>
         <li>POST /api/biology/simulate</li>
         <li>POST /api/ai/tutor</li>
-        <li>POST /api/ai/virtual-assistant</li>
+        <li>GET /api/health</li>
     </ul>
     '''
 
@@ -71,15 +65,7 @@ def ai_tutor_response():
     response = ai_tutor.get_response(data['question'], data['context'])
     return jsonify({"response": response})
 
-@app.route('/api/ai/virtual-assistant', methods=['POST'])
-def virtual_assistant():
-    data = request.json
-    response = virtual_assistant.process_message(
-        data['message'], 
-        data['user_id'], 
-        data.get('context', {})
-    )
-    return jsonify(response)
+# (Virtual assistant endpoint omitted; corresponding module not present yet)
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -96,6 +82,6 @@ def health_check():
     })
 
 if __name__ == '__main__':
-    print("🧪 Starting Sayansi Yathu Virtual Lab...")
-    print("✅ All modules loaded successfully!")
+    print("Starting Sayansi Yathu Virtual Lab...")
+    print("All modules loaded successfully!")
     app.run(debug=True, port=5000, host='0.0.0.0')

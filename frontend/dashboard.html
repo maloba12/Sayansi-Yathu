@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sayansi Yathu</title>
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
     <div class="dashboard-container">
         <aside class="sidebar">
             <div class="user-profile">
-                <img src="assets/user-avatar.png" alt="User">
+                <img src="assets/user-avatar.png" alt="User" onerror="this.style.display='none'">
                 <h3 id="username">Student</h3>
+                <button id="loginBtn" onclick="showLoginModal()" style="background: var(--copper-orange); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin-top: 1rem;">Login</button>
+                <button id="logoutBtn" onclick="logout()" style="background: var(--sunset-red); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin-top: 1rem; display: none;">Logout</button>
             </div>
             <nav class="experiment-nav">
                 <button onclick="loadExperiment('physics')">Physics</button>
@@ -31,11 +34,100 @@
         </main>
     </div>
 
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Login to Sayansi Yathu</h2>
+            <form id="loginForm">
+                <div style="margin-bottom: 1rem;">
+                    <label for="email" style="display: block; margin-bottom: 0.5rem; color: white;">Email:</label>
+                    <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem; border: none; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="password" style="display: block; margin-bottom: 0.5rem; color: white;">Password:</label>
+                    <input type="password" id="password" name="password" required style="width: 100%; padding: 0.5rem; border: none; border-radius: 5px;">
+                </div>
+                <button type="submit" style="background: var(--copper-orange); color: white; border: none; padding: 0.75rem 2rem; border-radius: 5px; cursor: pointer; width: 100%;">Login</button>
+            </form>
+            <div id="loginMessage" style="margin-top: 1rem; color: white;"></div>
+        </div>
+    </div>
+
     <script src="js/api.js"></script>
     <script src="js/simulations.js"></script>
-    <script type="module">
-        import { callPy } from './js/api.js';
-      
+    <script>
+        // Login functionality
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('loginMessage').textContent = '';
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            updateLoginUI();
+            document.getElementById('loginMessage').textContent = 'Logged out successfully';
+        }
+
+        function updateLoginUI() {
+            const token = localStorage.getItem('authToken');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (token && user.name) {
+                document.getElementById('username').textContent = user.name;
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'block';
+            } else {
+                document.getElementById('username').textContent = 'Student';
+                document.getElementById('loginBtn').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'none';
+            }
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageEl = document.getElementById('loginMessage');
+
+            try {
+                const response = await AuthAPI.login(email, password);
+                if (response.token) {
+                    localStorage.setItem('authToken', response.token);
+                    localStorage.setItem('user', JSON.stringify(response.user));
+                    updateLoginUI();
+                    closeLoginModal();
+                    messageEl.textContent = 'Login successful!';
+                    messageEl.style.color = 'lightgreen';
+                } else {
+                    messageEl.textContent = response.message || 'Login failed';
+                    messageEl.style.color = 'red';
+                }
+            } catch (error) {
+                messageEl.textContent = 'Login failed: ' + error.message;
+                messageEl.style.color = 'red';
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('loginModal');
+            if (event.target === modal) {
+                closeLoginModal();
+            }
+        }
+
+        // Check auth on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLoginUI();
+        });
+
         // Example: load a physics simulation
         async function runPendulum() {
           const data = await callPy('/api/physics/simulate', {
@@ -47,6 +139,6 @@
         }
       
         window.runPendulum = runPendulum;
-      </script>
+    </script>
 </body>
 </html>
