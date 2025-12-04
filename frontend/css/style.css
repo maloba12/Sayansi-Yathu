@@ -2,6 +2,7 @@
 
 /* Variables */
 :root {
+<<<<<<< HEAD
     /* Core palette from colors.txt */
     --yale-blue: #003d68;
     --honey-bronze: #fdc36a;
@@ -23,6 +24,13 @@
     --sky-blue: var(--baltic-blue);
 
     /* Shadows */
+=======
+    --zambian-green: #006B3C;
+    --copper-orange: #C46210;
+    --sunset-red: #FF4500;
+    --earth-brown: #8B4513;
+    --sky-blue: #1E90FF;
+>>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     --shadow-light: rgba(0, 0, 0, 0.1);
     --shadow-medium: rgba(0, 0, 0, 0.2);
     --shadow-heavy: rgba(0, 0, 0, 0.3);
@@ -36,8 +44,13 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+<<<<<<< HEAD
     background: linear-gradient(135deg, var(--yale-blue), var(--baltic-blue));
     color: var(--white);
+=======
+    background: linear-gradient(135deg, var(--zambian-green), var(--sky-blue));
+    color: white;
+>>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     min-height: 100vh;
 }
 
@@ -63,7 +76,11 @@ header {
 .logo {
     width: 50px;
     height: 50px;
+<<<<<<< HEAD
     background: var(--accent-color);
+=======
+    background: var(--copper-orange);
+>>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -110,8 +127,13 @@ nav a:hover {
 }
 
 .cta-button {
+<<<<<<< HEAD
     background: var(--accent-color);
     color: var(--white);
+=======
+    background: var(--copper-orange);
+    color: white;
+>>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     padding: 1rem 2rem;
     border: none;
     border-radius: 25px;
@@ -203,6 +225,7 @@ nav a:hover {
 .medium { background: rgba(243, 156, 18, 0.3); }
 .hard { background: rgba(231, 76, 60, 0.3); }
 
+<<<<<<< HEAD
 /* Login Modal */
 .modal {
     display: none;
@@ -327,6 +350,8 @@ nav a:hover {
     min-height: 1.5rem;
 }
 
+=======
+>>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
 /* Stats Section */
 .stats {
     display: grid;
@@ -348,7 +373,11 @@ nav a:hover {
 .stat-number {
     font-size: 3rem;
     font-weight: bold;
+<<<<<<< HEAD
     color: var(--accent-color);
+=======
+    color: var(--copper-orange);
+>>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     display: block;
 }
 
@@ -473,7 +502,11 @@ footer {
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 200px;
+<<<<<<< HEAD
     background-color: var(--secondary-color);
+=======
+    background-color: var(--earth-brown);
+>>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     color: white;
     text-align: center;
     border-radius: 6px;
@@ -506,7 +539,11 @@ footer {
 }
 
 .modal-content {
+<<<<<<< HEAD
     background: linear-gradient(135deg, var(--yale-blue), var(--baltic-blue));
+=======
+    background: linear-gradient(135deg, var(--zambian-green), var(--sky-blue));
+>>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     margin: 10% auto;
     padding: 2rem;
     border-radius: 15px;
