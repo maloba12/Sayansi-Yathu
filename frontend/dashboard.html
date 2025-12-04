@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sayansi Yathu</title>
+    <link rel="stylesheet" href="/frontend/css/style.css">
+    <link rel="stylesheet" href="/frontend/css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="user-profile">
+                <img src="/frontend/assets/user-avatar.png" alt="User">
+                <h3 id="username">Student</h3>
+            </div>
+            <nav class="experiment-nav">
+                <button onclick="loadExperiment('physics')">Physics</button>
+                <button onclick="loadExperiment('chemistry')">Chemistry</button>
+                <button onclick="loadExperiment('biology')">Biology</button>
+            </nav>
+        </aside>
+
+        <main class="experiment-area">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div id="experiment-content">
+                <h2>Welcome to Your Virtual Lab</h2>
+                <p>Select an experiment to begin</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="/frontend/js/auth-guard.js"></script>
+    <script src="/frontend/js/api.js"></script>
+    <script src="/frontend/js/dashboard.js"></script>
+  <!-- <script src="js/simulations.js"></script> -->
+    <script type="module">
+        import { callPy } from '/frontend/js/api.js';
+      
+        // Example: load a physics simulation
+        async function runPendulum() {
+          const data = await callPy('/api/physics/simulate', {
+            experiment: 'pendulum',
+            parameters: { length: 1.2, angle: 25 }
+          });
+          console.log('Simulation result:', data);
+          // drawChart(data.time, data.angle);  // hook into your visualiser
+        }
+      
+        window.runPendulum = runPendulum;
+      </script>
+</body>
+</html>

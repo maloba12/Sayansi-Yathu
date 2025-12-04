@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – Sayansi Yathu</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <main class="auth-layout" aria-labelledby="login-title">
+        <!-- Left: Brand / Welcome -->
+        <section class="auth-hero" aria-hidden="true">
+            <div class="auth-hero-overlay"></div>
+            <div class="auth-hero-content">
+                <div class="auth-hero-header">
+                    <div class="auth-logo-circle">
+                        <img src="assets/logo1.jpeg" alt="Sayansi Yathu logo">
+                    </div>
+                    <span class="auth-brand-text">Sayansi Yathu</span>
+                </div>
+
+                <div class="auth-hero-main">
+                    <h1 class="auth-hero-title">Hello,<br>welcome!</h1>
+                    <p class="auth-hero-copy">
+                        Virtual science labs for Zambian schools. Practice experiments safely,
+                        anytime, anywhere.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right: Login Form -->
+        <section class="auth-panel">
+            <div class="auth-card" role="form" aria-describedby="login-description">
+                <h2 id="login-title">Sign in</h2>
+                <p id="login-description" class="auth-subtitle">
+                    Use your email, username, or Student ID to access your dashboard.
+                </p>
+
+                <div id="loginError" class="auth-error" role="alert" aria-live="polite"></div>
+
+                <form id="loginForm" novalidate>
+                    <div class="field-group">
+                        <label for="identifier">Email / Username / Student ID</label>
+                        <input
+                            id="identifier"
+                            name="identifier"
+                            type="text"
+                            autocomplete="username"
+                            required
+                            aria-required="true"
+                            placeholder="e.g. teacher@school.zm or STU-2025-G10-001"
+                        >
+                    </div>
+
+                    <div class="field-group">
+                        <div class="field-label-row">
+                            <label for="password">Password</label>
+                            <button type="button" class="ghost-link" id="togglePassword" aria-pressed="false">
+                                Show
+                            </button>
+                        </div>
+                        <div class="password-wrapper">
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                autocomplete="current-password"
+                                required
+                                aria-required="true"
+                                minlength="8"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="field-row-between">
+                        <div class="remember-wrapper">
+                            <input type="checkbox" id="rememberDevice" name="rememberDevice">
+                            <label for="rememberDevice">Remember this device</label>
+                        </div>
+                        <a href="#" class="ghost-link" id="forgotPasswordLink">Forgot password?</a>
+                    </div>
+
+                    <div class="auth-actions-row">
+                        <button type="submit" class="primary-button" id="loginButton">
+                            Login
+                        </button>
+                        <button type="button" class="secondary-button" disabled>
+                            Sign up
+                        </button>
+                    </div>
+                </form>
+
+                <div class="auth-footer-row">
+                    <span class="auth-footnote" aria-live="polite" id="securityNotice">
+                        Secure school platform. Suspicious logins are monitored.
+                    </span>
+                    <div class="auth-social">
+                        <span>Follow</span>
+                        <a href="#" aria-label="Facebook">f</a>
+                        <a href="#" aria-label="Twitter">t</a>
+                        <a href="#" aria-label="Instagram">in</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/login.js"></script>
+</body>
+</html>
+
+
