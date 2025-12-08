@@ -11,7 +11,7 @@ $userId = $_GET['user'];
 $experimentId = $_GET['experiment'];
 
 // Get experiment details
-$query = "SELECT e.*, p.score, p.completed_steps, p.time_spent, 
+$query = "SELECT e.*, p.score, p.completed_steps, p.time_spent,
           u.name as student_name
           FROM experiments e
           JOIN progress p ON e.id = p.experiment_id

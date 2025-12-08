@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
 
 function getJwtSecret(): string {
     $env = getenv('JWT_SECRET');
@@ -16,18 +15,10 @@ function generateJWT($userId, $role = null) {
     // Short-lived access token (30 minutes)
     $expiration_time = $issued_at + (60 * 30);
 
-=======
-function generateJWT($userId) {
-    $secret_key = "your_secret_key_here";
-    $issued_at = time();
-    $expiration_time = $issued_at + (60 * 60 * 24); // 24 hours
-    
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     $payload = [
         "iss" => "sayansi_yathu",
         "iat" => $issued_at,
         "exp" => $expiration_time,
-<<<<<<< HEAD
         "user_id" => $userId,
         "role" => $role
     ];
@@ -140,30 +131,3 @@ function getClientIp(): string {
 }
 
 ?>
-=======
-        "user_id" => $userId
-    ];
-    
-    return base64_encode(json_encode($payload)) . '.' . 
-           base64_encode(hash_hmac('sha256', json_encode($payload), $secret_key, true));
-}
-
-function validateJWT($token) {
-    $secret_key = "your_secret_key_here";
-    $parts = explode('.', $token);
-    
-    if (count($parts) !== 2) return false;
-    
-    $payload = json_decode(base64_decode($parts[0]), true);
-    $signature = $parts[1];
-    
-    $expected_signature = base64_encode(hash_hmac('sha256', json_encode($payload), $secret_key, true));
-    
-    if ($signature !== $expected_signature) return false;
-    
-    if ($payload['exp'] < time()) return false;
-    
-    return $payload;
-}
-?>
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66

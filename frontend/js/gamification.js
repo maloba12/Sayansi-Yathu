@@ -10,7 +10,7 @@ class GamificationEngine {
             { id: 'team_player', name: 'Team Player', icon: '👥', requirement: 1 },
             { id: 'innovator', name: 'Innovator', icon: '💡', requirement: 1 }
         ];
-        
+
         this.levels = [
             { level: 1, xpRequired: 0, title: 'Novice' },
             { level: 2, xpRequired: 100, title: 'Learner' },
@@ -23,7 +23,7 @@ class GamificationEngine {
             { level: 9, xpRequired: 16000, title: 'Professor' },
             { level: 10, xpRequired: 32000, title: 'Grandmaster' }
         ];
-        
+
         this.init();
     }
 
@@ -58,7 +58,7 @@ class GamificationEngine {
     checkLevelUp() {
         const currentLevel = this.userProgress.level;
         const nextLevel = this.levels.find(l => l.level === currentLevel + 1);
-        
+
         if (nextLevel && this.userProgress.xp >= nextLevel.xpRequired) {
             this.userProgress.level = nextLevel.level;
             this.showLevelUpNotification(nextLevel);
@@ -77,12 +77,12 @@ class GamificationEngine {
     completeExperiment(experiment) {
         this.userProgress.totalExperiments++;
         this.userProgress.subjectsCompleted[experiment.subject]++;
-        
+
         // Award XP based on difficulty
-        const xpAmount = experiment.difficulty === 'easy' ? 10 : 
+        const xpAmount = experiment.difficulty === 'easy' ? 10 :
                         experiment.difficulty === 'medium' ? 25 : 50;
         this.awardXP(xpAmount, `Completed ${experiment.title}`);
-        
+
         // Check for badges
         this.checkBadges();
     }
@@ -91,15 +91,15 @@ class GamificationEngine {
         if (this.userProgress.totalExperiments === 1) {
             this.awardBadge('first_experiment');
         }
-        
+
         if (this.userProgress.subjectsCompleted.physics >= 5) {
             this.awardBadge('physics_master');
         }
-        
+
         if (this.userProgress.subjectsCompleted.chemistry >= 5) {
             this.awardBadge('chemistry_expert');
         }
-        
+
         if (this.userProgress.subjectsCompleted.biology >= 5) {
             this.awardBadge('biology_pro');
         }
@@ -127,7 +127,7 @@ class GamificationEngine {
                 <div id="leaderboard-list"></div>
             </div>
         `;
-        
+
         document.querySelector('.dashboard-container').appendChild(gamificationPanel);
     }
 
@@ -135,7 +135,7 @@ class GamificationEngine {
         return this.badges.map(badge => {
             const earned = this.userProgress.badges.includes(badge.id);
             return `
-                <div class="badge ${earned ? 'earned' : 'locked'}" 
+                <div class="badge ${earned ? 'earned' : 'locked'}"
                      title="${badge.name}: ${badge.requirement}">
                     <span class="badge-icon">${badge.icon}</span>
                     <span class="badge-name">${badge.name}</span>
@@ -147,13 +147,13 @@ class GamificationEngine {
     getXPPercentage() {
         const currentLevel = this.levels.find(l => l.level === this.userProgress.level);
         const nextLevel = this.levels.find(l => l.level === this.userProgress.level + 1);
-        
+
         if (!nextLevel) return 100;
-        
+
         const levelStartXP = currentLevel.xpRequired;
         const levelEndXP = nextLevel.xpRequired;
         const currentXP = this.userProgress.xp;
-        
+
         return ((currentXP - levelStartXP) / (levelEndXP - levelStartXP)) * 100;
     }
 
@@ -181,9 +181,9 @@ class GamificationEngine {
             <h4>${title}</h4>
             <p>${message}</p>
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.remove();
         }, 3000);

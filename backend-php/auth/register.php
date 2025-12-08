@@ -13,11 +13,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 $name = $data->name;
 $email = $data->email;
-<<<<<<< HEAD
 $password = password_hash($data->password, PASSWORD_BCRYPT, ['cost' => 12]);
-=======
-$password = password_hash($data->password, PASSWORD_BCRYPT);
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
 $role = $data->role ?? 'student';
 
 $query = "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)";

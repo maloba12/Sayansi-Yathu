@@ -43,10 +43,6 @@
 .experiment-area {
     flex: 1;
     padding: 2rem;
-<<<<<<< HEAD
-    color: #111827; /* ensure main content text is dark and readable */
-=======
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
 }
 
 .progress-bar {
@@ -65,25 +61,4 @@
 }
 
 #experiment-content {
-<<<<<<< HEAD
-    background: #ffffff;
-    color: #111827;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-#experiment-content h2,
-#experiment-content h3 {
-    color: #111827;
-}
-
-#experiment-content p {
-    color: #374151;
-=======
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
 }

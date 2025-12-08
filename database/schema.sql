@@ -1,7 +1,6 @@
 -- Create database
-<<<<<<< HEAD
-CREATE DATABASE IF NOT EXISTS sayansi_yesu;
-USE sayansi_yesu;
+CREATE DATABASE IF NOT EXISTS sayansi_yathu;
+USE sayansi_yathu;
 
 -- Core users table
 CREATE TABLE users (
@@ -62,21 +61,6 @@ CREATE TABLE admins (
     CONSTRAINT fk_admins_user FOREIGN KEY (linked_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-=======
-CREATE DATABASE IF NOT EXISTS sayansi_yathu;
-USE sayansi_yathu;
-
--- Users table
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('student', 'teacher', 'admin') DEFAULT 'student',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
 -- Experiments table
 CREATE TABLE experiments (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -115,7 +99,6 @@ CREATE TABLE ai_interactions (
     FOREIGN KEY (experiment_id) REFERENCES experiments(id)
 );
 
-<<<<<<< HEAD
 -- Security / audit logs
 CREATE TABLE security_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -135,9 +118,5 @@ CREATE INDEX idx_user_role ON users(role);
 CREATE INDEX idx_student_id ON students(student_id);
 CREATE INDEX idx_security_logs_event ON security_logs(event_type);
 CREATE INDEX idx_security_logs_user ON security_logs(user_id);
-=======
--- Create indexes
-CREATE INDEX idx_user_email ON users(email);
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
 CREATE INDEX idx_experiment_subject ON experiments(subject);
 CREATE INDEX idx_progress_user ON progress(user_id);

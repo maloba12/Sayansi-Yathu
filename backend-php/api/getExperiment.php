@@ -15,8 +15,8 @@ if (!$userId) {
     exit();
 }
 
-$query = "SELECT e.*, p.completed_steps, p.score 
-          FROM experiments e 
+$query = "SELECT e.*, p.completed_steps, p.score
+          FROM experiments e
           LEFT JOIN progress p ON e.id = p.experiment_id AND p.user_id = ?
           ORDER BY e.subject, e.difficulty_level";
 

@@ -120,7 +120,7 @@ class Localization {
         this.currentLanguage = lang;
         localStorage.setItem('language', lang);
         this.updateUI();
-        
+
         // Update language selector
         document.querySelectorAll('.language-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.lang === lang);
@@ -128,7 +128,7 @@ class Localization {
     }
 
     translate(key) {
-        return translations[this.currentLanguage][key] || 
+        return translations[this.currentLanguage][key] ||
                translations['en'][key] || key;
     }
 
@@ -147,22 +147,22 @@ class Localization {
         const selector = document.createElement('div');
         selector.className = 'language-selector';
         selector.innerHTML = `
-            <button class="language-btn ${this.currentLanguage === 'en' ? 'active' : ''}" 
+            <button class="language-btn ${this.currentLanguage === 'en' ? 'active' : ''}"
                     data-lang="en">English</button>
-            <button class="language-btn ${this.currentLanguage === 'bem' ? 'active' : ''}" 
+            <button class="language-btn ${this.currentLanguage === 'bem' ? 'active' : ''}"
                     data-lang="bem">Bemba</button>
-            <button class="language-btn ${this.currentLanguage === 'nya' ? 'active' : ''}" 
+            <button class="language-btn ${this.currentLanguage === 'nya' ? 'active' : ''}"
                     data-lang="nya">Nyanja</button>
-            <button class="language-btn ${this.currentLanguage === 'ton' ? 'active' : ''}" 
+            <button class="language-btn ${this.currentLanguage === 'ton' ? 'active' : ''}"
                     data-lang="ton">Tonga</button>
         `;
-        
+
         selector.addEventListener('click', (e) => {
             if (e.target.classList.contains('language-btn')) {
                 this.setLanguage(e.target.dataset.lang);
             }
         });
-        
+
         document.body.appendChild(selector);
     }
 }

@@ -6,7 +6,7 @@ function initThreeJS(canvasId) {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    
+
     // Lighting
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
@@ -43,7 +43,7 @@ class PendulumSimulation {
         const bobY = centerY + Math.cos(this.angle) * this.length;
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
+
         // Draw pendulum
         this.ctx.beginPath();
         this.ctx.moveTo(centerX, centerY);
@@ -51,7 +51,7 @@ class PendulumSimulation {
         this.ctx.strokeStyle = '#333';
         this.ctx.lineWidth = 2;
         this.ctx.stroke();
-        
+
         // Draw bob
         this.ctx.beginPath();
         this.ctx.arc(bobX, bobY, 15, 0, Math.PI * 2);

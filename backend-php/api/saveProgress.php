@@ -15,11 +15,11 @@ $experimentId = $data->experimentId;
 $completedSteps = $data->completedSteps;
 $score = $data->score;
 
-$query = "INSERT INTO progress (user_id, experiment_id, completed_steps, score, last_accessed) 
-          VALUES (?, ?, ?, ?, NOW()) 
-          ON DUPLICATE KEY UPDATE 
-          completed_steps = VALUES(completed_steps), 
-          score = VALUES(score), 
+$query = "INSERT INTO progress (user_id, experiment_id, completed_steps, score, last_accessed)
+          VALUES (?, ?, ?, ?, NOW())
+          ON DUPLICATE KEY UPDATE
+          completed_steps = VALUES(completed_steps),
+          score = VALUES(score),
           last_accessed = VALUES(last_accessed)";
 
 $stmt = $db->prepare($query);

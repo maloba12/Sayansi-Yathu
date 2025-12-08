@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Max-Age: 3600");
@@ -21,21 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-=======
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
 include_once '../config/db.php';
 include_once '../utils/helpers.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-<<<<<<< HEAD
 $rawInput = file_get_contents("php://input");
 $data = json_decode($rawInput, true);
 
@@ -63,9 +53,9 @@ $maxFailedAttempts = 5;
 
 // Simple per-identifier lock using users.failed_attempts and users.locked_until
 try {
-    $lockQuery = "SELECT id, failed_attempts, locked_until FROM users 
-                  WHERE email = :identifier 
-                     OR username = :identifier 
+    $lockQuery = "SELECT id, failed_attempts, locked_until FROM users
+                  WHERE email = :identifier
+                     OR username = :identifier
                      OR id IN (
                         SELECT linked_user_id FROM students WHERE student_id = :identifier
                      )
@@ -95,7 +85,7 @@ try {
     $studentParsed = parseStudentId($identifierUpper);
 
     if ($studentParsed !== null) {
-        $studentQuery = "SELECT s.student_id, s.grade_or_form, s.class, s.enrolled_year, 
+        $studentQuery = "SELECT s.student_id, s.grade_or_form, s.class, s.enrolled_year,
                                 u.id, u.name, u.email, u.password, u.role
                          FROM students s
                          JOIN users u ON s.linked_user_id = u.id
@@ -123,8 +113,8 @@ try {
 
     // If not a student ID match, search users by email/username
     if ($user === null) {
-        $userQuery = "SELECT id, name, email, username, password, role 
-                      FROM users 
+        $userQuery = "SELECT id, name, email, username, password, role
+                      FROM users
                       WHERE email = :identifier OR username = :identifier
                       LIMIT 1";
         $stmt = $db->prepare($userQuery);
@@ -196,7 +186,7 @@ if ($user && password_verify($password, $user['password'])) {
 
     // Log successful login
     try {
-        $logStmt = $db->prepare("INSERT INTO security_logs (user_id, event_type, ip_address, user_agent, details) 
+        $logStmt = $db->prepare("INSERT INTO security_logs (user_id, event_type, ip_address, user_agent, details)
                                  VALUES (:user_id, 'login_success', :ip, :ua, :details)");
         $logStmt->execute([
             ':user_id' => $user['id'],
@@ -208,25 +198,10 @@ if ($user && password_verify($password, $user['password'])) {
         error_log('Security log insert failed: ' . $e->getMessage());
     }
 
-=======
-$data = json_decode(file_get_contents("php://input"));
-
-$email = $data->email;
-$password = $data->password;
-
-$query = "SELECT id, name, email, password FROM users WHERE email = ? LIMIT 1";
-$stmt = $db->prepare($query);
-$stmt->execute([$email]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if ($user && password_verify($password, $user['password'])) {
-    $token = generateJWT($user['id']);
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66
     http_response_code(200);
     echo json_encode([
         "message" => "Login successful",
         "token" => $token,
-<<<<<<< HEAD
         "user" => $responseUser,
         "dashboard_route" => $dashboardRoute,
         "requires_verification" => $requiresVerification,
@@ -257,7 +232,7 @@ if ($lockRow) {
 
 // Log failed attempt (generic)
 try {
-    $logStmt = $db->prepare("INSERT INTO security_logs (user_id, event_type, ip_address, user_agent, details) 
+    $logStmt = $db->prepare("INSERT INTO security_logs (user_id, event_type, ip_address, user_agent, details)
                              VALUES (NULL, 'login_failure', :ip, :ua, :details)");
     $logStmt->execute([
         ':ip' => $clientIp,
@@ -285,16 +260,3 @@ if (!empty($lockedUntil) && strtotime($lockedUntil) > time()) {
 }
 
 ?>
-=======
-        "user" => [
-            "id" => $user['id'],
-            "name" => $user['name'],
-            "email" => $user['email']
-        ]
-    ]);
-} else {
-    http_response_code(401);
-    echo json_encode(["message" => "Invalid credentials"]);
-}
-?>
->>>>>>> 8d55e11c3f6378e3c87f07534019d51e74c77b66

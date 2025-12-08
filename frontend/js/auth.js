@@ -4,7 +4,7 @@ class Auth {
         this.tokenKey = 'auth_token';
         this.userKey = 'user_data';
         this.apiBaseUrl = 'http://localhost:8080/auth';
-        
+
         // Initialize event listeners
         this.initEventListeners();
     }
@@ -86,10 +86,10 @@ class Auth {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         const grade = document.getElementById('grade').value;
-        
+
         // Show grade selection if not selected (will be shown after first attempt if needed)
         const gradeSelection = document.getElementById('gradeSelection');
-        
+
         try {
             const response = await fetch(`${this.apiBaseUrl}/login.php`, {
                 method: 'POST',
@@ -117,10 +117,10 @@ class Auth {
 
             // Save token and user data
             this.saveAuthData(data.token, data.user);
-            
+
             // Redirect based on user role
             this.redirectBasedOnRole(data.user.role, data.user.grade);
-            
+
             // Hide login modal
             this.hideLoginModal();
 
