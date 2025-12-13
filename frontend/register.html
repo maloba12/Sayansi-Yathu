@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register – Sayansi Yathu</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <main class="auth-layout" aria-labelledby="register-title">
+        <!-- Left: Brand / Welcome -->
+        <section class="auth-hero" aria-hidden="true">
+            <div class="auth-hero-content">
+                <div class="auth-hero-header">
+                    <div class="auth-logo-circle">
+                        <img src="assets/logo.png" alt="Sayansi Yathu logo">
+                    </div>
+                    <span class="auth-brand-text">Sayansi Yathu</span>
+                </div>
+
+                <div class="auth-hero-main">
+                    <h1 class="auth-hero-title">Join us,<br>learn science!</h1>
+                    <p class="auth-hero-copy">
+                        Create your account to access virtual science labs designed for Zambian students.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right: Register Form -->
+        <section class="auth-panel">
+            <div class="auth-card" role="form" aria-describedby="register-description">
+                <h2 id="register-title">Create Account</h2>
+                <p id="register-description" class="auth-subtitle">
+                    Join thousands of students learning science virtually
+                </p>
+
+                <div id="registerError" class="auth-error" role="alert" aria-live="polite"></div>
+
+                <form id="registerForm" novalidate>
+                    <div class="field-group">
+                        <label for="fullName">Full Name</label>
+                        <input id="fullName" name="fullName" type="text" autocomplete="name" required
+                            aria-required="true" placeholder="John Banda">
+                    </div>
+
+                    <div class="field-group">
+                        <label for="email">Email Address</label>
+                        <input id="email" name="email" type="email" autocomplete="email" required aria-required="true"
+                            placeholder="john@example.com">
+                    </div>
+
+                    <div class="field-group">
+                        <label for="studentId">Student ID (Optional)</label>
+                        <input id="studentId" name="studentId" type="text" placeholder="STU-2025-G10-001">
+                    </div>
+
+                    <div class="field-group">
+                        <div class="field-label-row">
+                            <label for="password">Password</label>
+                        </div>
+                        <div class="password-wrapper">
+                            <input id="password" name="password" type="password" autocomplete="new-password" required
+                                aria-required="true" minlength="8" placeholder="Min. 8 characters">
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password"
+                            required aria-required="true" minlength="8">
+                    </div>
+
+                    <div class="auth-actions-row">
+                        <button type="submit" class="primary-button" id="registerButton" style="width: 100%;">
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+
+                <div class="auth-footer-row" style="margin-top: 1.5rem; display: block; text-align: center;">
+                    <span class="auth-footnote">
+                        Already have an account? <a href="login.html"
+                            style="color: var(--primary-blue); font-weight: 600;">Sign in</a>
+                    </span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Basic registration handler (frontend only - backend needed)
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const errorEl = document.getElementById('registerError');
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Clear previous errors
+            errorEl.classList.remove('visible');
+
+            // Validation
+            if (!fullName || !email || !password || !confirmPassword) {
+                errorEl.textContent = 'Please fill in all required fields';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorEl.textContent = 'Passwords do not match';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            if (password.length < 8) {
+                errorEl.textContent = 'Password must be at least 8 characters';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            const registerButton = document.getElementById('registerButton');
+            const originalText = registerButton.textContent;
+            registerButton.disabled = true;
+            registerButton.textContent = 'Creating account...';
+
+            try {
+                const response = await fetch('http://localhost:8000/auth/register.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fullName: fullName,
+                        email: email,
+                        password: password,
+                        studentId: document.getElementById('studentId').value.trim() || null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    alert('Registration successful! You can now log in with your credentials.');
+                    window.location.href = 'login.html';
+                } else {
+                    errorEl.textContent = data.message || 'Registration failed';
+                    errorEl.classList.add('visible');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                errorEl.textContent = 'Network error. Please ensure backend is running.';
+                errorEl.classList.add('visible');
+            } finally {
+                registerButton.disabled = false;
+                registerButton.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+
+</html>

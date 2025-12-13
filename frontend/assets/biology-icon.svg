@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64">
+  <defs>
+    <linearGradient id="biologyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16A34A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#15803D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- DNA double helix -->
+  <path d="M20 25 Q30 15 40 25 Q50 35 60 25 Q70 15 80 25" 
+        fill="none" stroke="url(#biologyGrad)" stroke-width="3"/>
+  <path d="M20 35 Q30 45 40 35 Q50 25 60 35 Q70 45 80 35" 
+        fill="none" stroke="url(#biologyGrad)" stroke-width="3"/>
+  
+  <!-- DNA base pairs -->
+  <rect x="28" y="23" width="4" height="4" fill="#16A34A"/>
+  <rect x="48" y="23" width="4" height="4" fill="#16A34A"/>
+  <rect x="68" y="23" width="4" height="4" fill="#16A34A"/>
+  
+  <rect x="28" y="33" width="4" height="4" fill="#16A34A"/>
+  <rect x="48" y="33" width="4" height="4" fill="#16A34A"/>
+  <rect x="68" y="33" width="4" height="4" fill="#16A34A"/>
+  
+  <!-- Cell membrane -->
+  <ellipse cx="50" cy="70" rx="25" ry="15" fill="none" stroke="url(#biologyGrad)" stroke-width="3"/>
+  
+  <!-- Cell nucleus -->
+  <circle cx="50" cy="70" r="8" fill="url(#biologyGrad)" stroke="#14532d" stroke-width="2"/>
+  
+  <!-- Mitochondria -->
+  <ellipse cx="40" cy="68" rx="4" ry="2" fill="#dc2626"/>
+  <ellipse cx="60" cy="68" rx="4" ry="2" fill="#dc2626"/>
+</svg>

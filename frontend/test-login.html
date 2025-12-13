@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login Diagnostic Test</title>
+</head>
+
+<body>
+    <h1>Login Diagnostic Test</h1>
+    <button onclick="testLogin()">Test Login</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testLogin() {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = 'Testing...\n\n';
+
+            try {
+                // Test 1: Check if backend is reachable
+                resultEl.textContent += 'Test 1: Checking backend health...\n';
+                const healthResponse = await fetch('http://localhost:8000/');
+                resultEl.textContent += `✓ Backend reachable (${healthResponse.status})\n\n`;
+
+                // Test 2: Try login
+                resultEl.textContent += 'Test 2: Attempting login...\n';
+                const loginResponse = await fetch('http://localhost:8000/auth/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        identifier: 'STU-2025-G10-001',
+                        password: 'password',
+                        remember_device: false,
+                        device_fingerprint: 'test'
+                    })
+                });
+
+                resultEl.textContent += `Response Status: ${loginResponse.status}\n`;
+                resultEl.textContent += `Response Headers:\n`;
+                loginResponse.headers.forEach((value, key) => {
+                    resultEl.textContent += `  ${key}: ${value}\n`;
+                });
+
+                const data = await loginResponse.json();
+                resultEl.textContent += `\nResponse Data:\n${JSON.stringify(data, null, 2)}\n`;
+
+                if (data.message === 'Login successful') {
+                    resultEl.textContent += '\n✓✓✓ LOGIN WORKS! ✓✓✓\n';
+                } else {
+                    resultEl.textContent += '\n✗ Login failed\n';
+                }
+
+            } catch (error) {
+                resultEl.textContent += `\n✗ ERROR: ${error.message}\n`;
+                resultEl.textContent += `Error stack: ${error.stack}\n`;
+            }
+        }
+    </script>
+</body>
+
+</html>

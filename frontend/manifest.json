@@ -1,0 +1,73 @@
+{
+  "name": "Sayansi Yathu - Virtual Science Lab",
+  "short_name": "Sayansi Yathu",
+  "description": "Interactive virtual science laboratory for Zambian secondary schools",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-GB",
+  "categories": ["education", "science", "productivity"],
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Physics Lab",
+      "short_name": "Physics",
+      "description": "Access physics experiments",
+      "url": "/experiments/physics.html",
+      "icons": [
+        {
+          "src": "assets/physics-icon.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Chemistry Lab",
+      "short_name": "Chemistry",
+      "description": "Access chemistry experiments",
+      "url": "/experiments/chemistry.html",
+      "icons": [
+        {
+          "src": "assets/chemistry-icon.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Biology Lab",
+      "short_name": "Biology",
+      "description": "Access biology experiments",
+      "url": "/experiments/biology.html",
+      "icons": [
+        {
+          "src": "assets/biology-icon.svg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

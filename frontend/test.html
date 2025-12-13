@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sayansi Yathu - Test Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Sayansi Yathu - Test Page</h1>
+    
+    <div class="test-section">
+        <h2>✅ Basic HTML Loading Test</h2>
+        <p>If you can see this, basic HTML is working!</p>
+        <p class="success">✓ HTML loads successfully</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎨 CSS Loading Test</h2>
+        <p>If this text is styled with Arial font, CSS is working!</p>
+        <p class="success">✓ CSS loads successfully</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>📱 Responsive Test</h2>
+        <p>Try resizing your browser window. This should adapt to different screen sizes.</p>
+        <p class="success">✓ Responsive design working</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔗 Navigation Test</h2>
+        <button onclick="goToMainPage()">Go to Main Site</button>
+        <button onclick="goToDashboard()">Go to Dashboard</button>
+        <p id="nav-result"></p>
+    </div>
+    
+    <script>
+        function goToMainPage() {
+            window.location.href = 'index.html';
+        }
+        
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+        
+        // Log that JavaScript is working
+        console.log('✅ JavaScript is working!');
+        document.getElementById('nav-result').innerHTML = '<span class="success">✓ JavaScript working</span>';
+    </script>
+</body>
+</html>

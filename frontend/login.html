@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login – Sayansi Yathu</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <main class="auth-layout" aria-labelledby="login-title">
         <!-- Left: Brand / Welcome -->
         <section class="auth-hero" aria-hidden="true">
-            <div class="auth-hero-overlay"></div>
+
             <div class="auth-hero-content">
                 <div class="auth-hero-header">
                     <div class="auth-logo-circle">
-                        <img src="assets/logo1.jpeg" alt="Sayansi Yathu logo">
+                        <img src="assets/logo.png" alt="Sayansi Yathu logo">
                     </div>
                     <span class="auth-brand-text">Sayansi Yathu</span>
                 </div>
@@ -43,15 +46,8 @@
                 <form id="loginForm" novalidate>
                     <div class="field-group">
                         <label for="identifier">Email / Username / Student ID</label>
-                        <input
-                            id="identifier"
-                            name="identifier"
-                            type="text"
-                            autocomplete="username"
-                            required
-                            aria-required="true"
-                            placeholder="e.g. teacher@school.zm or STU-2025-G10-001"
-                        >
+                        <input id="identifier" name="identifier" type="text" autocomplete="username" required
+                            aria-required="true" placeholder="e.g. teacher@school.zm or STU-2025-G10-001">
                     </div>
 
                     <div class="field-group">
@@ -62,15 +58,8 @@
                             </button>
                         </div>
                         <div class="password-wrapper">
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autocomplete="current-password"
-                                required
-                                aria-required="true"
-                                minlength="8"
-                            >
+                            <input id="password" name="password" type="password" autocomplete="current-password"
+                                required aria-required="true" minlength="8">
                         </div>
                     </div>
 
@@ -86,9 +75,10 @@
                         <button type="submit" class="primary-button" id="loginButton">
                             Login
                         </button>
-                        <button type="button" class="secondary-button" disabled>
+                        <a href="register.html" class="secondary-button"
+                            style="width: 100%; text-align: center; text-decoration: none;">
                             Sign up
-                        </button>
+                        </a>
                     </div>
                 </form>
 
@@ -109,6 +99,5 @@
 
     <script src="js/login.js"></script>
 </body>
+
 </html>
-
-

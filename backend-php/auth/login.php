@@ -3,9 +3,10 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Credentials: true");
 
 // In production, restrict origin to trusted frontends
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+$origin = $_SERVER['HTTP_ORIGIN'] ?? 'http://localhost:3000';
 header("Access-Control-Allow-Origin: " . $origin);
 header("Vary: Origin");
 
@@ -20,8 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-include_once '../config/db.php';
 include_once '../utils/helpers.php';
+include_once '../config/db.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -41,7 +42,7 @@ if (!is_array($data) || empty($data['identifier']) || empty($data['password'])) 
 $identifier = trim($data['identifier']);
 $password = (string) $data['password'];
 $rememberDevice = !empty($data['remember_device']);
-$deviceFingerprint = isset($data['device_fingerprint']) ? substr((string)$data['device_fingerprint'], 0, 255) : null;
+$deviceFingerprint = isset($data['device_fingerprint']) ? substr((string)$data['device_fingerprint'], 0, 64) : null;
 $clientIp = getClientIp();
 
 // Normalize identifier for search
@@ -54,14 +55,18 @@ $maxFailedAttempts = 5;
 // Simple per-identifier lock using users.failed_attempts and users.locked_until
 try {
     $lockQuery = "SELECT id, failed_attempts, locked_until FROM users
-                  WHERE email = :identifier
-                     OR username = :identifier
+                  WHERE email = :id_email
+                     OR username = :id_username
                      OR id IN (
-                        SELECT linked_user_id FROM students WHERE student_id = :identifier
+                        SELECT linked_user_id FROM students WHERE student_id = :id_student
                      )
                   LIMIT 1";
     $lockStmt = $db->prepare($lockQuery);
-    $lockStmt->execute([':identifier' => $identifier]);
+    $lockStmt->execute([
+        ':id_email' => $identifier,
+        ':id_username' => $identifier,
+        ':id_student' => $identifier
+    ]);
     $lockRow = $lockStmt->fetch();
 
     if ($lockRow && !empty($lockRow['locked_until']) && strtotime($lockRow['locked_until']) > time()) {
@@ -115,15 +120,20 @@ try {
     if ($user === null) {
         $userQuery = "SELECT id, name, email, username, password, role
                       FROM users
-                      WHERE email = :identifier OR username = :identifier
+                      WHERE email = :id_search_email OR username = :id_search_username
                       LIMIT 1";
         $stmt = $db->prepare($userQuery);
-        $stmt->execute([':identifier' => $identifier]);
+        $stmt->execute([
+            ':id_search_email' => $identifier,
+            ':id_search_username' => $identifier
+        ]);
         $user = $stmt->fetch() ?: null;
     }
 } catch (Exception $e) {
     error_log('User lookup failed: ' . $e->getMessage());
 }
+
+
 
 $loginSuccess = false;
 $responseUser = null;
@@ -162,7 +172,7 @@ if ($user && password_verify($password, $user['password'])) {
     // Generate JWT
     $token = generateJWT($user['id'], $user['role']);
 
-    // Set HTTP-only, Secure cookie (Secure should be true when using HTTPS)
+    // Set HTTP-only, Secure cookie
     $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
     setcookie(
         'sy_auth',
@@ -177,11 +187,42 @@ if ($user && password_verify($password, $user['password'])) {
         ]
     );
 
-    // Basic device fingerprint hook – in a full implementation we would verify and possibly require OTP
+    // Device Fingerprinting
     $requiresVerification = false;
-    if ($deviceFingerprint && $rememberDevice) {
-        // Placeholder: mark device as trusted (table not implemented here)
-        // Future: store device fingerprint + user id, and compare on next login
+    
+    if ($deviceFingerprint) {
+        try {
+            $deviceQuery = "SELECT id, is_verified FROM device_fingerprints 
+                            WHERE user_id = :uid AND device_hash = :hash LIMIT 1";
+            $deviceStmt = $db->prepare($deviceQuery);
+            $deviceStmt->execute([':uid' => $user['id'], ':hash' => $deviceFingerprint]);
+            $deviceRow = $deviceStmt->fetch();
+
+            if ($deviceRow) {
+                // Update last used
+                $updateDevice = $db->prepare("UPDATE device_fingerprints SET last_used_at = NOW(), ip_address = :ip, user_agent = :ua 
+                                              WHERE id = :id");
+                $updateDevice->execute([
+                    ':ip' => $clientIp,
+                    ':ua' => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255),
+                    ':id' => $deviceRow['id']
+                ]);
+            } else {
+                // New device
+                if ($rememberDevice) {
+                     $insertDevice = $db->prepare("INSERT INTO device_fingerprints (user_id, device_hash, user_agent, ip_address, is_verified) 
+                                                  VALUES (:uid, :hash, :ua, :ip, 1)");
+                    $insertDevice->execute([
+                        ':uid' => $user['id'],
+                        ':hash' => $deviceFingerprint,
+                        ':ua' => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255),
+                        ':ip' => $clientIp
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            error_log('Device fingerprint error: ' . $e->getMessage());
+        }
     }
 
     // Log successful login
@@ -209,7 +250,7 @@ if ($user && password_verify($password, $user['password'])) {
     exit();
 }
 
-// Handle failed login: increment counters and possibly lock
+// Handle failed login
 if ($lockRow) {
     $failedAttempts = (int) $lockRow['failed_attempts'] + 1;
     $lockedUntil = null;
@@ -230,7 +271,7 @@ if ($lockRow) {
     }
 }
 
-// Log failed attempt (generic)
+// Log failed attempt
 try {
     $logStmt = $db->prepare("INSERT INTO security_logs (user_id, event_type, ip_address, user_agent, details)
                              VALUES (NULL, 'login_failure', :ip, :ua, :details)");
@@ -245,7 +286,6 @@ try {
     error_log('Security log insert failed: ' . $e->getMessage());
 }
 
-// If account was just locked, return lock message, else generic invalid credentials
 if (!empty($lockedUntil) && strtotime($lockedUntil) > time()) {
     http_response_code(429);
     echo json_encode([
@@ -258,5 +298,4 @@ if (!empty($lockedUntil) && strtotime($lockedUntil) > time()) {
         "message" => $genericError
     ]);
 }
-
 ?>

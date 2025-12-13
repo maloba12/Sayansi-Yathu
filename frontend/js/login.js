@@ -1,6 +1,6 @@
 class LoginPageAuth {
     constructor() {
-        this.apiBaseUrl = '/backend-php/auth';
+        this.apiBaseUrl = 'http://localhost:8000/auth';
         this.tokenKey = 'auth_token';
         this.userKey = 'user_data';
         this.init();
@@ -67,11 +67,8 @@ class LoginPageAuth {
     }
 
     redirectToDashboard(route) {
-        if (!route) {
-            window.location.href = 'dashboard.html';
-            return;
-        }
-        window.location.href = route;
+        // Always redirect to dashboard.html (frontend handles role-based views)
+        window.location.href = 'dashboard.html';
     }
 
     async handleLogin() {
@@ -123,7 +120,7 @@ class LoginPageAuth {
                 }
 
                 this.showError(
-                    'Invalid login credentials. Please check your email, Student ID, or password and try again.'
+                    `Login failed (${response.status} ${response.statusText}): ${data.message || 'Check credentials'}`
                 );
                 return;
             }
@@ -142,7 +139,7 @@ class LoginPageAuth {
         } catch (err) {
             console.error('Login error', err);
             this.showError(
-                'Invalid login credentials. Please check your email, Student ID, or password and try again.'
+                `Login failed: ${err.message}. Please ensure the backend server is running at ${this.apiBaseUrl}`
             );
         } finally {
             if (loginButton) {

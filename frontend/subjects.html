@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiments – Sayansi Yathu</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <div class="logo-container">
+                <img src="assets/logo1.jpeg" alt="Sayansi Yathu" class="logo-image">
+                <span class="brand-name">Sayansi Yathu</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="subjects.html" class="nav-link active">Experiments</a></li>
+                <li><a href="#" class="nav-link" id="logoutLink">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="container mt-2xl">
+        <div class="text-center mb-2xl">
+            <h1>Virtual Science Experiments</h1>
+            <p style="color: var(--gray-700); margin-top: var(--space-md);">
+                Choose an experiment to begin hands-on virtual learning
+            </p>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex justify-center gap-md mb-xl">
+            <button class="btn btn-secondary filter-btn active" data-filter="all">All</button>
+            <button class="btn btn-secondary filter-btn" data-filter="Biology">Biology</button>
+            <button class="btn btn-secondary filter-btn" data-filter="Chemistry">Chemistry</button>
+            <button class="btn btn-secondary filter-btn" data-filter="Physics">Physics</button>
+        </div>
+
+        <!-- Experiments Grid -->
+        <div class="grid grid-cols-3" id="experimentsGrid">
+            <!-- Loading state -->
+            <div class="card text-center" style="grid-column: 1 / -1;">
+                <p>Loading experiments...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Experiments Page Logic
+        class ExperimentsPage {
+            constructor() {
+                this.apiBase = 'http://localhost:8000/api';
+                this.experiments = [];
+                this.currentFilter = 'all';
+                this.init();
+            }
+
+            async init() {
+                await this.loadExperiments();
+                this.attachEventListeners();
+            }
+
+            async loadExperiments() {
+                try {
+                    const response = await fetch(`${this.apiBase}/simulations/list.php`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.experiments = data.simulations;
+                        this.renderExperiments();
+                    }
+                } catch (error) {
+                    console.error('Load experiments error:', error);
+                }
+            }
+
+            renderExperiments() {
+                const grid = document.getElementById('experimentsGrid');
+                const filtered = this.currentFilter === 'all'
+                    ? this.experiments
+                    : this.experiments.filter(e => e.subject === this.currentFilter);
+
+                if (filtered.length === 0) {
+                    grid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p>No experiments found</p></div>';
+                    return;
+                }
+
+                grid.innerHTML = filtered.map(exp => `
+                    <div class="card" style="cursor: pointer;" onclick="window.location.href='simulation-player.html?id=${exp.id}'">
+                        <div class="card-header">
+                            <div class="flex justify-between items-center mb-sm">
+                                <span class="badge badge-${exp.subject.toLowerCase()}">${exp.subject}</span>
+                                <span class="badge badge-${exp.difficulty.toLowerCase()}">${exp.difficulty}</span>
+                            </div>
+                            <h3 class="card-title">${exp.title}</h3>
+                        </div>
+                        <p class="card-subtitle">${exp.description || 'Click to start this experiment'}</p>
+                        <button class="btn btn-primary mt-md" style="width: 100%;">Start Experiment →</button>
+                    </div>
+                `).join('');
+            }
+
+            attachEventListeners() {
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentFilter = e.target.dataset.filter;
+                        this.renderExperiments();
+                    });
+                });
+
+                document.getElementById('logoutLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new ExperimentsPage();
+        });
+    </script>
+
+    <style>
+        .filter-btn.active {
+            background: var(--primary-blue);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+    </style>
+</body>
+
+</html>

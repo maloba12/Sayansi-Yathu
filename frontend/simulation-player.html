@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Player – Sayansi Yathu</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/simulation-player.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <div class="logo-container">
+                <img src="assets/logo1.jpeg" alt="Sayansi Yathu" class="logo-image">
+                <span class="brand-name">Sayansi Yathu</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="subjects.html" class="nav-link">Experiments</a></li>
+                <li><a href="#" class="nav-link" id="exitBtn">Exit</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Simulation Player Layout -->
+    <div class="player-layout">
+        <!-- Left Panel: Instructions -->
+        <aside class="instructions-panel">
+            <div class="panel-header">
+                <h3 id="simTitle">Loading...</h3>
+                <span class="badge" id="simSubject">Subject</span>
+            </div>
+
+            <div class="progress-tracker">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <span class="progress-text" id="progressText">Step 0 of 0</span>
+            </div>
+
+            <div class="step-content">
+                <h4 id="stepTitle">Step Title</h4>
+                <p id="stepInstructions">Loading instructions...</p>
+            </div>
+
+            <div class="step-controls">
+                <button class="btn btn-secondary" id="prevBtn" disabled>← Previous</button>
+                <button class="btn btn-primary" id="nextBtn">Next →</button>
+            </div>
+        </aside>
+
+        <!-- Center: Simulation Workspace -->
+        <main class="workspace-container">
+            <div class="workspace-header">
+                <h4>Simulation Workspace</h4>
+                <div class="workspace-actions">
+                    <button class="btn-icon" id="resetBtn" title="Reset">🔄</button>
+                    <button class="btn-icon" id="helpBtn" title="Help">?</button>
+                </div>
+            </div>
+
+            <div class="workspace-content" id="workspace">
+                <!-- Dynamic content will be loaded here based on step config -->
+                <div class="placeholder-message">
+                    <p>🧪 Simulation workspace will appear here</p>
+                    <p class="text-muted">Follow the instructions on the left to proceed</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Completion Modal -->
+    <div class="modal" id="completionModal">
+        <div class="modal-content card">
+            <h2>🎉 Experiment Complete!</h2>
+            <p>Congratulations! You've completed this simulation.</p>
+            <div class="score-display">
+                <span class="score-label">Your Score:</span>
+                <span class="score-value" id="finalScore">100</span>
+            </div>
+            <div class="flex gap-md" style="margin-top: 2rem;">
+                <button class="btn btn-secondary" id="restartBtn">Restart</button>
+                <button class="btn btn-primary" id="returnBtn">Return to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/simulation-player.js"></script>
+</body>
+
+</html>
