@@ -1,278 +1,329 @@
 // Biology Simulations - Three.js based experiments
+// Enhanced with Loader and Interactive Cell Model
 
-class BiologySimulation {
-    constructor(canvasId) {
-        this.canvas = document.getElementById(canvasId);
-        if (!this.canvas) {
-            console.error('Canvas element not found:', canvasId);
-            return;
+// Global State
+let currentSimulation = null;
+let renderer = null;
+let camera = null;
+let scene = null;
+let animationId = null;
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+
+// Main Loader
+function loadBiologyExperiment(type) {
+    console.log('Loading Biology Experiment:', type);
+    
+    // Cleanup
+    if (animationId) cancelAnimationFrame(animationId);
+    if (renderer) {
+        renderer.dispose();
+        const canvasContainer = document.getElementById('biology-canvas');
+        canvasContainer.innerHTML = '';
+    }
+    currentSimulation = null;
+
+    // UI Toggles
+    document.querySelectorAll('.experiment-controls').forEach(el => el.classList.add('hidden'));
+    const controls = document.getElementById(`${type}-controls`);
+    if (controls) controls.classList.remove('hidden');
+
+    // Init Logic
+    if (type === 'cell') {
+        currentSimulation = new CellSimulation();
+    } else if (type === 'dna') {
+        currentSimulation = new DNASimulation();
+    } else {
+        document.getElementById('biology-canvas').innerHTML = '<p class="text-center p-4">Experiment under construction 🚧</p>';
+        return;
+    }
+    
+    currentSimulation.init();
+    animate();
+}
+
+// Shared Animation Loop
+function animate() {
+    animationId = requestAnimationFrame(animate);
+    if (currentSimulation) {
+        currentSimulation.update();
+        if (renderer && scene && camera) {
+            renderer.render(scene, camera);
         }
-
-        // Three.js setup
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
-        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
-        this.renderer.setClearColor(0xe6f3ff);
-
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        this.scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(1, 1, 1);
-        this.scene.add(directionalLight);
-
-        this.camera.position.z = 5;
-        this.animate = this.animate.bind(this);
-        this.isRunning = false;
-    }
-
-    animate() {
-        if (!this.isRunning) return;
-        requestAnimationFrame(this.animate);
-        this.renderer.render(this.scene, this.camera);
-    }
-
-    start() {
-        this.isRunning = true;
-        this.animate();
-    }
-
-    stop() {
-        this.isRunning = false;
-    }
-
-    clear() {
-        while(this.scene.children.length > 0) {
-            this.scene.remove(this.scene.children[0]);
-        }
-        // Re-add lights
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        this.scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(1, 1, 1);
-        this.scene.add(directionalLight);
     }
 }
 
-// Cell Structure Simulation
-class CellSimulation extends BiologySimulation {
-    constructor(canvasId) {
-        super(canvasId);
-        this.cell = null;
-        this.organelles = [];
+// ==========================================
+// CELL STRUCTURE SIMULATION
+// ==========================================
+class CellSimulation {
+    constructor() {
+        this.organelles = {};
+        this.isMembraneVisible = true;
     }
 
-    createCell() {
-        // Cell membrane (outer boundary)
-        const membraneGeometry = new THREE.TorusGeometry(2, 0.1, 8, 16);
-        const membraneMaterial = new THREE.MeshLambertMaterial({ color: 0x4ade80 });
-        const membrane = new THREE.Mesh(membraneGeometry, membraneMaterial);
-        membrane.rotation.x = Math.PI / 2;
-        this.scene.add(membrane);
+    init() {
+        const container = document.getElementById('biology-canvas');
+        const w = container.clientWidth;
+        const h = container.clientHeight;
 
-        // Cytoplasm (cell interior)
-        const cytoplasmGeometry = new THREE.CylinderGeometry(1.8, 1.8, 0.2);
-        const cytoplasmMaterial = new THREE.MeshLambertMaterial({ color: 0xfef3c7, transparent: true, opacity: 0.7 });
-        const cytoplasm = new THREE.Mesh(cytoplasmGeometry, cytoplasmMaterial);
-        this.scene.add(cytoplasm);
+        // Scene Setup
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xe0f2fe); // Soft blue
+        scene.fog = new THREE.Fog(0xe0f2fe, 5, 20);
 
-        // Nucleus
-        const nucleusGeometry = new THREE.SphereGeometry(0.4);
-        const nucleusMaterial = new THREE.MeshLambertMaterial({ color: 0x8b5cf6 });
-        const nucleus = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
-        nucleus.position.set(0.5, 0.1, 0);
-        this.scene.add(nucleus);
+        camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+        camera.position.set(0, 2, 8);
+        camera.lookAt(0, 0, 0);
 
-        // Mitochondria
-        for (let i = 0; i < 3; i++) {
-            const mitoGeometry = new THREE.CapsuleGeometry(0.1, 0.3);
-            const mitoMaterial = new THREE.MeshLambertMaterial({ color: 0xf97316 });
-            const mitochondrion = new THREE.Mesh(mitoGeometry, mitoMaterial);
-            mitochondrion.position.set(
-                Math.cos(i * Math.PI * 2 / 3) * 1.2,
-                0.1,
-                Math.sin(i * Math.PI * 2 / 3) * 1.2
-            );
-            this.scene.add(mitochondrion);
-        }
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(w, h);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
 
-        // Endoplasmic Reticulum
-        const erGeometry = new THREE.TorusGeometry(1.0, 0.05, 6, 12);
-        const erMaterial = new THREE.MeshLambertMaterial({ color: 0x06b6d4 });
-        const er = new THREE.Mesh(erGeometry, erMaterial);
-        er.rotation.x = Math.PI / 2;
-        er.position.y = -0.1;
-        this.scene.add(er);
-
-        this.cell = { membrane, cytoplasm, nucleus };
-    }
-
-    highlightOrganelle(organelleType) {
-        // Reset all colors
-        this.cell.nucleus.material.color.setHex(0x8b5cf6);
+        // Lights
+        const ambLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambLight);
         
-        // Find mitochondria and reset colors
-        this.scene.children.forEach(child => {
-            if (child.geometry && child.geometry.type === 'CapsuleGeometry') {
-                child.material.color.setHex(0xf97316);
-            }
-            if (child.geometry && child.geometry.type === 'TorusGeometry' && child !== this.cell.membrane) {
-                child.material.color.setHex(0x06b6d4);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 5, 5);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        // Interaction
+        renderer.domElement.addEventListener('click', this.onClick.bind(this));
+        renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this));
+
+        this.createCellModel();
+    }
+
+    createCellModel() {
+        // 1. Cytoplasm / Membrane (Cutosphere)
+        const geometry = new THREE.SphereGeometry(3, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.75); // Cut top
+        const material = new THREE.MeshPhongMaterial({ 
+            color: 0x4ade80, 
+            transparent: true, 
+            opacity: 0.3,
+            side: THREE.DoubleSide,
+            shininess: 60
+        });
+        this.membrane = new THREE.Mesh(geometry, material);
+        this.membrane.rotation.x = Math.PI / 5;
+        scene.add(this.membrane);
+
+        // 2. Nucleus
+        const nucGeo = new THREE.SphereGeometry(0.8, 32, 32);
+        const nucMat = new THREE.MeshPhongMaterial({ color: 0x9333ea });
+        const nucleus = new THREE.Mesh(nucGeo, nucMat);
+        nucleus.position.set(0, -0.5, 0);
+        nucleus.userData = { id: 'nucleus', name: 'Nucleus' };
+        scene.add(nucleus);
+        this.organelles['nucleus'] = nucleus;
+
+        // 3. Mitochondria (Capsules)
+        const mitoGeo = new THREE.CapsuleGeometry(0.2, 0.6, 4, 8);
+        const mitoMat = new THREE.MeshPhongMaterial({ color: 0xf97316 });
+        
+        const positions = [
+            { x: 1.5, y: 0, z: 1 },
+            { x: -1.2, y: -1, z: 0.5 },
+            { x: 0.5, y: 0.5, z: -1.5 }
+        ];
+
+        positions.forEach((pos, i) => {
+            const mito = new THREE.Mesh(mitoGeo, mitoMat);
+            mito.position.set(pos.x, pos.y, pos.z);
+            mito.rotation.set(Math.random(), Math.random(), Math.random());
+            mito.userData = { id: 'mitochondria', name: 'Mitochondria' };
+            scene.add(mito);
+            if (!this.organelles['mitochondria']) this.organelles['mitochondria'] = [];
+            this.organelles['mitochondria'].push(mito);
+        });
+
+        // 4. ER (Torus knots abstract)
+        const erGeo = new THREE.TorusKnotGeometry(0.4, 0.05, 64, 8);
+        const erMat = new THREE.MeshPhongMaterial({ color: 0x06b6d4 });
+        const er = new THREE.Mesh(erGeo, erMat);
+        er.position.set(-1, -0.5, 0);
+        er.userData = { id: 'endoplasmic_reticulum', name: 'Endoplasmic Reticulum' };
+        scene.add(er);
+        this.organelles['endoplasmic_reticulum'] = er;
+    }
+
+    update() {
+        // Slow rotation for life-like feel
+        if (this.membrane) this.membrane.rotation.y += 0.001;
+    }
+
+    // Interaction Handlers
+    highlight(type) {
+        // Reset all
+        scene.traverse((obj) => {
+            if (obj.isMesh && obj.userData.originalColor) {
+               obj.material.color.setHex(obj.userData.originalColor);
+               obj.scale.set(1,1,1);
             }
         });
 
-        // Highlight selected organelle
-        switch(organelleType) {
-            case 'nucleus':
-                this.cell.nucleus.material.color.setHex(0xffff00);
-                break;
-            case 'mitochondria':
-                this.scene.children.forEach(child => {
-                    if (child.geometry && child.geometry.type === 'CapsuleGeometry') {
-                        child.material.color.setHex(0xffff00);
-                    }
-                });
-                break;
-            case 'endoplasmic-reticulum':
-                this.scene.children.forEach(child => {
-                    if (child.geometry && child.geometry.type === 'TorusGeometry' && child !== this.cell.membrane) {
-                        child.material.color.setHex(0xffff00);
-                    }
-                });
-                break;
+        // Select targets
+        let targets = [];
+        if (Array.isArray(this.organelles[type])) {
+            targets = this.organelles[type];
+        } else if (this.organelles[type]) {
+            targets = [this.organelles[type]];
         }
-    }
-}
 
-// DNA Replication Simulation
-class DNASimulation extends BiologySimulation {
-    constructor(canvasId) {
-        super(canvasId);
-        this.dnaStrands = [];
-        this.replicationProgress = 0;
+        // Highlight
+        targets.forEach(t => {
+            if (!t.userData.originalColor) t.userData.originalColor = t.material.color.getHex();
+            t.material.color.setHex(0xffff00); // Yellow highlight
+            t.scale.set(1.2, 1.2, 1.2);
+        });
+
+        this.showLabel(type);
     }
 
-    createDNA() {
-        // Create double helix DNA structure
-        for (let i = 0; i < 20; i++) {
-            // Phosphate backbone (sugar-phosphate)
-            const phosphateGeometry = new THREE.SphereGeometry(0.05);
-            const phosphateMaterial = new THREE.MeshLambertMaterial({ color: 0x8b5cf6 });
-            
-            // Left strand
-            const phosphate1 = new THREE.Mesh(phosphateGeometry, phosphateMaterial);
-            phosphate1.position.set(
-                Math.cos(i * 0.3) * 1.5,
-                i * 0.1 - 1,
-                Math.sin(i * 0.3) * 1.5
-            );
-            this.scene.add(phosphate1);
-            
-            // Right strand
-            const phosphate2 = new THREE.Mesh(phosphateGeometry, phosphateMaterial);
-            phosphate2.position.set(
-                Math.cos(i * 0.3 + Math.PI) * 1.5,
-                i * 0.1 - 1,
-                Math.sin(i * 0.3 + Math.PI) * 1.5
-            );
-            this.scene.add(phosphate2);
-            
-            // Base pairs
-            if (i % 2 === 0) {
-                const baseGeometry = new THREE.BoxGeometry(0.8, 0.02, 0.05);
-                const baseMaterial = new THREE.MeshLambertMaterial({ color: 0x10b981 });
-                const base = new THREE.Mesh(baseGeometry, baseMaterial);
-                base.position.set(0, i * 0.1 - 1, 0);
-                base.rotation.z = i * 0.3;
-                this.scene.add(base);
+    showLabel(text) {
+        const lbl = document.getElementById('labels-container');
+        lbl.innerHTML = `<div class="canvas-label" style="top: 20px; left: 20px; font-size: 16px;">Selected: ${text.toUpperCase()}</div>`;
+        
+        // Hide after 3s
+        setTimeout(() => lbl.innerHTML = '', 3000);
+    }
+
+    onClick(event) {
+        // Basic Raycaster implementation
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+
+        for (let i = 0; i < intersects.length; i++) {
+            const obj = intersects[i].object;
+            if (obj.userData.id) {
+                this.highlight(obj.userData.id);
+                break;
             }
         }
     }
-
-    startReplication() {
-        this.replicationProgress = 0;
-        this.animateReplication();
+    
+    onMouseMove(event) {
+        // Optional: Cursor change on hover
     }
+    
+    toggleMembrane() {
+        this.isMembraneVisible = !this.isMembraneVisible;
+        if(this.membrane) this.membrane.visible = this.isMembraneVisible;
+    }
+    
+    resetCamera() {
+        camera.position.set(0, 2, 8);
+        camera.lookAt(0,0,0);
+        camera.zoom = 1;
+        camera.updateProjectionMatrix();
+    }
+}
 
-    animateReplication() {
-        if (this.replicationProgress < 1) {
-            this.replicationProgress += 0.01;
+
+// ==========================================
+// DNA REPLICATION SIMULATION (Basic)
+// ==========================================
+class DNASimulation {
+    init() {
+        const container = document.getElementById('biology-canvas');
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111827); // Dark for DNA
+
+        camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+        camera.position.set(0, 0, 15);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(w, h);
+        container.appendChild(renderer.domElement);
+        
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+        
+        this.createHelix();
+    }
+    
+    createHelix() {
+        this.helixGroup = new THREE.Group();
+        const count = 20;
+        for(let i = -count; i <= count; i++) {
+            const y = i * 0.4;
+            const angle = i * 0.5;
+            const rad = 2;
             
-            // Create new strands (simplified visualization)
-            const progress = this.replicationProgress;
-            const yPos = progress * 2 - 1;
+            // Sphere A
+            const s1 = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshBasicMaterial({color: 0xef4444}));
+            s1.position.set(Math.cos(angle)*rad, y, Math.sin(angle)*rad);
             
-            // Add replication fork visualization
-            const forkGeometry = new THREE.ConeGeometry(0.1, 0.3);
-            const forkMaterial = new THREE.MeshLambertMaterial({ color: 0xf59e0b });
-            const fork = new THREE.Mesh(forkGeometry, forkMaterial);
-            fork.position.set(0, yPos, 0);
-            fork.rotation.x = Math.PI;
-            this.scene.add(fork);
+            // Sphere B
+            const s2 = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshBasicMaterial({color: 0x3b82f6}));
+            s2.position.set(Math.cos(angle + Math.PI)*rad, y, Math.sin(angle + Math.PI)*rad);
             
-            setTimeout(() => this.animateReplication(), 50);
+            // Bar
+            const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, rad*2), new THREE.MeshBasicMaterial({color: 0xffffff}));
+            bar.rotation.z = Math.PI/2;
+            bar.rotation.y = angle;
+            bar.position.set(0, y, 0);
+            
+            this.helixGroup.add(s1);
+            this.helixGroup.add(s2);
+            this.helixGroup.add(bar);
+        }
+        scene.add(this.helixGroup);
+    }
+    
+    update() {
+        if(this.helixGroup) {
+            this.helixGroup.rotation.y += 0.01;
         }
     }
-
-    reset() {
-        this.replicationProgress = 0;
-        this.clear();
-        this.createDNA();
-    }
 }
 
-// Global instances
-let cellSim = null;
-let dnaSim = null;
+// ==========================================
+// EXPORTS & HELPERS
+// ==========================================
 
-// Initialize biology simulations
-function initBiologySimulations() {
-    // Cell structure simulation
-    cellSim = new CellSimulation('cell-canvas');
-    cellSim.createCell();
-    cellSim.start();
+window.loadBiologyExperiment = loadBiologyExperiment;
+window.CellSimulation = CellSimulation;
+window.DNASimulation = DNASimulation;
 
-    // DNA simulation
-    dnaSim = new DNASimulation('dna-canvas');
-    dnaSim.createDNA();
-    dnaSim.start();
-}
-
-// Control functions
-function highlightOrganelle(type) {
-    if (cellSim) {
-        cellSim.highlightOrganelle(type);
+window.highlightOrganelle = (type) => {
+    if (currentSimulation instanceof CellSimulation) {
+        currentSimulation.highlight(type);
     }
-}
+};
 
-function startDNAReplication() {
-    if (dnaSim) {
-        dnaSim.startReplication();
+window.resetCamera = () => {
+    if (currentSimulation instanceof CellSimulation) {
+        currentSimulation.resetCamera();
     }
-}
+};
 
-function resetDNASimulation() {
-    if (dnaSim) {
-        dnaSim.reset();
+window.toggleMembrane = () => {
+    if (currentSimulation instanceof CellSimulation) {
+        currentSimulation.toggleMembrane();
     }
-}
+};
 
-function zoomCamera(direction) {
-    // Zoom in/out for better viewing
-    if (cellSim) {
-        cellSim.camera.position.z += direction * 0.5;
-        cellSim.camera.position.z = Math.max(2, Math.min(10, cellSim.camera.position.z));
-    }
-    if (dnaSim) {
-        dnaSim.camera.position.z += direction * 0.5;
-        dnaSim.camera.position.z = Math.max(2, Math.min(10, dnaSim.camera.position.z));
-    }
-}
+window.startDNAReplication = () => {
+    alert("Replication started! (Animation WIP)");
+};
 
-// Make functions globally available
-window.initBiologySimulations = initBiologySimulations;
-window.highlightOrganelle = highlightOrganelle;
-window.startDNAReplication = startDNAReplication;
-window.resetDNASimulation = resetDNASimulation;
-window.zoomCamera = zoomCamera;
+window.resetDNASimulation = () => {
+     loadBiologyExperiment('dna');
+};
+
+// Auto load
+document.addEventListener('DOMContentLoaded', () => {
+    loadBiologyExperiment('cell');
+});

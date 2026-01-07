@@ -9,10 +9,10 @@ class Database {
     public function __construct()
     {
         // Prefer environment variables for security; fall back to defaults for local dev
-        $this->host = getenv('DB_HOST') ?: 'localhost';
+        $this->host = getenv('DB_HOST') ?: '127.0.0.1';
         $this->db_name = getenv('DB_NAME') ?: 'sayansi_yathu';
-        $this->username = getenv('DB_USER') ?: 'sayansi_admin';
-        $this->password = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : 'password';
+        $this->username = getenv('DB_USER') ?: 'root';
+        $this->password = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : '';
     }
 
     public function getConnection() {

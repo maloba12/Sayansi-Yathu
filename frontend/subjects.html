@@ -68,12 +68,26 @@
 
             async loadExperiments() {
                 try {
-                    const response = await fetch(`${this.apiBase}/simulations/list.php`);
+                    let userId = 1; // Default
+                    try {
+                        const userData = localStorage.getItem('user_data');
+                        if (userData) {
+                             userId = JSON.parse(userData).id;
+                        }
+                    } catch(e) { console.error("User ID parse error", e); }
+                    
+                    const response = await fetch(`${this.apiBase}/getExperiment.php?userId=${userId}`);
                     const data = await response.json();
 
-                    if (data.success) {
+                    if (Array.isArray(data)) {
+                        this.experiments = data;
+                        this.renderExperiments();
+                    } else if (data.success && Array.isArray(data.simulations)) {
+                        // Fallback in case backend changes structure later
                         this.experiments = data.simulations;
                         this.renderExperiments();
+                    } else {
+                        console.error("Unexpected API format:", data);
                     }
                 } catch (error) {
                     console.error('Load experiments error:', error);
@@ -84,7 +98,7 @@
                 const grid = document.getElementById('experimentsGrid');
                 const filtered = this.currentFilter === 'all'
                     ? this.experiments
-                    : this.experiments.filter(e => e.subject === this.currentFilter);
+                    : this.experiments.filter(e => e.subject.toLowerCase() === this.currentFilter.toLowerCase());
 
                 if (filtered.length === 0) {
                     grid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p>No experiments found</p></div>';
@@ -95,8 +109,8 @@
                     <div class="card" style="cursor: pointer;" onclick="window.location.href='simulation-player.html?id=${exp.id}'">
                         <div class="card-header">
                             <div class="flex justify-between items-center mb-sm">
-                                <span class="badge badge-${exp.subject.toLowerCase()}">${exp.subject}</span>
-                                <span class="badge badge-${exp.difficulty.toLowerCase()}">${exp.difficulty}</span>
+                                <span class="badge badge-${(exp.subject || 'general').toLowerCase()}">${exp.subject}</span>
+                                <span class="badge badge-${(exp.difficulty_level || 'beginner').toLowerCase()}">${exp.difficulty_level}</span>
                             </div>
                             <h3 class="card-title">${exp.title}</h3>
                         </div>

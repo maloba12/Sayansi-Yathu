@@ -18,10 +18,23 @@
         </div>
 
         <div class="simulation-area">
-            <div id="chemistry-canvas"></div>
+            <div id="chemistry-canvas" class="canvas-container"></div>
         </div>
 
-        <div class="chemical-controls">
+        <!-- Dynamic Controls Container -->
+        <div id="titration-controls" class="experiment-controls hidden">
+            <div class="control-group">
+                <label>Acid Conc. (M): <input type="number" id="acid-conc" value="0.1" step="0.01" onchange="updateAcidConcentration()"></label>
+                <label>Base Conc. (M): <input type="number" id="base-conc" value="0.1" step="0.01" onchange="updateBaseConcentration()"></label>
+            </div>
+            <div class="control-actions">
+                <button onclick="resetTitration()" class="btn-secondary">Reset</button>
+                <button onclick="addBase(0.5)" class="btn-primary">Add Drop (0.5mL)</button>
+                <button onclick="addBase(5)" class="btn-primary">Add 5mL</button>
+            </div>
+        </div>
+
+        <div id="reaction-controls" class="experiment-controls hidden">
             <select id="chemical-select">
                 <option value="hcl">Hydrochloric Acid</option>
                 <option value="naoh">Sodium Hydroxide</option>
@@ -29,6 +42,46 @@
             <button onclick="runReaction()">Start Reaction</button>
         </div>
     </div>
+
+    <style>
+        .hidden { display: none; }
+        .experiment-controls {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .canvas-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: var(--primary-color, #007bff);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
 
     <script src="../js/chemistry-simulations.js"></script>
 </body>

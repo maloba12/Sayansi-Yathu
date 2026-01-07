@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users – Sayansi Yathu Admin</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <div class="logo-container">
+                <img src="assets/logo1.jpeg" alt="Sayansi Yathu" class="logo-image">
+                <span class="brand-name">Sayansi Yathu</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <div class="dashboard-sidebar-header">
+                <h3>Admin Panel</h3>
+                <p>Administrator</p>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <a href="dashboard.html" class="sidebar-nav-link">
+                            <span class="sidebar-nav-icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a href="admin-users.html" class="sidebar-nav-link active">
+                            <span class="sidebar-nav-icon">👥</span>
+                            <span>Users</span>
+                            <span class="sidebar-badge">350</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a href="admin-reports.html" class="sidebar-nav-link">
+                            <span class="sidebar-nav-icon">📈</span>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a href="admin-settings.html" class="sidebar-nav-link">
+                            <span class="sidebar-nav-icon">⚙️</span>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="sidebar-divider"></div>
+                <p class="sidebar-section-title">System</p>
+                
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <a href="#" class="sidebar-nav-link">
+                            <span class="sidebar-nav-icon">🔔</span>
+                            <span>Notifications</span>
+                            <span class="sidebar-badge sidebar-badge-warning">3</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a href="#" class="sidebar-nav-link">
+                            <span class="sidebar-nav-icon">📚</span>
+                            <span>Documentation</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="sidebar-divider"></div>
+                
+                <ul class="sidebar-nav">
+                    <li class="sidebar-nav-item">
+                        <a href="#" class="sidebar-nav-link" id="logoutLink">
+                            <span class="sidebar-nav-icon">🚪</span>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="mb-2xl">
+                <h1>User Management <span class="badge badge-primary">Admin</span></h1>
+                <p>Manage users, roles, and permissions across the platform.</p>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="card mb-lg">
+                <div class="flex justify-between items-center">
+                    <input type="text" id="searchUsers" placeholder="Search by name or email..." style="flex: 1; padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 4px; margin-right: 1rem;">
+                    <select id="roleFilter" style="padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 4px; margin-right: 1rem;">
+                        <option value="">All Roles</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="showAddUserModal()">+ Add User</button>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card">
+                <h3>All Users</h3>
+                <div id="usersTableContainer" style="overflow-x: auto; margin-top: 1rem;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: var(--gray-100); text-align: left;">
+                            <tr>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--gray-300);">ID</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--gray-300);">Name</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--gray-300);">Email</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--gray-300);">Role</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--gray-300);">Created</th>
+                                <th style="padding: 0.75rem; border-bottom: 2px solid var(--gray-300);">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="6" style="padding: 2rem; text-align: center;">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer style="text-align: center; padding: 2rem; margin-top: 4rem; color: var(--gray-700);">
+        <p>&copy; 2025 Sayansi Yathu. Empowering Zambian Students.</p>
+    </footer>
+
+    <script src="js/admin-users.js?v=3"></script>
+</body>
+</html>

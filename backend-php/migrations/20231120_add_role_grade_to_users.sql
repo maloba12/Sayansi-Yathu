@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS students (
     school VARCHAR(191) NULL,
     date_of_birth DATE NULL,
     guardian_contact VARCHAR(64) NULL,
-    linked_user_id INT NOT NULL,
+    linked_user_id INT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_students_user FOREIGN KEY (linked_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS teachers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     department VARCHAR(100) NOT NULL,
     school VARCHAR(191) NULL,
-    linked_user_id INT NOT NULL UNIQUE,
+    linked_user_id INT UNSIGNED NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_teachers_user FOREIGN KEY (linked_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS hods (
     id INT AUTO_INCREMENT PRIMARY KEY,
     department VARCHAR(100) NOT NULL,
     school VARCHAR(191) NULL,
-    linked_user_id INT NOT NULL UNIQUE,
+    linked_user_id INT UNSIGNED NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_hods_user FOREIGN KEY (linked_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
     school_id VARCHAR(64) NOT NULL,
     school_name VARCHAR(191) NULL,
-    linked_user_id INT NOT NULL UNIQUE,
+    linked_user_id INT UNSIGNED NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_admins_user FOREIGN KEY (linked_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS admins (
 -- 6) Create security_logs table if it does not exist
 CREATE TABLE IF NOT EXISTS security_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NULL,
+    user_id INT UNSIGNED NULL,
     event_type VARCHAR(64) NOT NULL,
     ip_address VARCHAR(64) NULL,
     user_agent VARCHAR(255) NULL,

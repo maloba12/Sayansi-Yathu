@@ -1,5 +1,6 @@
 from typing import Dict, List
 import random
+import math
 
 class ChemistryEngine:
     def simulate(self, experiment_type, parameters):
@@ -27,10 +28,12 @@ class ChemistryEngine:
             volumes.append(vol)
             if vol < equivalence_point:
                 moles_acid = (acid_conc * acid_vol - base_conc * vol) / 1000
-                pH = -math.log10(moles_acid / (acid_vol + vol))
+                conc_H = max(1e-14, moles_acid / (acid_vol + vol)) # Avoid 0 or negative
+                pH = -math.log10(conc_H)
             else:
                 moles_base = (base_conc * vol - acid_conc * acid_vol) / 1000
-                pOH = -math.log10(moles_base / (acid_vol + vol))
+                conc_OH = max(1e-14, moles_base / (acid_vol + vol)) # Avoid 0 or negative
+                pOH = -math.log10(conc_OH)
                 pH = 14 - pOH
             
             pH_values.append(max(0, min(14, pH)))

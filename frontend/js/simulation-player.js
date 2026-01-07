@@ -143,14 +143,88 @@ class SimulationPlayer {
                     `${e.target.value} ${config.unit}`;
             });
         } else if (config.type === 'action' || config.type === 'observation') {
+            // Check if we need to launch a real simulation
+            // Use visual type to determine which engine to load
+            
+            // Clean up previous content but keep container
             workspace.innerHTML = `
-                <div class="card" style="max-width: 600px; text-align: center;">
-                    <div class="visual-display">
-                        <p>${config.visual === 'bubbles' ? '🫧 Bubbles forming...' : '🧪 Observing reaction...'}</p>
-                    </div>
-                    <p style="margin-top: 1rem;">Follow the instructions on the left.</p>
+                <div class="simulation-view" style="width: 100%; height: 500px; position: relative;">
+                    <canvas id="sim-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                    <div id="p5-container" style="width: 100%; height: 100%;"></div>
+                </div>
+                <div class="controls-overlay" style="margin-top: 1rem; text-align: center;">
+                    <p>${step.instructions}</p>
                 </div>
             `;
+
+            // Initialize specific simulation based on visual tag or experiment title
+            // This maps the Database 'visual' config to the JS classes
+            const visual = config.visual || '';
+            
+            if (visual === 'pendulum') {
+                if (!this.currentSim) {
+                    this.currentSim = new PendulumSimulation('sim-canvas');
+                    this.currentSim.createPendulum();
+                    this.currentSim.start();
+                }
+            } 
+            else if (visual === 'pipette' || this.simulation.title.includes('Titration')) {
+                // Chemistry uses p5.js which attaches to a div
+                document.getElementById('sim-canvas').style.display = 'none'; // Hide ThreeJS canvas
+                // Only create if not exists
+                if (!this.currentP5) {
+                    this.currentP5 = new p5(createTitrationSketch(), 'p5-container');
+                }
+            }
+            else if (visual === 'circuit' || this.simulation.title.includes('Ohm')) {
+                if (!this.currentSim) {
+                    this.currentSim = new CircuitSimulation('sim-canvas');
+                    this.currentSim.createCircuit();
+                    this.currentSim.start();
+                }
+            }
+            else if (visual === 'cell_3d' || this.simulation.subject === 'Biology') {
+                if (window.CellSimulation) {
+                    if (!this.currentSim) {
+                        this.currentSim = new CellSimulation();
+                        this.currentSim.init(); // Biology sim uses init() not constructor for canvas
+                    }
+                }
+            } else if (visual.includes('dna')) {
+                if (window.DNASimulation) {
+                    if (!this.currentSim) {
+                        this.currentSim = new DNASimulation();
+                         this.currentSim.init();
+                    }
+                }
+            } else if (visual.includes('bubbles') || config.visual === 'beaker') {
+                 // Chemistry Reaction
+                 document.getElementById('sim-canvas').style.display = 'none';
+                 if (!this.currentP5) {
+                     this.currentP5 = new p5(createReactionSketch(), 'p5-container');
+                 }
+            }
+            else {
+                 // Fallback to searching by title keywords if visual tag is generic
+                 if (this.simulation.title.toLowerCase().includes('optics')) {
+                      // Optics placeholder using Physics base or simple threejs setup
+                      // For now, we reuse Circuit or similar if no specific optics class exists
+                      // Or implement a basic lens setup here?
+                      // Given constraints, showing a generic placeholder or creating a simple lens scene
+                      if(window.PhysicsSimulation) {
+                           // Basic ThreeJS setup
+                           this.currentSim = new PhysicsSimulation('sim-canvas');
+                           this.currentSim.start();
+                           // Add a simple lens object
+                           const geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 32);
+                           const material = new THREE.MeshPhongMaterial( {color: 0xaaffff, transparent: true, opacity: 0.5} );
+                           const lens = new THREE.Mesh( geometry, material );
+                           lens.rotation.x = Math.PI/2;
+                           this.currentSim.scene.add( lens );
+                      }
+                 }
+            }
+
         } else if (config.type === 'result' || config.type === 'calculation') {
             workspace.innerHTML = `
                 <div class="card" style="max-width: 600px;">

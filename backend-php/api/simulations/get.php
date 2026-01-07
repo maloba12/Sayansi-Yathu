@@ -27,8 +27,10 @@ if ($sim_id <= 0) {
 
 try {
     // Get simulation details
-    $simQuery = "SELECT id, title, subject, description, thumbnail_url, difficulty 
-                 FROM simulations WHERE id = :id LIMIT 1";
+    // Get simulation details
+    // Note: Mapping 'experiments' table columns to expected API format
+    $simQuery = "SELECT id, title, subject, description, difficulty_level as difficulty 
+                 FROM experiments WHERE id = :id LIMIT 1";
     $simStmt = $db->prepare($simQuery);
     $simStmt->execute([':id' => $sim_id]);
     $simulation = $simStmt->fetch(PDO::FETCH_ASSOC);

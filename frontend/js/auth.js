@@ -3,7 +3,7 @@ class Auth {
     constructor() {
         this.tokenKey = 'auth_token';
         this.userKey = 'user_data';
-        this.apiBaseUrl = 'http://localhost:8080/auth';
+        this.apiBaseUrl = 'http://localhost:8000/auth';
 
         // Initialize event listeners
         this.initEventListeners();

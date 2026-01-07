@@ -1,0 +1,183 @@
+[
+  {
+    "id": 1,
+    "title": "Identification of Laboratory Apparatus",
+    "topic": "Introduction to Chemistry",
+    "aim": "To identify common laboratory apparatus and state their uses.",
+    "materials": [
+      "Beaker",
+      "Test tube",
+      "Measuring cylinder",
+      "Funnel",
+      "Tripod stand",
+      "Bunsen burner"
+    ],
+    "procedure": [
+      "Observe each apparatus carefully.",
+      "Identify the name and shape.",
+      "Discuss its use in the laboratory."
+    ],
+    "observations": "Different apparatus have different shapes and uses.",
+    "conclusion": "Laboratory apparatus are designed for specific purposes.",
+    "safety_precautions": "Handle glassware carefully.",
+    "curriculum_link": "CDC 2024 - Intro to Chemistry"
+  },
+  {
+    "id": 2,
+    "title": "Laboratory Safety Rules",
+    "topic": "Introduction to Chemistry",
+    "aim": "To learn basic laboratory safety rules.",
+    "materials": ["Safety charts", "Laboratory symbols"],
+    "procedure": [
+      "Observe laboratory safety symbols.",
+      "Discuss what each symbol means."
+    ],
+    "observations": "Each symbol warns against specific dangers.",
+    "conclusion": "Safety rules help prevent accidents.",
+    "safety_precautions": "Always follow teacher instructions.",
+    "curriculum_link": "CDC 2024 - Intro to Chemistry"
+  },
+  {
+    "id": 3,
+    "title": "Change of State (Melting and Boiling)",
+    "topic": "States of Matter",
+    "aim": "To observe changes of state.",
+    "materials": [
+      "Ice",
+      "Water",
+      "Beaker",
+      "Heat source (e.g., charcoal/stove)"
+    ],
+    "procedure": [
+      "Heat ice gently until it melts.",
+      "Continue heating until it boils."
+    ],
+    "observations": "Ice melts to water; water boils to steam.",
+    "conclusion": "Heat causes changes in states of matter.",
+    "safety_precautions": "Avoid touching hot equipment.",
+    "curriculum_link": "CDC 2024 - States of Matter"
+  },
+  {
+    "id": 4,
+    "title": "Diffusion in Liquids",
+    "topic": "States of Matter",
+    "aim": "To demonstrate diffusion in liquids.",
+    "materials": [
+      "Water",
+      "Potassium permanganate crystals (or food coloring)"
+    ],
+    "procedure": [
+      "Place water in a beaker.",
+      "Add a crystal of potassium permanganate."
+    ],
+    "observations": "Colour spreads through water.",
+    "conclusion": "Particles move from high to low concentration.",
+    "safety_precautions": "Do not touch chemicals directly.",
+    "curriculum_link": "CDC 2024 - States of Matter"
+  },
+  {
+    "id": 5,
+    "title": "Filtration",
+    "topic": "Separation of Mixtures",
+    "aim": "To separate sand from water.",
+    "materials": ["Sand", "Water", "Filter paper", "Funnel"],
+    "procedure": ["Mix sand and water.", "Filter the mixture."],
+    "observations": "Sand remains on filter paper.",
+    "conclusion": "Filtration separates insoluble solids from liquids.",
+    "safety_precautions": "Handle glassware carefully.",
+    "curriculum_link": "CDC 2024 - Separation of Mixtures"
+  },
+  {
+    "id": 6,
+    "title": "Evaporation",
+    "topic": "Separation of Mixtures",
+    "aim": "To obtain salt from salt solution.",
+    "materials": ["Salt solution", "Evaporating dish", "Heat source"],
+    "procedure": [
+      "Heat the salt solution gently.",
+      "Allow water to evaporate."
+    ],
+    "observations": "Salt crystals remain.",
+    "conclusion": "Evaporation separates soluble solids.",
+    "safety_precautions": "Do not overheat.",
+    "curriculum_link": "CDC 2024 - Separation of Mixtures"
+  },
+  {
+    "id": 7,
+    "title": "Air Supports Combustion",
+    "topic": "Air and Combustion",
+    "aim": "To show that air supports burning.",
+    "materials": ["Candle", "Matchstick", "Glass jar"],
+    "procedure": ["Light the candle.", "Cover it with a glass jar."],
+    "observations": "Flame goes out.",
+    "conclusion": "Oxygen in air supports combustion.",
+    "safety_precautions": "Handle fire carefully.",
+    "curriculum_link": "CDC 2024 - Air and Combustion"
+  },
+  {
+    "id": 8,
+    "title": "Properties of Carbon Dioxide",
+    "topic": "Air and Combustion",
+    "aim": "To test for carbon dioxide.",
+    "materials": ["Limewater", "Carbon dioxide gas"],
+    "procedure": ["Bubble gas through limewater."],
+    "observations": "Limewater turns milky.",
+    "conclusion": "Carbon dioxide reacts with limewater.",
+    "safety_precautions": "Avoid inhaling gases.",
+    "curriculum_link": "CDC 2024 - Air and Combustion"
+  },
+  {
+    "id": 9,
+    "title": "Water as a Solvent",
+    "topic": "Water",
+    "aim": "To show that water dissolves substances.",
+    "materials": ["Salt", "Sugar", "Water"],
+    "procedure": ["Add salt to water and stir.", "Repeat with sugar."],
+    "observations": "Salt and sugar dissolve.",
+    "conclusion": "Water is a good solvent.",
+    "safety_precautions": "Use clean containers.",
+    "curriculum_link": "CDC 2024 - Water"
+  },
+  {
+    "id": 10,
+    "title": "Simple Water Filtration",
+    "topic": "Water",
+    "aim": "To demonstrate water purification.",
+    "materials": ["Sand", "Gravel", "Charcoal", "Dirty water"],
+    "procedure": [
+      "Arrange layers in a container.",
+      "Pour dirty water through."
+    ],
+    "observations": "Filtered water is clearer.",
+    "conclusion": "Filtration removes impurities.",
+    "safety_precautions": "Do not drink filtered water.",
+    "curriculum_link": "CDC 2024 - Water"
+  },
+  {
+    "id": 11,
+    "title": "Litmus Test",
+    "topic": "Acids, Bases and Indicators",
+    "aim": "To identify acids and bases.",
+    "materials": ["Litmus paper", "Lemon juice", "Soap solution"],
+    "procedure": ["Dip litmus paper into substances."],
+    "observations": "Acids turn blue litmus red; bases turn red litmus blue.",
+    "conclusion": "Litmus identifies acids and bases.",
+    "safety_precautions": "Avoid contact with eyes.",
+    "curriculum_link": "CDC 2024 - Acids and Bases"
+  },
+  {
+    "id": 12,
+    "title": "Natural Indicators",
+    "topic": "Acids, Bases and Indicators",
+    "aim": "To prepare a natural indicator.",
+    "materials": ["Red cabbage leaves", "Hot water"],
+    "procedure": [
+      "Soak leaves in hot water.",
+      "Use solution to test substances."
+    ],
+    "observations": "Colour changes occur.",
+    "conclusion": "Plants can act as indicators.",
+    "safety_precautions": "Handle hot water carefully.",
+    "curriculum_link": "CDC 2024 - Acids and Bases"
+  }
+]

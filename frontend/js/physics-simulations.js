@@ -262,6 +262,7 @@ function updateCircuitResistance() {
 }
 
 // Make functions globally available
+// Make functions globally available
 window.initPhysicsSimulations = initPhysicsSimulations;
 window.startPendulum = startPendulum;
 window.stopPendulum = stopPendulum;
@@ -270,3 +271,7 @@ window.updatePendulumGravity = updatePendulumGravity;
 window.updatePendulumLength = updatePendulumLength;
 window.updateCircuitVoltage = updateCircuitVoltage;
 window.updateCircuitResistance = updateCircuitResistance;
+
+// Expose Classes for Simulation Player
+window.PendulumSimulation = PendulumSimulation;
+window.CircuitSimulation = CircuitSimulation;

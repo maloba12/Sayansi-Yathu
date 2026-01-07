@@ -1,6 +1,6 @@
 // frontend/js/api.js
 const API_BASE_URL = 'http://localhost:5000';   // Python backend
-const PHP_BASE_URL = 'http://localhost:8080';   // PHP backend
+const PHP_BASE_URL = 'http://localhost:8000';   // PHP backend
 
 // ---- Python endpoints (simulations / AI) ----
 async function callPy(endpoint, payload) {
@@ -52,10 +52,10 @@ class AuthAPI {
 // Experiment data
 class ExperimentAPI {
     static async getExperiments(userId) {
-        const response = await fetch(`${PHP_BASE_URL}/api/getExperiment.php`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId })
+        // Backend expects GET parameter, not JSON body
+        const response = await fetch(`${PHP_BASE_URL}/api/getExperiment.php?userId=${userId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
         });
         return response.json();
     }

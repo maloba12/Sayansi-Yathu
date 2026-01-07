@@ -1,0 +1,222 @@
+
+SAYANSI YATHU – FORM 1 CHEMISTRY EXPERIMENTS
+Aligned to Zambia Secondary School Chemistry Syllabus (CDC, 2024)
+
+==================================================
+TOPIC 1: INTRODUCTION TO CHEMISTRY & LABORATORY SAFETY
+==================================================
+
+Experiment 1: Identification of Laboratory Apparatus
+Topic: Introduction to Chemistry
+Grade: Form 1
+Aim: To identify common laboratory apparatus and state their uses.
+Materials: Beaker, test tube, measuring cylinder, funnel, tripod stand, Bunsen burner.
+Procedure:
+1. Observe each apparatus carefully.
+2. Identify the name and shape.
+3. Discuss its use in the laboratory.
+Observation:
+Different apparatus have different shapes and uses.
+Conclusion:
+Laboratory apparatus are designed for specific purposes.
+Safety Precautions:
+Handle glassware carefully.
+
+--------------------------------------------------
+
+Experiment 2: Laboratory Safety Rules
+Topic: Introduction to Chemistry
+Grade: Form 1
+Aim: To learn basic laboratory safety rules.
+Materials: Safety charts, laboratory symbols.
+Procedure:
+1. Observe laboratory safety symbols.
+2. Discuss what each symbol means.
+Observation:
+Each symbol warns against specific dangers.
+Conclusion:
+Safety rules help prevent accidents.
+Safety Precautions:
+Always follow teacher instructions.
+
+==================================================
+TOPIC 2: STATES OF MATTER
+==================================================
+
+Experiment 3: Change of State (Melting and Boiling)
+Topic: States of Matter
+Grade: Form 1
+Aim: To observe changes of state.
+Materials: Ice, water, beaker, heat source.
+Procedure:
+1. Heat ice gently until it melts.
+2. Continue heating until it boils.
+Observation:
+Ice melts to water; water boils to steam.
+Conclusion:
+Heat causes changes in states of matter.
+Safety Precautions:
+Avoid touching hot equipment.
+
+--------------------------------------------------
+
+Experiment 4: Diffusion in Liquids
+Topic: States of Matter
+Grade: Form 1
+Aim: To demonstrate diffusion in liquids.
+Materials: Water, potassium permanganate crystals.
+Procedure:
+1. Place water in a beaker.
+2. Add a crystal of potassium permanganate.
+Observation:
+Colour spreads through water.
+Conclusion:
+Particles move from high to low concentration.
+Safety Precautions:
+Do not touch chemicals directly.
+
+==================================================
+TOPIC 3: SEPARATION OF MIXTURES
+==================================================
+
+Experiment 5: Filtration
+Topic: Separation of Mixtures
+Grade: Form 1
+Aim: To separate sand from water.
+Materials: Sand, water, filter paper, funnel.
+Procedure:
+1. Mix sand and water.
+2. Filter the mixture.
+Observation:
+Sand remains on filter paper.
+Conclusion:
+Filtration separates insoluble solids from liquids.
+Safety Precautions:
+Handle glassware carefully.
+
+--------------------------------------------------
+
+Experiment 6: Evaporation
+Topic: Separation of Mixtures
+Grade: Form 1
+Aim: To obtain salt from salt solution.
+Materials: Salt solution, evaporating dish, heat source.
+Procedure:
+1. Heat the salt solution gently.
+2. Allow water to evaporate.
+Observation:
+Salt crystals remain.
+Conclusion:
+Evaporation separates soluble solids.
+Safety Precautions:
+Do not overheat.
+
+==================================================
+TOPIC 4: AIR AND COMBUSTION
+==================================================
+
+Experiment 7: Air Supports Combustion
+Topic: Air and Combustion
+Grade: Form 1
+Aim: To show that air supports burning.
+Materials: Candle, matchstick, glass jar.
+Procedure:
+1. Light the candle.
+2. Cover it with a glass jar.
+Observation:
+Flame goes out.
+Conclusion:
+Oxygen in air supports combustion.
+Safety Precautions:
+Handle fire carefully.
+
+--------------------------------------------------
+
+Experiment 8: Properties of Carbon Dioxide
+Topic: Air and Combustion
+Grade: Form 1
+Aim: To test for carbon dioxide.
+Materials: Limewater, carbon dioxide gas.
+Procedure:
+1. Bubble gas through limewater.
+Observation:
+Limewater turns milky.
+Conclusion:
+Carbon dioxide reacts with limewater.
+Safety Precautions:
+Avoid inhaling gases.
+
+==================================================
+TOPIC 5: WATER
+==================================================
+
+Experiment 9: Water as a Solvent
+Topic: Water
+Grade: Form 1
+Aim: To show that water dissolves substances.
+Materials: Salt, sugar, water.
+Procedure:
+1. Add salt to water and stir.
+2. Repeat with sugar.
+Observation:
+Salt and sugar dissolve.
+Conclusion:
+Water is a good solvent.
+Safety Precautions:
+Use clean containers.
+
+--------------------------------------------------
+
+Experiment 10: Simple Water Filtration
+Topic: Water
+Grade: Form 1
+Aim: To demonstrate water purification.
+Materials: Sand, gravel, charcoal, dirty water.
+Procedure:
+1. Arrange layers in a container.
+2. Pour dirty water through.
+Observation:
+Filtered water is clearer.
+Conclusion:
+Filtration removes impurities.
+Safety Precautions:
+Do not drink filtered water.
+
+==================================================
+TOPIC 6: ACIDS, BASES AND INDICATORS
+==================================================
+
+Experiment 11: Litmus Test
+Topic: Acids and Bases
+Grade: Form 1
+Aim: To identify acids and bases.
+Materials: Litmus paper, lemon juice, soap solution.
+Procedure:
+1. Dip litmus paper into substances.
+Observation:
+Acids turn blue litmus red; bases turn red litmus blue.
+Conclusion:
+Litmus identifies acids and bases.
+Safety Precautions:
+Avoid contact with eyes.
+
+--------------------------------------------------
+
+Experiment 12: Natural Indicators
+Topic: Acids and Bases
+Grade: Form 1
+Aim: To prepare a natural indicator.
+Materials: Red cabbage leaves, hot water.
+Procedure:
+1. Soak leaves in hot water.
+2. Use solution to test substances.
+Observation:
+Colour changes occur.
+Conclusion:
+Plants can act as indicators.
+Safety Precautions:
+Handle hot water carefully.
+
+==================================================
+END OF DOCUMENT
+==================================================
