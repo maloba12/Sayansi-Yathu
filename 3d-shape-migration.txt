@@ -1,0 +1,48 @@
+Project Name: Sayansi Yathu – Virtual Science Lab
+
+Goal: Improve the 3D simulation shapes and experiment experience without breaking the existing project structure.
+
+Current Situation:
+– 3D shapes are currently rendered using JavaScript
+– Visual quality of shapes is poor
+– The project works, and I do NOT want to redesign the system structure
+
+What I want to achieve:
+– Move 3D rendering from JavaScript to Python
+– Keep the same project organization, UI, and features
+– ONLY upgrade the 3D equipment, lab environment, and simulations
+
+Python technologies to use:
+
+Design the Lab Equipment:
+– Use CadQuery or Blender to create detailed 3D models of lab items
+– Examples: beakers, test tubes, Bunsen burners, microscopes, flasks
+
+Build the Virtual Lab Environment:
+– Use Ursina Engine to assemble the room and place the equipment inside it
+– Define user movement and interaction inside the lab
+– Ensure it runs smoothly in real-time
+
+Simulate Science Experiments:
+– Use Python logic and NumPy to compute experiment results
+– Link calculation outputs to the 3D scene
+– Update graphics in real-time based on results
+
+Important Constraints:
+– Do NOT distort or break the existing project folder structure
+– Keep frontend and other modules unchanged
+– Only replace the 3D engine and simulation layer
+
+What I want as output from the AI model:
+– Migration plan from JavaScript 3D to Python 3D
+– Guidance for integrating Python 3D rendering with current frontend
+– Example code snippets using:
+• CadQuery or Blender for models
+• Ursina for assembly & interaction
+• Python + NumPy for simulation logic
+– Steps to connect Python simulation results to visual updates
+
+End Goal:
+Upgrade the 3D shapes and experiment realism in Sayansi Yathu using Python (CadQuery/Blender + Ursina + NumPy) without changing the rest of the project system.
+
+END OF TXT PROMPT

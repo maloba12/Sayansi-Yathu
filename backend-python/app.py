@@ -81,6 +81,34 @@ def virtual_assistant():
     )
     return jsonify(response)
 
+@app.route('/api/launch-simulation', methods=['POST'])
+def launch_3d_simulation():
+    """
+    Launches the Ursina 3D simulation in a separate process.
+    """
+    import subprocess
+    data = request.json
+    sim_type = data.get('type', 'pendulum')
+    
+    try:
+        # Path to the Ursina main.py
+        script_path = os.path.join(os.path.dirname(__file__), 'ursa_lab', 'main.py')
+        
+        # Determine Python executable (Prioritize local venv)
+        venv_python = os.path.join(os.path.dirname(__file__), 'venv', 'bin', 'python')
+        if os.path.exists(venv_python):
+            python_exe = venv_python
+        else:
+            python_exe = sys.executable
+            
+        subprocess.Popen([python_exe, script_path, '--type', sim_type])
+        
+        return jsonify({"success": True, "message": f"Launched {sim_type} simulation"})
+    except Exception as e:
+        print(f"Error launching simulation: {e}")
+        return jsonify({"success": False, "message": str(e)})
+
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({

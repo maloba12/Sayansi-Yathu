@@ -149,25 +149,148 @@ class SimulationPlayer {
             // Clean up previous content but keep container
             workspace.innerHTML = `
                 <div class="simulation-view" style="width: 100%; height: 500px; position: relative;">
+                    <div id="external-sim-message" style="display:none; text-align:center; padding-top: 200px;">
+                        <h3>🚀 Simulation Launched</h3>
+                        <p>The 3D experiment is running in a separate window.</p>
+                        <button class="btn btn-primary" onclick="window.location.reload()">Reset View</button>
+                    </div>
                     <canvas id="sim-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
                     <div id="p5-container" style="width: 100%; height: 100%;"></div>
                 </div>
                 <div class="controls-overlay" style="margin-top: 1rem; text-align: center;">
                     <p>${step.instructions}</p>
+                    <button id="launch3DBtn" class="btn btn-success" style="display:none;">Launch 3D View</button>
                 </div>
             `;
 
             // Initialize specific simulation based on visual tag or experiment title
-            // This maps the Database 'visual' config to the JS classes
             const visual = config.visual || '';
             
-            if (visual === 'pendulum') {
-                if (!this.currentSim) {
-                    this.currentSim = new PendulumSimulation('sim-canvas');
-                    this.currentSim.createPendulum();
-                    this.currentSim.start();
+            // Check if this should use Python/Ursina 3D (high realism engine)
+            const isPython3D = ['pendulum', 'chemistry_mix', 'pipette', 'beaker', 'cell_3d', 'dna'].includes(visual) || 
+                               this.simulation.title.toLowerCase().includes('pendulum') ||
+                               this.simulation.title.toLowerCase().includes('circuit');
+
+            if (isPython3D) {
+                const launchBtn = document.getElementById('launch3DBtn');
+                launchBtn.style.display = 'inline-block';
+                document.getElementById('sim-canvas').style.display = 'none';
+                
+                // Map frontend visual/title to Ursina backend simulation types
+                let simType = 'pendulum'; // Default
+                const title = this.simulation.title.toLowerCase();
+                
+                if (title.includes('titration') || visual === 'pipette') {
+                    simType = 'titration';
+                } else if (title.includes('apparatus')) {
+                    simType = 'apparatus_id';
+                } else if (title.includes('melting') || title.includes('boiling')) {
+                    simType = 'melting_boiling';
+                } else if (title.includes('diffusion')) {
+                    simType = 'diffusion';
+                } else if (title.includes('filtration') && !title.includes('water')) {
+                    simType = 'filtration';
+                } else if (title.includes('evaporation')) {
+                    simType = 'evaporation';
+                } else if (title.includes('combustion') || title.includes('supports burning')) {
+                    simType = 'combustion';
+                } else if (title.includes('carbon dioxide') || title.includes('co2')) {
+                    simType = 'co2_test';
+                } else if (title.includes('solvent')) {
+                    simType = 'solvent';
+                } else if (title.includes('water filtration')) {
+                    simType = 'water_filtration';
+                } else if (title.includes('litmus')) {
+                    simType = 'litmus';
+                } else if (title.includes('natural indicator')) {
+                    simType = 'indicators';
+                } else if (visual === 'beaker' || visual === 'chemistry_mix' || title.includes('reaction')) {
+                    simType = 'reaction';
+                } else if (visual === 'cell_3d' || this.simulation.subject.toLowerCase() === 'biology') {
+                    simType = 'cell';
+                } else if (visual === 'dna') {
+                    simType = 'dna';
+                } else if (title.includes('circuit')) {
+                    simType = 'circuit';
+                } else if (title.includes('pendulum')) {
+                    simType = 'pendulum';
+                } else if (title.includes('safety') || title.includes('waste')) {
+                    simType = 'safety';
+                } else if (title.includes('workflow') || title.includes('investigation')) {
+                    simType = 'workflow';
+                } else if (title.includes('identification') || title.includes('apparatus')) {
+                    simType = 'apparatus_id';
+                } else if (title.includes('length')) {
+                    simType = 'length';
+                } else if (title.includes('mass')) {
+                    simType = 'mass';
+                } else if (title.includes('volume')) {
+                    simType = 'volume';
+                } else if (title.includes('time')) {
+                    simType = 'time_meas';
+                } else if (title.includes('weight')) {
+                    simType = 'weight';
+                } else if (title.includes('density')) {
+                    simType = 'density';
+                } else if (title.includes('precision') || title.includes('accuracy')) {
+                    simType = 'precision';
+                } else if (title.includes('centre of mass')) {
+                    simType = 'com';
+                } else if (title.includes('equilibrium')) {
+                    simType = 'equilibrium';
+                } else if (title.includes('linear motion') || title.includes('velocity') || title.includes('acceleration')) {
+                    simType = 'linear_motion';
+                } else if (title.includes('free fall') || title.includes('gravitational acceleration')) {
+                    simType = 'free_fall';
+                } else if (title.includes('effect of force') || title.includes('force on motion')) {
+                    simType = 'force_effect';
+                } else if (title.includes('friction')) {
+                    simType = 'friction';
+                } else if (title.includes('hooke')) {
+                    simType = 'hookes_law';
+                } else if (title.includes('circular motion') || title.includes('centripetal')) {
+                    simType = 'circular_motion';
+                } else if (title.includes('moment of a force') || (title.includes('lever') && !title.includes('principle'))) {
+                    simType = 'moments_lever';
+                } else if (title.includes('principle of moments')) {
+                    simType = 'principle_moments';
+                } else if (title.includes('solar system') || title.includes('eclipse')) {
+                    simType = 'solar_system';
+                } else if (title.includes('structure of the earth') && !title.includes('atmosphere')) {
+                    simType = 'earth_structure';
+                } else if (title.includes('atmosphere')) {
+                    simType = 'atmosphere';
                 }
-            } 
+
+                
+                launchBtn.addEventListener('click', async () => {
+                    launchBtn.disabled = true;
+                    launchBtn.textContent = 'Launching Realism Mode...';
+                    
+                    try {
+                        const response = await fetch(`http://localhost:5000/api/launch-simulation`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ type: simType })
+                        });
+                        const res = await response.json();
+                        
+                        if (res.success) {
+                            document.getElementById('external-sim-message').style.display = 'block';
+                            launchBtn.style.display = 'none';
+                        } else {
+                            alert('Failed to launch 3D: ' + res.message);
+                            launchBtn.disabled = false;
+                            launchBtn.textContent = 'Launch 3D View';
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        alert('Error connecting to backend');
+                        launchBtn.disabled = false;
+                    }
+                });
+            }
+            
             else if (visual === 'pipette' || this.simulation.title.includes('Titration')) {
                 // Chemistry uses p5.js which attaches to a div
                 document.getElementById('sim-canvas').style.display = 'none'; // Hide ThreeJS canvas
