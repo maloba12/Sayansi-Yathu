@@ -158,327 +158,58 @@ class SimulationPlayer {
                     `${e.target.value} ${config.unit}`;
             });
         } else if (config.type === 'action' || config.type === 'observation') {
-            // Check if we need to launch a real simulation
-            // Use visual type to determine which engine to load
+            // Build iframe URL using simulation_type from the API response
+            const simType = this.simulation.simulation_type;
+            const sim3dBase = window.SAYANSI_CONFIG?.sim3dBaseUrl || 'http://localhost:3001';
             
-            // Clean up previous content but keep container
-            workspace.innerHTML = `
-                <div class="simulation-view" style="width: 100%; height: 500px; position: relative;">
-                    <div id="external-sim-message" style="display:none; text-align:center; padding-top: 100px;">
-                        <h3>🚀 3D Simulation Launched!</h3>
-                        <div style="background: #f0f8ff; border: 2px solid #0066cc; border-radius: 8px; padding: 20px; margin: 20px auto; max-width: 500px;">
-                            <h4>📋 How to Use:</h4>
-                            <ul style="text-align: left; display: inline-block;">
-                                <li>🖱️ <strong>Mouse:</strong> Look around the experiment</li>
-                                <li>⌨️ <strong>WASD:</strong> Move camera position</li>
-                                <li>🔍 <strong>Scroll:</strong> Zoom in/out</li>
-                                <li>🚪 <strong>ESC:</strong> Close the 3D window</li>
-                            </ul>
-                            <p style="margin-top: 15px; color: #666;">
-                                <strong>💡 Tip:</strong> Check your taskbar or press Alt+Tab if you don't see the 3D window
-                            </p>
+            if (!simType) {
+                // Explicit fallback for missing type
+                workspace.innerHTML = `
+                    <div class="simulation-view" style="width: 100%; height: 600px; display: flex; align-items: center; justify-content: center; background: #1e293b; color: #e2e8f0; border-radius: 8px;">
+                        <div style="text-align: center;">
+                            <h2 style="color: #93c5fd; margin-bottom: 10px;">Simulation Type Unknown</h2>
+                            <p style="color: #94a3b8;">This experiment does not have a defined simulation type metadata.</p>
                         </div>
-                        <button class="btn btn-primary" onclick="window.location.reload()">Back to Dashboard</button>
                     </div>
-                    <canvas id="sim-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
-                    <div id="p5-container" style="width: 100%; height: 100%;"></div>
-                </div>
-                <div class="controls-overlay" style="margin-top: 1rem; text-align: center;">
-                    <p>${step.instructions}</p>
-                    <button id="launch3DBtn" class="btn btn-success" style="display:none;">Launch 3D View</button>
-                </div>
-            `;
-
-            // Initialize specific simulation based on visual tag or experiment title
-            const visual = config.visual || '';
-            
-            // Check if this should use React 3D (new approach) or Python/Ursina (legacy)
-            const react3DTypes = [
-                'pendulum', 'free_fall', 'linear_motion', 'hookes_law', 'friction', 'circuit',
-                'density', 'pressure', 'cog', 'apparatus', 'states', 'separation', 'litmus',
-                'combustion', 'water_purify', 'cell', 'dna'
-            ];
-            const t = this.simulation.title.toLowerCase();
-            const isReact3D = react3DTypes.includes(visual) ||
-                               t.includes('pendulum') ||
-                               t.includes('free fall') ||
-                               t.includes('acceleration') ||
-                               t.includes('linear motion') ||
-                               t.includes('hooke') ||
-                               t.includes('friction') ||
-                               t.includes('circuit') ||
-                               t.includes('ohm') ||
-                               t.includes('density') ||
-                               t.includes('pressure') ||
-                               t.includes('gravity') ||
-                               t.includes('stability') ||
-                               t.includes('moments') ||
-                               t.includes('apparatus') ||
-                               t.includes('matter') ||
-                               t.includes('boiling') ||
-                               t.includes('melting') ||
-                               t.includes('diffusion') ||
-                               t.includes('mixture') ||
-                               t.includes('separation') ||
-                               t.includes('filter') ||
-                               t.includes('evaporat') ||
-                               t.includes('indicator') ||
-                               t.includes('combustion') ||
-                               t.includes('oxygen') ||
-                               t.includes('candle') ||
-                               t.includes('air') ||
-                               t.includes('water purify') ||
-                               t.includes('purification') ||
-                               t.includes('biological cell') ||
-                               t.includes('plant cell') ||
-                               t.includes('animal cell') ||
-                               t.includes('dna') ||
-                               t.includes('helix');
-            
-            const isPython3D = ['chemistry_mix', 'pipette', 'beaker', 'cell_3d', 'dna'].includes(visual);
-
-            if (isReact3D) {
-                // Use new React 3D approach - embed directly
-                document.getElementById('sim-canvas').style.display = 'none';
-                document.getElementById('p5-container').style.display = 'none';
-                
-                // Build iframe URL: use configured base or fall back to same-origin relative path
-                const sim3dBase = window.SAYANSI_CONFIG?.sim3dBaseUrl || '';
-                // Map to React component type — prefer visual tag, fall back to title match
-                let simVisual = visual || '';
-                if (!react3DTypes.includes(simVisual)) {
-                const t = this.simulation.title.toLowerCase();
-                if (t.includes('free fall') || t.includes('acceleration')) simVisual = 'free_fall';
-                else if (t.includes('linear motion')) simVisual = 'linear_motion';
-                else if (t.includes('hooke')) simVisual = 'hookes_law';
-                else if (t.includes('friction')) simVisual = 'friction';
-                else if (t.includes('circuit') || t.includes('ohm')) simVisual = 'circuit';
-                else if (t.includes('density')) simVisual = 'density';
-                else if (t.includes('pressure')) simVisual = 'pressure';
-                else if (t.includes('gravity') || t.includes('stability') || t.includes('moments')) simVisual = 'cog';
-                else if (t.includes('apparatus')) simVisual = 'apparatus';
-                else if (t.includes('matter') || t.includes('boiling') || t.includes('melting') || t.includes('diffusion')) simVisual = 'states';
-                else if (t.includes('separation') || t.includes('filter') || t.includes('evaporat')) simVisual = 'separation';
-                else if (t.includes('acid') || t.includes('base') || t.includes('litmus') || t.includes('indicator')) simVisual = 'litmus';
-                else if (t.includes('combustion') || t.includes('oxygen') || t.includes('candle') || t.includes('air')) simVisual = 'combustion';
-                else if (t.includes('water purify') || t.includes('purification')) simVisual = 'water_purify';
-                else if (t.includes('biological cell') || t.includes('plant cell') || t.includes('animal cell') || t.includes('cell')) simVisual = 'cell';
-                else if (t.includes('dna') || t.includes('helix')) simVisual = 'dna';
-                else simVisual = 'pendulum';
-                }
-                const iframeSrc = sim3dBase
-                    ? `${sim3dBase}/index_3d.html?type=${simVisual}`
-                    : `index_3d.html?type=${simVisual}`;
-                
-                // Create iframe for React 3D simulation with error fallback
-                workspace.innerHTML += `
-                    <div id="react3d-container" style="width: 100%; height: 600px; border: 2px solid #ddd; border-radius: 8px; overflow: hidden;">
-                        <iframe id="react3d-iframe" src="${iframeSrc}" 
-                                style="width: 100%; height: 100%; border: none;" 
-                                frameborder="0">
-                        </iframe>
+                    <div class="controls-overlay" style="margin-top: 1rem; text-align: center;">
+                        <p>${step.instructions}</p>
                     </div>
+                `;
+                return;
+            }
+
+            const iframeSrc = `${sim3dBase}/index_3d.html?type=${simType}`;
+            
+            workspace.innerHTML = `
+                <div class="simulation-view" style="width: 100%; height: 600px; position: relative;">
+                    <iframe id="react3d-iframe" src="${iframeSrc}" 
+                            style="width: 100%; height: 100%; border: 2px solid #ddd; border-radius: 8px;" 
+                            frameborder="0">
+                    </iframe>
                     <div id="react3d-fallback" style="display:none; text-align:center; padding: 40px; background:#fff3cd; border:2px solid #ffc107; border-radius:8px; margin-top:10px;">
                         <p style="color:#856404; font-size:16px;">⚠️ Could not load the 3D simulation. Please ensure the simulation assets are available.</p>
                         <button class="btn btn-primary" onclick="document.getElementById('react3d-iframe').src='${iframeSrc}'">Retry</button>
                     </div>
-                    <div style="text-align: center; margin-top: 10px;">
-                        <p style="color: #666; font-size: 14px;">
-                            🧪 Interactive 3D Pendulum Simulation - Adjust length and angle using controls
-                        </p>
-                    </div>
-                `;
-                
-                // Attach error fallback listener
-                const iframe3d = document.getElementById('react3d-iframe');
-                iframe3d.addEventListener('error', () => {
-                    document.getElementById('react3d-fallback').style.display = 'block';
-                });
-                // Also handle load failure (same-origin only)
-                iframe3d.addEventListener('load', () => {
-                    try {
-                        // If cross-origin, this will throw; that's acceptable
-                        if (iframe3d.contentDocument && iframe3d.contentDocument.title === '') {
-                            // Empty document likely means load failed
-                        }
-                    } catch(e) { /* cross-origin, ignore */ }
-                });
-            } else if (isPython3D) {
-                const launchBtn = document.getElementById('launch3DBtn');
-                launchBtn.style.display = 'inline-block';
-                document.getElementById('sim-canvas').style.display = 'none';
-                
-                // Map frontend visual/title to Ursina backend simulation types
-                let simType = 'pendulum'; // Default
-                const title = this.simulation.title.toLowerCase();
-                
-                if (title.includes('titration') || visual === 'pipette') {
-                    simType = 'titration';
-                } else if (title.includes('apparatus')) {
-                    simType = 'apparatus_id';
-                } else if (title.includes('melting') || title.includes('boiling')) {
-                    simType = 'melting_boiling';
-                } else if (title.includes('diffusion')) {
-                    simType = 'diffusion';
-                } else if (title.includes('filtration') && !title.includes('water')) {
-                    simType = 'filtration';
-                } else if (title.includes('evaporation')) {
-                    simType = 'evaporation';
-                } else if (title.includes('combustion') || title.includes('supports burning')) {
-                    simType = 'combustion';
-                } else if (title.includes('carbon dioxide') || title.includes('co2')) {
-                    simType = 'co2_test';
-                } else if (title.includes('solvent')) {
-                    simType = 'solvent';
-                } else if (title.includes('water filtration')) {
-                    simType = 'water_filtration';
-                } else if (title.includes('litmus')) {
-                    simType = 'litmus';
-                } else if (title.includes('natural indicator')) {
-                    simType = 'indicators';
-                } else if (visual === 'beaker' || visual === 'chemistry_mix' || title.includes('reaction')) {
-                    simType = 'reaction';
-                } else if (visual === 'cell_3d' || this.simulation.subject.toLowerCase() === 'biology') {
-                    simType = 'cell';
-                } else if (visual === 'dna') {
-                    simType = 'dna';
-                } else if (title.includes('circuit')) {
-                    simType = 'circuit';
-                } else if (title.includes('pendulum')) {
-                    simType = 'pendulum';
-                } else if (title.includes('safety') || title.includes('waste')) {
-                    simType = 'safety';
-                } else if (title.includes('workflow') || title.includes('investigation')) {
-                    simType = 'workflow';
-                } else if (title.includes('identification') || title.includes('apparatus')) {
-                    simType = 'apparatus_id';
-                } else if (title.includes('length')) {
-                    simType = 'length';
-                } else if (title.includes('mass')) {
-                    simType = 'mass';
-                } else if (title.includes('volume')) {
-                    simType = 'volume';
-                } else if (title.includes('time')) {
-                    simType = 'time_meas';
-                } else if (title.includes('weight')) {
-                    simType = 'weight';
-                } else if (title.includes('density')) {
-                    simType = 'density';
-                } else if (title.includes('precision') || title.includes('accuracy')) {
-                    simType = 'precision';
-                } else if (title.includes('centre of mass')) {
-                    simType = 'com';
-                } else if (title.includes('equilibrium')) {
-                    simType = 'equilibrium';
-                } else if (title.includes('linear motion') || title.includes('velocity') || title.includes('acceleration')) {
-                    simType = 'linear_motion';
-                } else if (title.includes('free fall') || title.includes('gravitational acceleration')) {
-                    simType = 'free_fall';
-                } else if (title.includes('effect of force') || title.includes('force on motion')) {
-                    simType = 'force_effect';
-                } else if (title.includes('friction')) {
-                    simType = 'friction';
-                } else if (title.includes('hooke')) {
-                    simType = 'hookes_law';
-                } else if (title.includes('circular motion') || title.includes('centripetal')) {
-                    simType = 'circular_motion';
-                } else if (title.includes('moment of a force') || (title.includes('lever') && !title.includes('principle'))) {
-                    simType = 'moments_lever';
-                } else if (title.includes('principle of moments')) {
-                    simType = 'principle_moments';
-                } else if (title.includes('solar system') || title.includes('eclipse')) {
-                    simType = 'solar_system';
-                } else if (title.includes('structure of the earth') && !title.includes('atmosphere')) {
-                    simType = 'earth_structure';
-                } else if (title.includes('atmosphere')) {
-                    simType = 'atmosphere';
-                }
+                </div>
+                <div class="controls-overlay" style="margin-top: 1rem; text-align: center;">
+                    <p>${step.instructions}</p>
+                </div>
+            `;
 
-                
-                launchBtn.addEventListener('click', async () => {
-                    launchBtn.disabled = true;
-                    launchBtn.textContent = 'Launching Realism Mode...';
-                    
-                    try {
-                        const response = await fetch(`http://localhost:5000/api/launch-simulation`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ type: simType })
-                        });
-                        const res = await response.json();
-                        
-                        if (res.success) {
-                            document.getElementById('external-sim-message').style.display = 'block';
-                            launchBtn.style.display = 'none';
-                        } else {
-                            alert('Failed to launch 3D: ' + res.message);
-                            launchBtn.disabled = false;
-                            launchBtn.textContent = 'Launch 3D View';
-                        }
-                    } catch (e) {
-                        console.error(e);
-                        alert('Error connecting to backend');
-                        launchBtn.disabled = false;
+            // Attach error fallback listener
+            const iframe3d = document.getElementById('react3d-iframe');
+            iframe3d.addEventListener('error', () => {
+                document.getElementById('react3d-fallback').style.display = 'block';
+            });
+            // Also handle load failure (same-origin only)
+            iframe3d.addEventListener('load', () => {
+                try {
+                    // If cross-origin, this will throw; that's acceptable
+                    if (iframe3d.contentDocument && iframe3d.contentDocument.title === '') {
+                        document.getElementById('react3d-fallback').style.display = 'block';
                     }
-                });
-            }
-            
-            else if (visual === 'pipette' || this.simulation.title.includes('Titration')) {
-                // Chemistry uses p5.js which attaches to a div
-                document.getElementById('sim-canvas').style.display = 'none'; // Hide ThreeJS canvas
-                // Only create if not exists
-                if (!this.currentP5) {
-                    this.currentP5 = new p5(createTitrationSketch(), 'p5-container');
-                }
-            }
-            else if (visual === 'circuit' || this.simulation.title.includes('Ohm')) {
-                if (!this.currentSim) {
-                    this.currentSim = new CircuitSimulation('sim-canvas');
-                    this.currentSim.createCircuit();
-                    this.currentSim.start();
-                }
-            }
-            else if (visual === 'cell_3d' || this.simulation.subject === 'Biology') {
-                if (window.CellSimulation) {
-                    if (!this.currentSim) {
-                        this.currentSim = new CellSimulation();
-                        this.currentSim.init(); // Biology sim uses init() not constructor for canvas
-                    }
-                }
-            } else if (visual.includes('dna')) {
-                if (window.DNASimulation) {
-                    if (!this.currentSim) {
-                        this.currentSim = new DNASimulation();
-                         this.currentSim.init();
-                    }
-                }
-            } else if (visual.includes('bubbles') || config.visual === 'beaker') {
-                 // Chemistry Reaction
-                 document.getElementById('sim-canvas').style.display = 'none';
-                 if (!this.currentP5) {
-                     this.currentP5 = new p5(createReactionSketch(), 'p5-container');
-                 }
-            }
-            else {
-                 // Fallback to searching by title keywords if visual tag is generic
-                 if (this.simulation.title.toLowerCase().includes('optics')) {
-                      // Optics placeholder using Physics base or simple threejs setup
-                      // For now, we reuse Circuit or similar if no specific optics class exists
-                      // Or implement a basic lens setup here?
-                      // Given constraints, showing a generic placeholder or creating a simple lens scene
-                      if(window.PhysicsSimulation) {
-                           // Basic ThreeJS setup
-                           this.currentSim = new PhysicsSimulation('sim-canvas');
-                           this.currentSim.start();
-                           // Add a simple lens object
-                           const geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 32);
-                           const material = new THREE.MeshPhongMaterial( {color: 0xaaffff, transparent: true, opacity: 0.5} );
-                           const lens = new THREE.Mesh( geometry, material );
-                           lens.rotation.x = Math.PI/2;
-                           this.currentSim.scene.add( lens );
-                      }
-                 }
-            }
+                } catch(e) { /* cross-origin, ignore */ }
+            });
 
         } else if (config.type === 'result' || config.type === 'calculation') {
             workspace.innerHTML = `

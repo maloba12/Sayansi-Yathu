@@ -27,7 +27,7 @@ const DNA3D = lazy(() => import('../components/DNA3D.jsx'));
 // Read experiment type from URL query parameter (?type=pendulum)
 function getSimType() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('type') || 'pendulum';
+  return params.get('type');
 }
 
 // Registry of available experiment components
@@ -40,11 +40,11 @@ const EXPERIMENT_COMPONENTS = {
   circuit: Circuit3D,
   density: Density3D,
   pressure: Pressure3D,
-  cog: CenterOfGravity3D,
+  cog: Cog3D,
   apparatus: Apparatus3D,
   states: StatesOfMatter3D,
   separation: Separation3D,
-  litmus: AcidsBases3D,
+  litmus: Litmus3D,
   combustion: AirCombustion3D,
   water_purify: WaterPurification3D,
   cell: Cell3D,

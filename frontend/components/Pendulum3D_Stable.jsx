@@ -14,6 +14,19 @@ function PendulumSimulation({ length, initialAngle, isRunning }) {
   const [angle, setAngle] = useState(initialAngle);
   const [angularVelocity, setAngularVelocity] = useState(0);
 
+  // Sync internal state with external control changes
+  useEffect(() => {
+    setAngle(initialAngle);
+    setAngularVelocity(0);
+  }, [initialAngle, length]);
+
+  // Keep visual position updated even when paused
+  useEffect(() => {
+    if (!isRunning && groupRef.current) {
+      groupRef.current.rotation.z = angle;
+    }
+  }, [angle, isRunning]);
+
   // Physics calculation
   useFrame((state, delta) => {
     if (!isRunning || !groupRef.current) return;
@@ -27,10 +40,6 @@ function PendulumSimulation({ length, initialAngle, isRunning }) {
     
     setAngularVelocity(newVelocity);
     setAngle(newAngle);
-    
-    // Update visual positions
-    const x = length * Math.sin(newAngle);
-    const y = -length * Math.cos(newAngle);
     
     // Update rod and bob positions
     groupRef.current.rotation.z = newAngle;
