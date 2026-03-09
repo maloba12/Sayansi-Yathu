@@ -81,31 +81,99 @@ def virtual_assistant():
     )
     return jsonify(response)
 
+def _launch_script(script_path, sim_type):
+    """Helper: launch a Python script in a subprocess and return JSON result."""
+    import subprocess
+    import time
+
+    # Determine Python executable (prioritize local venv)
+    venv_python = os.path.join(os.path.dirname(__file__), 'venv', 'bin', 'python')
+    python_exe = venv_python if os.path.exists(venv_python) else sys.executable
+
+    # Set environment variables for display
+    env = os.environ.copy()
+    env['DISPLAY'] = ':0.0'
+
+    print(f"Launching 3D simulation: {python_exe} {script_path} --type {sim_type}")
+
+    process = subprocess.Popen(
+        [python_exe, script_path, '--type', sim_type],
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+
+    # Wait a moment to check if it starts successfully
+    time.sleep(2)
+
+    if process.poll() is None:  # Still running
+        print(f"✅ 3D simulation launched successfully (PID: {process.pid})")
+        return jsonify({
+            "success": True,
+            "message": f"Launched {sim_type} simulation",
+            "pid": process.pid,
+            "debug": "Check for separate 3D window"
+        })
+    else:
+        stdout, stderr = process.communicate()
+        print(f"❌ 3D simulation failed to start")
+        print(f"STDOUT: {stdout}")
+        print(f"STDERR: {stderr}")
+        return jsonify({
+            "success": False,
+            "message": f"Failed to start {sim_type} simulation",
+            "error": stderr or stdout
+        })
+
+
 @app.route('/api/launch-simulation', methods=['POST'])
 def launch_3d_simulation():
     """
     Launches the Ursina 3D simulation in a separate process.
+    Uses ursa_lab/main.py by default for experiment-specific dispatch.
+    Pass {"debug": true} to fall back to the simple placeholder scene.
     """
-    import subprocess
     data = request.json
     sim_type = data.get('type', 'pendulum')
-    
+    use_debug = data.get('debug', False)
+
     try:
-        # Path to the Ursina main.py
-        script_path = os.path.join(os.path.dirname(__file__), 'ursa_lab', 'main.py')
-        
-        # Determine Python executable (Prioritize local venv)
-        venv_python = os.path.join(os.path.dirname(__file__), 'venv', 'bin', 'python')
-        if os.path.exists(venv_python):
-            python_exe = venv_python
+        if use_debug:
+            # Explicit debug flag — use simple placeholder scene
+            script_path = os.path.join(os.path.dirname(__file__), 'simple_3d.py')
+            if not os.path.exists(script_path):
+                return jsonify({"success": False, "message": "simple_3d.py not found"})
         else:
-            python_exe = sys.executable
-            
-        subprocess.Popen([python_exe, script_path, '--type', sim_type])
-        
-        return jsonify({"success": True, "message": f"Launched {sim_type} simulation"})
+            # Default: use the full Ursina simulation dispatcher
+            script_path = os.path.join(os.path.dirname(__file__), 'ursa_lab', 'main.py')
+            if not os.path.exists(script_path):
+                return jsonify({"success": False, "message": "ursa_lab/main.py not found"})
+
+        return _launch_script(script_path, sim_type)
+
     except Exception as e:
         print(f"Error launching simulation: {e}")
+        return jsonify({"success": False, "message": str(e)})
+
+
+@app.route('/api/debug/launch-simulation', methods=['POST'])
+def launch_debug_simulation():
+    """
+    Dedicated debug endpoint — always uses simple_3d.py placeholder scene.
+    """
+    data = request.json
+    sim_type = data.get('type', 'pendulum')
+
+    try:
+        script_path = os.path.join(os.path.dirname(__file__), 'simple_3d.py')
+        if not os.path.exists(script_path):
+            return jsonify({"success": False, "message": "simple_3d.py not found"})
+
+        return _launch_script(script_path, sim_type)
+
+    except Exception as e:
+        print(f"Error launching debug simulation: {e}")
         return jsonify({"success": False, "message": str(e)})
 
 

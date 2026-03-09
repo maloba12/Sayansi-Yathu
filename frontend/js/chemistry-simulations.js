@@ -378,7 +378,3 @@ window.updateAcidConcentration = () => {
 
 window.updateBaseConcentration = window.updateAcidConcentration;
 
-// Auto-load titration on start for demo
-document.addEventListener('DOMContentLoaded', () => {
-    loadChemistryExperiment('titration');
-});

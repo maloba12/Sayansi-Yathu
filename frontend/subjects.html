@@ -35,11 +35,27 @@
         </div>
 
         <!-- Filters -->
-        <div class="flex justify-center gap-md mb-xl">
-            <button class="btn btn-secondary filter-btn active" data-filter="all">All</button>
-            <button class="btn btn-secondary filter-btn" data-filter="Biology">Biology</button>
-            <button class="btn btn-secondary filter-btn" data-filter="Chemistry">Chemistry</button>
-            <button class="btn btn-secondary filter-btn" data-filter="Physics">Physics</button>
+        <div class="mb-xl">
+            <!-- Level 1: Curriculum -->
+            <div class="flex justify-center gap-md mb-md">
+                <button class="btn btn-secondary curriculum-btn active" data-curriculum="new">🆕 New Curriculum (Form 1)</button>
+                <button class="btn btn-secondary curriculum-btn" data-curriculum="old">📚 Old Curriculum (Grades 10–12)</button>
+            </div>
+            
+            <!-- Level 2: Grade (hidden by default since New Curriculum is Form 1) -->
+            <div class="flex justify-center gap-md mb-md" id="gradeFilters" style="display: none;">
+                <button class="btn btn-secondary grade-btn active" data-grade="Grade 10">Grade 10</button>
+                <button class="btn btn-secondary grade-btn" data-grade="Grade 11">Grade 11</button>
+                <button class="btn btn-secondary grade-btn" data-grade="Grade 12">Grade 12</button>
+            </div>
+
+            <!-- Level 3: Subject -->
+            <div class="flex justify-center gap-md">
+                <button class="btn btn-secondary subject-btn active" data-subject="all">All Subjects</button>
+                <button class="btn btn-secondary subject-btn" data-subject="biology">Biology</button>
+                <button class="btn btn-secondary subject-btn" data-subject="chemistry">Chemistry</button>
+                <button class="btn btn-secondary subject-btn" data-subject="physics">Physics</button>
+            </div>
         </div>
 
         <!-- Experiments Grid -->
@@ -57,17 +73,87 @@
             constructor() {
                 this.apiBase = 'http://localhost:8000/api';
                 this.experiments = [];
-                this.currentFilter = 'all';
+                this.currentCurriculum = 'new';
+                this.currentGrade = 'Form 1';
+                this.currentSubject = 'all';
                 this.init();
             }
 
             async init() {
+                this.loadUserPreferences();
+                this.updateFilterUI();
                 await this.loadExperiments();
                 this.attachEventListeners();
             }
 
+            loadUserPreferences() {
+                try {
+                    const userDataStr = localStorage.getItem('user_data');
+                    if (userDataStr) {
+                        const userData = JSON.parse(userDataStr);
+                        if (userData.profile && userData.profile.grade_or_form) {
+                            const grade = userData.profile.grade_or_form;
+                            // Check if it's new or old curriculum
+                            if (grade.toLowerCase().includes('form')) {
+                                this.currentCurriculum = 'new';
+                                this.currentGrade = grade;
+                            } else if (grade.toLowerCase().includes('grade')) {
+                                this.currentCurriculum = 'old';
+                                this.currentGrade = grade;
+                            }
+                        }
+                    }
+                } catch(e) { console.error("Error loading user preferences", e); }
+            }
+
+            updateFilterUI() {
+                // Update Curriculum Buttons
+                document.querySelectorAll('.curriculum-btn').forEach(btn => {
+                    if (btn.dataset.curriculum === this.currentCurriculum) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+                // Show/Hide Grade Filters
+                const gradeFilters = document.getElementById('gradeFilters');
+                if (this.currentCurriculum === 'old') {
+                    gradeFilters.style.display = 'flex';
+                    // Default to Grade 10 if switching from New to Old without a grade
+                    if (!this.currentGrade.toLowerCase().includes('grade')) {
+                        this.currentGrade = 'Grade 10';
+                    }
+                } else {
+                    gradeFilters.style.display = 'none';
+                    this.currentGrade = 'Form 1';
+                }
+
+                // Update Grade Buttons
+                document.querySelectorAll('.grade-btn').forEach(btn => {
+                    if (btn.dataset.grade === this.currentGrade) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+                // Update Subject Buttons
+                document.querySelectorAll('.subject-btn').forEach(btn => {
+                    if (btn.dataset.subject === this.currentSubject) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+
             async loadExperiments() {
                 try {
+                    // Show loading
+                    const grid = document.getElementById('experimentsGrid');
+                    grid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p>Loading experiments...</p></div>';
+
                     let userId = 1; // Default
                     try {
                         const userData = localStorage.getItem('user_data');
@@ -76,7 +162,8 @@
                         }
                     } catch(e) { console.error("User ID parse error", e); }
                     
-                    const response = await fetch(`${this.apiBase}/getExperiment.php?userId=${userId}`);
+                    const url = `${this.apiBase}/getExperiment.php?userId=${userId}&curriculum=${this.currentCurriculum}&grade=${encodeURIComponent(this.currentGrade)}`;
+                    const response = await fetch(url);
                     const data = await response.json();
 
                     if (Array.isArray(data)) {
@@ -88,20 +175,29 @@
                         this.renderExperiments();
                     } else {
                         console.error("Unexpected API format:", data);
+                        grid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p>Error loading experiments</p></div>';
                     }
                 } catch (error) {
                     console.error('Load experiments error:', error);
+                    const grid = document.getElementById('experimentsGrid');
+                    grid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p>Error loading experiments</p></div>';
                 }
             }
 
             renderExperiments() {
                 const grid = document.getElementById('experimentsGrid');
-                const filtered = this.currentFilter === 'all'
+                // The backend already filters by curriculum and grade, so we just filter by subject here if needed
+                // (or if we fetched all and filtering locally, but we fetch with curriculum/grade parameters)
+                const filtered = this.currentSubject === 'all'
                     ? this.experiments
-                    : this.experiments.filter(e => e.subject.toLowerCase() === this.currentFilter.toLowerCase());
+                    : this.experiments.filter(e => e.subject && e.subject.toLowerCase() === this.currentSubject.toLowerCase());
 
                 if (filtered.length === 0) {
-                    grid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p>No experiments found</p></div>';
+                    if (this.currentCurriculum === 'old') {
+                        grid.innerHTML = `<div class="card text-center" style="grid-column: 1 / -1;"><p>Coming soon — experiments being added for ${this.currentGrade}</p></div>`;
+                    } else {
+                        grid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p>No experiments found</p></div>';
+                    }
                     return;
                 }
 
@@ -110,7 +206,7 @@
                         <div class="card-header">
                             <div class="flex justify-between items-center mb-sm">
                                 <span class="badge badge-${(exp.subject || 'general').toLowerCase()}">${exp.subject}</span>
-                                <span class="badge badge-${(exp.difficulty_level || 'beginner').toLowerCase()}">${exp.difficulty_level}</span>
+                                <span class="badge badge-${(exp.difficulty_level || 'beginner').toLowerCase()}">${exp.difficulty_level || 'Beginner'}</span>
                             </div>
                             <h3 class="card-title">${exp.title}</h3>
                         </div>
@@ -121,12 +217,30 @@
             }
 
             attachEventListeners() {
-                document.querySelectorAll('.filter-btn').forEach(btn => {
+                // Curriculum Filters
+                document.querySelectorAll('.curriculum-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        this.currentFilter = e.target.dataset.filter;
-                        this.renderExperiments();
+                        this.currentCurriculum = e.target.dataset.curriculum;
+                        this.updateFilterUI();
+                        this.loadExperiments();
+                    });
+                });
+
+                // Grade Filters
+                document.querySelectorAll('.grade-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.currentGrade = e.target.dataset.grade;
+                        this.updateFilterUI();
+                        this.loadExperiments();
+                    });
+                });
+
+                // Subject Filters
+                document.querySelectorAll('.subject-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.currentSubject = e.target.dataset.subject;
+                        this.updateFilterUI();
+                        this.renderExperiments(); // Local filter, no need to refetch
                     });
                 });
 

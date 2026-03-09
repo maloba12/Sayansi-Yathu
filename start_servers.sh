@@ -18,8 +18,16 @@ python3 -m http.server 3000 -d frontend > frontend.log 2>&1 &
 FRONTEND_PID=$!
 echo "Frontend Server started with PID $FRONTEND_PID"
 
+# Start React 3D Simulation Server (Vite)
+echo "Starting React 3D Simulation Server on port 3001..."
+cd frontend && npx vite --port 3001 --host > ../vite-simulation.log 2>&1 &
+VITE_PID=$!
+cd ..
+echo "React 3D Server started with PID $VITE_PID"
+
 echo "All servers started!"
-echo "Frontend: http://localhost:3000"
+echo "Main App: http://localhost:3000"
+echo "3D Simulations: http://localhost:3001"
 echo "Backend PHP: http://localhost:8000"
 echo "Backend Python: http://localhost:5000"
 
@@ -29,4 +37,5 @@ read -p "Press Enter to stop all servers..."
 kill $PHP_PID
 kill $PYTHON_PID
 kill $FRONTEND_PID
+kill $VITE_PID
 echo "Servers stopped."

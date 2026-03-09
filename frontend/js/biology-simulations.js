@@ -323,7 +323,3 @@ window.resetDNASimulation = () => {
      loadBiologyExperiment('dna');
 };
 
-// Auto load
-document.addEventListener('DOMContentLoaded', () => {
-    loadBiologyExperiment('cell');
-});

@@ -6,6 +6,8 @@ class SimulationPlayer {
         this.currentStepIndex = 0;
         this.userId = this.getUserId(); // From localStorage or session
         this.apiBase = 'http://localhost:8000/api';
+        this._startTime = Date.now(); // Track time spent in session
+        this._accumulatedTime = 0;    // Time loaded from backend (seconds)
         this.init();
     }
 
@@ -60,7 +62,11 @@ class SimulationPlayer {
             const data = await response.json();
 
             if (data.success && data.progress) {
-                this.currentStepIndex = data.progress.current_step || 0;
+                // Map completed_steps back to currentStepIndex safely
+                const completedSteps = parseInt(data.progress.completed_steps, 10) || 0;
+                const totalSteps = this.simulation ? this.simulation.total_steps : 0;
+                this.currentStepIndex = Math.min(completedSteps, Math.max(totalSteps - 1, 0));
+                this._accumulatedTime = parseInt(data.progress.time_spent, 10) || 0;
             }
         } catch (error) {
             console.error('Load progress error:', error);
@@ -96,6 +102,15 @@ class SimulationPlayer {
 
         // Render workspace based on step config
         this.renderWorkspace(step);
+
+        // Update AI Tutor context
+        if (window.aiTutor) {
+            window.aiTutor.setContext({
+                simulationTitle: this.simulation.title,
+                currentStep: step.title,
+                subject: this.simulation.subject
+            });
+        }
 
         // Save progress
         this.saveProgress();
@@ -149,10 +164,21 @@ class SimulationPlayer {
             // Clean up previous content but keep container
             workspace.innerHTML = `
                 <div class="simulation-view" style="width: 100%; height: 500px; position: relative;">
-                    <div id="external-sim-message" style="display:none; text-align:center; padding-top: 200px;">
-                        <h3>🚀 Simulation Launched</h3>
-                        <p>The 3D experiment is running in a separate window.</p>
-                        <button class="btn btn-primary" onclick="window.location.reload()">Reset View</button>
+                    <div id="external-sim-message" style="display:none; text-align:center; padding-top: 100px;">
+                        <h3>🚀 3D Simulation Launched!</h3>
+                        <div style="background: #f0f8ff; border: 2px solid #0066cc; border-radius: 8px; padding: 20px; margin: 20px auto; max-width: 500px;">
+                            <h4>📋 How to Use:</h4>
+                            <ul style="text-align: left; display: inline-block;">
+                                <li>🖱️ <strong>Mouse:</strong> Look around the experiment</li>
+                                <li>⌨️ <strong>WASD:</strong> Move camera position</li>
+                                <li>🔍 <strong>Scroll:</strong> Zoom in/out</li>
+                                <li>🚪 <strong>ESC:</strong> Close the 3D window</li>
+                            </ul>
+                            <p style="margin-top: 15px; color: #666;">
+                                <strong>💡 Tip:</strong> Check your taskbar or press Alt+Tab if you don't see the 3D window
+                            </p>
+                        </div>
+                        <button class="btn btn-primary" onclick="window.location.reload()">Back to Dashboard</button>
                     </div>
                     <canvas id="sim-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
                     <div id="p5-container" style="width: 100%; height: 100%;"></div>
@@ -166,12 +192,118 @@ class SimulationPlayer {
             // Initialize specific simulation based on visual tag or experiment title
             const visual = config.visual || '';
             
-            // Check if this should use Python/Ursina 3D (high realism engine)
-            const isPython3D = ['pendulum', 'chemistry_mix', 'pipette', 'beaker', 'cell_3d', 'dna'].includes(visual) || 
-                               this.simulation.title.toLowerCase().includes('pendulum') ||
-                               this.simulation.title.toLowerCase().includes('circuit');
+            // Check if this should use React 3D (new approach) or Python/Ursina (legacy)
+            const react3DTypes = [
+                'pendulum', 'free_fall', 'linear_motion', 'hookes_law', 'friction', 'circuit',
+                'density', 'pressure', 'cog', 'apparatus', 'states', 'separation', 'litmus',
+                'combustion', 'water_purify', 'cell', 'dna'
+            ];
+            const t = this.simulation.title.toLowerCase();
+            const isReact3D = react3DTypes.includes(visual) ||
+                               t.includes('pendulum') ||
+                               t.includes('free fall') ||
+                               t.includes('acceleration') ||
+                               t.includes('linear motion') ||
+                               t.includes('hooke') ||
+                               t.includes('friction') ||
+                               t.includes('circuit') ||
+                               t.includes('ohm') ||
+                               t.includes('density') ||
+                               t.includes('pressure') ||
+                               t.includes('gravity') ||
+                               t.includes('stability') ||
+                               t.includes('moments') ||
+                               t.includes('apparatus') ||
+                               t.includes('matter') ||
+                               t.includes('boiling') ||
+                               t.includes('melting') ||
+                               t.includes('diffusion') ||
+                               t.includes('mixture') ||
+                               t.includes('separation') ||
+                               t.includes('filter') ||
+                               t.includes('evaporat') ||
+                               t.includes('indicator') ||
+                               t.includes('combustion') ||
+                               t.includes('oxygen') ||
+                               t.includes('candle') ||
+                               t.includes('air') ||
+                               t.includes('water purify') ||
+                               t.includes('purification') ||
+                               t.includes('biological cell') ||
+                               t.includes('plant cell') ||
+                               t.includes('animal cell') ||
+                               t.includes('dna') ||
+                               t.includes('helix');
+            
+            const isPython3D = ['chemistry_mix', 'pipette', 'beaker', 'cell_3d', 'dna'].includes(visual);
 
-            if (isPython3D) {
+            if (isReact3D) {
+                // Use new React 3D approach - embed directly
+                document.getElementById('sim-canvas').style.display = 'none';
+                document.getElementById('p5-container').style.display = 'none';
+                
+                // Build iframe URL: use configured base or fall back to same-origin relative path
+                const sim3dBase = window.SAYANSI_CONFIG?.sim3dBaseUrl || '';
+                // Map to React component type — prefer visual tag, fall back to title match
+                let simVisual = visual || '';
+                if (!react3DTypes.includes(simVisual)) {
+                const t = this.simulation.title.toLowerCase();
+                if (t.includes('free fall') || t.includes('acceleration')) simVisual = 'free_fall';
+                else if (t.includes('linear motion')) simVisual = 'linear_motion';
+                else if (t.includes('hooke')) simVisual = 'hookes_law';
+                else if (t.includes('friction')) simVisual = 'friction';
+                else if (t.includes('circuit') || t.includes('ohm')) simVisual = 'circuit';
+                else if (t.includes('density')) simVisual = 'density';
+                else if (t.includes('pressure')) simVisual = 'pressure';
+                else if (t.includes('gravity') || t.includes('stability') || t.includes('moments')) simVisual = 'cog';
+                else if (t.includes('apparatus')) simVisual = 'apparatus';
+                else if (t.includes('matter') || t.includes('boiling') || t.includes('melting') || t.includes('diffusion')) simVisual = 'states';
+                else if (t.includes('separation') || t.includes('filter') || t.includes('evaporat')) simVisual = 'separation';
+                else if (t.includes('acid') || t.includes('base') || t.includes('litmus') || t.includes('indicator')) simVisual = 'litmus';
+                else if (t.includes('combustion') || t.includes('oxygen') || t.includes('candle') || t.includes('air')) simVisual = 'combustion';
+                else if (t.includes('water purify') || t.includes('purification')) simVisual = 'water_purify';
+                else if (t.includes('biological cell') || t.includes('plant cell') || t.includes('animal cell') || t.includes('cell')) simVisual = 'cell';
+                else if (t.includes('dna') || t.includes('helix')) simVisual = 'dna';
+                else simVisual = 'pendulum';
+                }
+                const iframeSrc = sim3dBase
+                    ? `${sim3dBase}/index_3d.html?type=${simVisual}`
+                    : `index_3d.html?type=${simVisual}`;
+                
+                // Create iframe for React 3D simulation with error fallback
+                workspace.innerHTML += `
+                    <div id="react3d-container" style="width: 100%; height: 600px; border: 2px solid #ddd; border-radius: 8px; overflow: hidden;">
+                        <iframe id="react3d-iframe" src="${iframeSrc}" 
+                                style="width: 100%; height: 100%; border: none;" 
+                                frameborder="0">
+                        </iframe>
+                    </div>
+                    <div id="react3d-fallback" style="display:none; text-align:center; padding: 40px; background:#fff3cd; border:2px solid #ffc107; border-radius:8px; margin-top:10px;">
+                        <p style="color:#856404; font-size:16px;">⚠️ Could not load the 3D simulation. Please ensure the simulation assets are available.</p>
+                        <button class="btn btn-primary" onclick="document.getElementById('react3d-iframe').src='${iframeSrc}'">Retry</button>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <p style="color: #666; font-size: 14px;">
+                            🧪 Interactive 3D Pendulum Simulation - Adjust length and angle using controls
+                        </p>
+                    </div>
+                `;
+                
+                // Attach error fallback listener
+                const iframe3d = document.getElementById('react3d-iframe');
+                iframe3d.addEventListener('error', () => {
+                    document.getElementById('react3d-fallback').style.display = 'block';
+                });
+                // Also handle load failure (same-origin only)
+                iframe3d.addEventListener('load', () => {
+                    try {
+                        // If cross-origin, this will throw; that's acceptable
+                        if (iframe3d.contentDocument && iframe3d.contentDocument.title === '') {
+                            // Empty document likely means load failed
+                        }
+                    } catch(e) { /* cross-origin, ignore */ }
+                });
+            } else if (isPython3D) {
                 const launchBtn = document.getElementById('launch3DBtn');
                 launchBtn.style.display = 'inline-block';
                 document.getElementById('sim-canvas').style.display = 'none';
@@ -369,8 +501,13 @@ class SimulationPlayer {
     }
 
     async saveProgress() {
-        const completed = this.currentStepIndex >= this.simulation.total_steps - 1;
-        const score = completed ? 100 : Math.floor((this.currentStepIndex / this.simulation.total_steps) * 100);
+        const totalSteps = this.simulation.total_steps || 0;
+        const completedSteps = this.currentStepIndex + 1; // 1-based count of completed steps
+        const isCompleted = completedSteps >= totalSteps;
+        const score = isCompleted ? 100 : Math.floor((completedSteps / totalSteps) * 100);
+        // Calculate time spent: accumulated from backend + current session elapsed (in seconds)
+        const sessionSeconds = Math.floor((Date.now() - this._startTime) / 1000);
+        const timeSpent = (this._accumulatedTime || 0) + sessionSeconds;
 
         try {
             await fetch(`${this.apiBase}/progress/save.php`, {
@@ -379,8 +516,9 @@ class SimulationPlayer {
                 body: JSON.stringify({
                     user_id: this.userId,
                     simulation_id: this.simulationId,
-                    current_step: this.currentStepIndex,
-                    completed: completed,
+                    completed_steps: completedSteps,
+                    total_steps: totalSteps,
+                    time_spent: timeSpent,
                     score: score
                 })
             });
@@ -430,6 +568,10 @@ class SimulationPlayer {
 
         document.getElementById('helpBtn').addEventListener('click', () => {
             alert('Read the instructions carefully on the left. Follow each step in order.');
+        });
+
+        document.getElementById('tutorBtn').addEventListener('click', () => {
+            if (window.aiTutor) window.aiTutor.toggle();
         });
 
         document.getElementById('restartBtn').addEventListener('click', () => {

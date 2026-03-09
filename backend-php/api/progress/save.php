@@ -24,9 +24,10 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 $user_id = isset($data['user_id']) ? (int)$data['user_id'] : 0;
 $simulation_id = isset($data['simulation_id']) ? (int)$data['simulation_id'] : 0;
-$current_step = isset($data['current_step']) ? (int)$data['current_step'] : 0;
-$completed = isset($data['completed']) ? (bool)$data['completed'] : false;
-$score = isset($data['score']) ? (int)$data['score'] : 0;
+$completed_steps = isset($data['completed_steps']) ? (int)$data['completed_steps'] : 0;
+$total_steps = isset($data['total_steps']) ? (int)$data['total_steps'] : 0;
+$score = isset($data['score']) ? (float)$data['score'] : 0;
+$time_spent = isset($data['time_spent']) ? (int)$data['time_spent'] : 0;
 
 if ($user_id <= 0 || $simulation_id <= 0) {
     http_response_code(400);
@@ -39,39 +40,41 @@ if ($user_id <= 0 || $simulation_id <= 0) {
 
 try {
     // Check if progress exists
-    $checkQuery = "SELECT id FROM student_progress 
-                   WHERE user_id = :uid AND simulation_id = :sid LIMIT 1";
+    $checkQuery = "SELECT id FROM progress 
+                   WHERE user_id = :uid AND experiment_id = :eid LIMIT 1";
     $checkStmt = $db->prepare($checkQuery);
-    $checkStmt->execute([':uid' => $user_id, ':sid' => $simulation_id]);
+    $checkStmt->execute([':uid' => $user_id, ':eid' => $simulation_id]);
     $existing = $checkStmt->fetch();
     
     if ($existing) {
         // Update existing progress
-        $updateQuery = "UPDATE student_progress 
-                        SET current_step = :step, completed = :completed, score = :score, 
-                            last_played_at = CURRENT_TIMESTAMP 
-                        WHERE user_id = :uid AND simulation_id = :sid";
+        $updateQuery = "UPDATE progress 
+                        SET completed_steps = :completed_steps, total_steps = :total_steps, score = :score, 
+                            time_spent = :time_spent, last_accessed = CURRENT_TIMESTAMP 
+                        WHERE user_id = :uid AND experiment_id = :eid";
         $updateStmt = $db->prepare($updateQuery);
         $updateStmt->execute([
-            ':step' => $current_step,
-            ':completed' => $completed ? 1 : 0,
+            ':completed_steps' => $completed_steps,
+            ':total_steps' => $total_steps,
             ':score' => $score,
+            ':time_spent' => $time_spent,
             ':uid' => $user_id,
-            ':sid' => $simulation_id
+            ':eid' => $simulation_id
         ]);
         $message = "Progress updated";
     } else {
         // Insert new progress
-        $insertQuery = "INSERT INTO student_progress 
-                        (user_id, simulation_id, current_step, completed, score) 
-                        VALUES (:uid, :sid, :step, :completed, :score)";
+        $insertQuery = "INSERT INTO progress 
+                        (user_id, experiment_id, completed_steps, total_steps, score, time_spent) 
+                        VALUES (:uid, :eid, :completed_steps, :total_steps, :score, :time_spent)";
         $insertStmt = $db->prepare($insertQuery);
         $insertStmt->execute([
             ':uid' => $user_id,
-            ':sid' => $simulation_id,
-            ':step' => $current_step,
-            ':completed' => $completed ? 1 : 0,
-            ':score' => $score
+            ':eid' => $simulation_id,
+            ':completed_steps' => $completed_steps,
+            ':total_steps' => $total_steps,
+            ':score' => $score,
+            ':time_spent' => $time_spent
         ]);
         $message = "Progress saved";
     }

@@ -27,9 +27,8 @@ if ($sim_id <= 0) {
 
 try {
     // Get simulation details
-    // Get simulation details
     // Note: Mapping 'experiments' table columns to expected API format
-    $simQuery = "SELECT id, title, subject, description, difficulty_level as difficulty 
+    $simQuery = "SELECT id, title, subject, description, simulation_type, difficulty_level as difficulty, curriculum, grade_or_form 
                  FROM experiments WHERE id = :id LIMIT 1";
     $simStmt = $db->prepare($simQuery);
     $simStmt->execute([':id' => $sim_id]);

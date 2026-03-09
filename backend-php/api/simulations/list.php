@@ -18,9 +18,11 @@ try {
     // Optional filters
     $subject = isset($_GET['subject']) ? $_GET['subject'] : null;
     $difficulty = isset($_GET['difficulty']) ? $_GET['difficulty'] : null;
+    $curriculum = isset($_GET['curriculum']) ? $_GET['curriculum'] : null;
+    $grade = isset($_GET['grade']) ? $_GET['grade'] : null;
     
-    $query = "SELECT id, title, subject, description, thumbnail_url, difficulty 
-              FROM simulations WHERE 1=1";
+    $query = "SELECT id, title, subject, description, simulation_type, difficulty_level AS difficulty, curriculum, grade_or_form
+              FROM experiments WHERE 1=1";
     
     $params = [];
     
@@ -30,8 +32,18 @@ try {
     }
     
     if ($difficulty) {
-        $query .= " AND difficulty = :difficulty";
+        $query .= " AND difficulty_level = :difficulty";
         $params[':difficulty'] = $difficulty;
+    }
+
+    if ($curriculum) {
+        $query .= " AND curriculum = :curriculum";
+        $params[':curriculum'] = $curriculum;
+    }
+
+    if ($grade) {
+        $query .= " AND grade_or_form = :grade";
+        $params[':grade'] = $grade;
     }
     
     $query .= " ORDER BY subject, title";

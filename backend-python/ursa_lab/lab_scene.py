@@ -19,8 +19,12 @@ class LabScene(Entity):
 
     def setup_lighting(self):
         # Brighter lights for better object visibility
-        self.light = PointLight(parent=self, position=(0, 10, 0), color=color.white)
-        self.ambient = AmbientLight(color=color.hsv(0, 0, 0.8))
+        self.light = PointLight(parent=self, position=(0, 10, 0), color=color.white, intensity=2)
+        self.ambient = AmbientLight(color=color.hsv(0, 0, 0.6))
+        
+        # Add additional lights for better visibility
+        PointLight(parent=self, position=(5, 8, 5), color=color.white, intensity=1)
+        PointLight(parent=self, position=(-5, 8, -5), color=color.white, intensity=1)
 
 
     def setup_table(self):

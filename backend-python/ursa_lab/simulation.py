@@ -91,11 +91,15 @@ class SimulationLogic:
             self.setup_atmosphere(scene_manager)
             
     def setup_pendulum(self, scene_manager):
-        # Create Pivot
-        pivot = Entity(parent=scene_manager, model='sphere', scale=0.2, position=(0, 6, 0), color=color.black)
-        # Rod and Bob will be updated in update()
-        self.entities['bob'] = Entity(parent=scene_manager, model='sphere', scale=0.5, color=color.red)
-        self.entities['rod'] = Entity(parent=scene_manager, model='cube', scale=(0.05, 1, 0.05), color=color.black)
+        # Create Pivot - make it more visible
+        pivot = Entity(parent=scene_manager, model='sphere', scale=0.3, position=(0, 6, 0), color=color.dark_gray)
+        
+        # Rod and Bob - make them larger and more colorful
+        self.entities['bob'] = Entity(parent=scene_manager, model='sphere', scale=0.8, color=color.red)
+        self.entities['rod'] = Entity(parent=scene_manager, model='cube', scale=(0.1, 1, 0.1), color=color.black)
+        
+        # Add a visual support structure
+        support = Entity(parent=scene_manager, model='cube', scale=(4, 0.2, 0.2), position=(0, 6, 0), color=color.brown)
         
         # Initial Physics State
         self.length = 3.0

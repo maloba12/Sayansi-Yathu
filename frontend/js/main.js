@@ -6,63 +6,47 @@
 //         })
 //         .catch(error => {
 //             console.log('Service Worker registration failed:', error);
-// //         });
-}
+//         });
+// }
 
 // Navigation and UI interactions
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Navigation toggle
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav-menu');
-
     if (navToggle && navMenu) {
         navToggle.addEventListener('click', () => {
             navMenu.classList.toggle('active');
-            // //         });
-        }
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                        // //         });
-                    }
-// //         });
-    });
         });
+    }
 
-        // User authentication check (temporarily disabled - was causing page blinking)
-        // function checkAuth() {
-        //     const token = localStorage.getItem('authToken');
-        //     if (!token && !window.location.pathname.includes('index.html')) {
-        //         window.location.href = '/';
-        //     }
-        // }
-
-        // checkAuth();
-
-        // Experiment navigation function
-        function loadExperiment(subject) {
-            // Navigate to the appropriate experiment page based on subject
-            switch (subject) {
-                case 'physics':
-                    window.location.href = 'experiments/physics.html';
-                    break;
-                case 'chemistry':
-                    window.location.href = 'experiments/chemistry.html';
-                    break;
-                case 'biology':
-                    window.location.href = 'experiments/biology.html';
-                    break;
-                default:
-                    console.error('Unknown experiment subject:', subject);
+    // 2. Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === '#') return;
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
             }
+        });
+    });
+
+    // 3. Experiment navigation function
+    window.loadExperiment = (subject) => {
+        const routes = {
+            physics: 'experiments/physics.html',
+            chemistry: 'experiments/chemistry.html',
+            biology: 'experiments/biology.html'
+        };
+        const route = routes[subject];
+        if (route) {
+            window.location.href = route;
+        } else {
+            console.error('Unknown experiment subject:', subject);
         }
+    };
 
-        // Backend test function
-        // Backend test function removed
-
-        console.log('Sayansi Yathu main.js loaded successfully');
+    console.log('Sayansi Yathu main.js initialized');
+});

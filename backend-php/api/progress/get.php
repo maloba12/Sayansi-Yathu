@@ -29,10 +29,10 @@ if ($user_id <= 0) {
 try {
     if ($simulation_id) {
         // Get progress for specific simulation
-        $query = "SELECT sp.*, s.title, s.subject 
-                  FROM student_progress sp
-                  JOIN simulations s ON sp.simulation_id = s.id
-                  WHERE sp.user_id = :uid AND sp.simulation_id = :sid LIMIT 1";
+        $query = "SELECT p.*, e.title, e.subject 
+                  FROM progress p
+                  JOIN experiments e ON p.experiment_id = e.id
+                  WHERE p.user_id = :uid AND p.experiment_id = :sid LIMIT 1";
         $stmt = $db->prepare($query);
         $stmt->execute([':uid' => $user_id, ':sid' => $simulation_id]);
         $progress = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -44,11 +44,11 @@ try {
         ]);
     } else {
         // Get all progress for user
-        $query = "SELECT sp.*, s.title, s.subject, s.thumbnail_url 
-                  FROM student_progress sp
-                  JOIN simulations s ON sp.simulation_id = s.id
-                  WHERE sp.user_id = :uid
-                  ORDER BY sp.last_played_at DESC";
+        $query = "SELECT p.*, e.title, e.subject 
+                  FROM progress p
+                  JOIN experiments e ON p.experiment_id = e.id
+                  WHERE p.user_id = :uid
+                  ORDER BY p.last_accessed DESC";
         $stmt = $db->prepare($query);
         $stmt->execute([':uid' => $user_id]);
         $progress = $stmt->fetchAll(PDO::FETCH_ASSOC);
