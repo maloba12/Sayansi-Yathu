@@ -1,122 +1,213 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function ExperimentShell({ title, controls, theory, children }) {
+export default function ExperimentShell({ 
+  title, 
+  controls, 
+  theory, 
+  children,
+  theoryLabel = "Experiment Theory" 
+}) {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [showControlsHint, setShowControlsHint] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Use state to handle initial desktop view correctly
+  useEffect(() => {
+     if (isMobile) setIsPanelOpen(false);
+     else setIsPanelOpen(true);
+  }, [isMobile]);
 
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', background: 'linear-gradient(to bottom, #87CEEB, #E0F6FF)' }}>
+    <div style={{ 
+      width: '100%', 
+      height: '100%', 
+      position: 'relative', 
+      overflow: 'hidden', 
+      background: 'linear-gradient(to bottom, #87CEEB, #E0F6FF)',
+      fontFamily: "'Inter', system-ui, -apple-system, sans-serif"
+    }}>
       {/* 3D Canvas Area */}
       <div style={{ position: 'absolute', inset: 0 }}>
         {children}
       </div>
 
-      {/* Left Panel Toggle Button */}
-      <button
-        onClick={() => setIsPanelOpen(!isPanelOpen)}
-        style={{
+      {/* Control Navigation - Desktop (Left) / Mobile (Bottom Bar) */}
+      <div style={{
           position: 'absolute',
-          left: isPanelOpen ? 320 : 20,
-          top: 20,
-          zIndex: 10,
-          width: '40px',
-          height: '40px',
-          borderRadius: '20px',
-          background: 'rgba(255, 255, 255, 0.9)',
-          border: '1px solid #ddd',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-          cursor: 'pointer',
+          zIndex: 20,
+          left: isMobile ? 0 : 20,
+          top: isMobile ? 'auto' : 20,
+          bottom: isMobile ? 0 : 'auto',
+          width: isMobile ? '100%' : 'auto',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '1.2rem',
-          transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-        }}
-      >
-        {isPanelOpen ? '◀' : '▶'}
-      </button>
+          flexDirection: isMobile ? 'row' : 'column',
+          gap: '10px',
+          padding: isMobile ? '10px' : '0'
+      }}>
+          <button
+            onClick={() => setIsPanelOpen(!isPanelOpen)}
+            style={{
+              width: isMobile ? 'calc(100% - 60px)' : '48px',
+              height: '48px',
+              borderRadius: isMobile ? '12px' : '24px',
+              background: 'rgba(255, 255, 255, 0.95)',
+              border: '1px solid #ddd',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              color: '#1e293b'
+            }}
+          >
+            {isPanelOpen ? (isMobile ? '🔽 Hide Panels' : '◀') : (isMobile ? '🔼 Show Controls' : '▶')}
+          </button>
 
-      {/* Left Physics Panel */}
+          <button
+            onClick={() => setShowControlsHint(!showControlsHint)}
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '24px',
+              background: showControlsHint ? '#3b82f6' : 'rgba(255, 255, 255, 0.95)',
+              color: showControlsHint ? 'white' : '#1e293b',
+              border: '1px solid #ddd',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.2rem'
+            }}
+          >
+            {showControlsHint ? '✖' : '🎮'}
+          </button>
+      </div>
+
+      {/* Main Side Panel / Bottom Sheet */}
       <AnimatePresence>
         {isPanelOpen && (
           <motion.div
-            initial={{ x: -320, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -320, opacity: 0 }}
+            initial={isMobile ? { y: 400 } : { x: -350 }}
+            animate={isMobile ? { y: 0 } : { x: 0 }}
+            exit={isMobile ? { y: 400 } : { x: -350 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             style={{
               position: 'absolute',
-              left: 20,
-              top: 20,
-              bottom: 20,
-              width: '300px',
-              background: 'rgba(255, 255, 255, 0.95)',
-              padding: '20px',
-              borderRadius: '12px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              backdropFilter: 'blur(10px)',
+              left: isMobile ? 0 : 20,
+              right: isMobile ? 0 : 'auto',
+              top: isMobile ? 'auto' : 80,
+              bottom: isMobile ? 0 : 20,
+              width: isMobile ? '100%' : '320px',
+              maxHeight: isMobile ? '60vh' : 'calc(100% - 100px)',
+              background: 'rgba(255, 255, 255, 0.98)',
+              padding: '24px',
+              borderTopLeftRadius: isMobile ? '20px' : '16px',
+              borderTopRightRadius: isMobile ? '20px' : '16px',
+              borderBottomLeftRadius: isMobile ? 0 : '16px',
+              borderBottomRightRadius: isMobile ? 0 : '16px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+              backdropFilter: 'blur(12px)',
               display: 'flex',
               flexDirection: 'column',
-              overflowY: 'auto'
+              overflowY: 'auto',
+              zIndex: 15
             }}
           >
-            <h3 style={{ margin: '0 0 20px 0', color: '#333', paddingRight: '30px' }}>
-              🧪 {title} Controls
+            <h3 style={{ 
+              margin: '0 0 20px 0', 
+              color: '#0f172a', 
+              fontSize: '1.1rem',
+              borderBottom: '1px solid #f1f5f9',
+              paddingBottom: '12px'
+            }}>
+              🧪 {title}
             </h3>
 
-            {/* Controls Slot */}
-            <div style={{ flex: '1 0 auto', marginBottom: '20px' }}>
+            <div style={{ flex: '1 0 auto', marginBottom: '24px' }}>
               {controls}
             </div>
 
-            {/* Theory Panel Slot */}
             {theory && (
               <div style={{
-                background: 'rgba(240, 248, 255, 0.8)',
-                padding: '15px',
-                borderRadius: '8px',
-                border: '1px solid #B0D4E3',
+                background: '#f8fafc',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
                 marginTop: 'auto'
               }}>
-                <h4 style={{ margin: '0 0 10px 0', color: '#2C5282' }}>📐 Physics Theory</h4>
+                <h4 style={{ margin: '0 0 10px 0', color: '#1e40af', fontSize: '0.9rem' }}>📖 {theoryLabel}</h4>
                 {theory.formula && (
-                  <p style={{ margin: '5px 0', fontSize: '14px', fontWeight: 'bold' }}>
+                  <p style={{ margin: '8px 0', fontSize: '14px', color: '#334155', fontWeight: '600' }}>
                     {theory.formula}
                   </p>
                 )}
-                {theory.values && theory.values.map((item, idx) => (
-                  <p key={idx} style={{ margin: '5px 0', fontSize: '14px' }}>
-                    <strong>{item.label}:</strong> {item.value}
-                  </p>
-                ))}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {theory.values && theory.values.map((item, idx) => (
+                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                      <span style={{ color: '#64748b' }}>{item.label}:</span>
+                      <span style={{ color: '#0f172a', fontWeight: '500' }}>{item.value}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
+            
+            {isMobile && <div style={{ height: '70px' }} />} {/* Space for bar */}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Camera Hints Overlay */}
-      <div style={{
-        position: 'absolute',
-        right: 20,
-        top: 20,
-        background: 'rgba(255, 255, 255, 0.9)',
-        padding: '15px',
-        borderRadius: '8px',
-        maxWidth: '250px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-      }}>
-        <h4 style={{ margin: '0 0 10px 0' }}>🎮 Controls</h4>
-        <p style={{ margin: '5px 0', fontSize: '14px' }}>
-          🖱️ <strong>Mouse:</strong> Rotate view
-        </p>
-        <p style={{ margin: '5px 0', fontSize: '14px' }}>
-          🔄 <strong>Scroll:</strong> Zoom in/out
-        </p>
-        <p style={{ margin: '5px 0', fontSize: '14px' }}>
-          ✋ <strong>Drag:</strong> Pan camera
-        </p>
-      </div>
+      {/* Toggleable Controls Hint */}
+      <AnimatePresence>
+        {showControlsHint && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            style={{
+              position: 'absolute',
+              right: 20,
+              top: isMobile ? 'auto' : 20,
+              bottom: isMobile ? 80 : 'auto',
+              background: 'rgba(15, 23, 42, 0.9)',
+              color: 'white',
+              padding: '20px',
+              borderRadius: '16px',
+              width: '240px',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+              backdropFilter: 'blur(8px)',
+              zIndex: 30
+            }}
+          >
+            <h4 style={{ margin: '0 0 12px 0', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '8px' }}>🎮 Simulation Help</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
+                <span style={{ fontSize: '1.2rem' }}>🖱️</span>
+                <span><strong>Rotate:</strong> Left Click + Drag</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
+                <span style={{ fontSize: '1.2rem' }}>🔄</span>
+                <span><strong>Zoom:</strong> Scroll Wheel</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px' }}>
+                <span style={{ fontSize: '1.2rem' }}>✋</span>
+                <span><strong>Pan:</strong> Right Click + Drag</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

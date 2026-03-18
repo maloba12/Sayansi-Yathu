@@ -12,7 +12,7 @@ class Database {
         $this->host = getenv('DB_HOST') ?: '127.0.0.1';
         $this->db_name = getenv('DB_NAME') ?: 'sayansi_yathu';
         $this->username = getenv('DB_USER') ?: 'sayansi_admin';
-        $this->password = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : 'password';
+        $this->password = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : '@mpundu23maloba';
     }
 
     public function getConnection() {

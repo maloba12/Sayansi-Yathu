@@ -69,6 +69,8 @@ CREATE TABLE experiments (
     description TEXT,
     difficulty_level ENUM('beginner', 'intermediate', 'advanced'),
     simulation_type VARCHAR(50),
+    curriculum ENUM('new', 'old') NOT NULL DEFAULT 'new',
+    grade_or_form VARCHAR(20) NOT NULL DEFAULT 'Form 1',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

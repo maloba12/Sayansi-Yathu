@@ -24,6 +24,32 @@ const WaterPurification3D = lazy(() => import('../components/WaterPurification3D
 const Cell3D = lazy(() => import('../components/Cell3D.jsx'));
 const DNA3D = lazy(() => import('../components/DNA3D.jsx'));
 
+// Chemistry Form 1 components
+const ChemApparatus3D = lazy(() => import('../components/ChemApparatus3D.jsx'));
+const ChemSafety3D = lazy(() => import('../components/ChemSafety3D.jsx'));
+const Diffusion3D = lazy(() => import('../components/Diffusion3D.jsx'));
+const Evaporation3D = lazy(() => import('../components/Evaporation3D.jsx'));
+const CO2Test3D = lazy(() => import('../components/CO2Test3D.jsx'));
+const Solvent3D = lazy(() => import('../components/Solvent3D.jsx'));
+const NaturalIndicators3D = lazy(() => import('../components/NaturalIndicators3D.jsx'));
+
+// Physics Form 1 components
+const LabSafety3D = lazy(() => import('../components/LabSafety3D.jsx'));
+const ScientificMethod3D = lazy(() => import('../components/ScientificMethod3D.jsx'));
+const MeasureLength3D = lazy(() => import('../components/MeasureLength3D.jsx'));
+const MeasureMass3D = lazy(() => import('../components/MeasureMass3D.jsx'));
+const MeasureVolume3D = lazy(() => import('../components/MeasureVolume3D.jsx'));
+const MeasureTime3D = lazy(() => import('../components/MeasureTime3D.jsx'));
+const MeasureWeight3D = lazy(() => import('../components/MeasureWeight3D.jsx'));
+const Equilibrium3D = lazy(() => import('../components/Equilibrium3D.jsx'));
+const ForceMotion3D = lazy(() => import('../components/ForceMotion3D.jsx'));
+const CircularMotion3D = lazy(() => import('../components/CircularMotion3D.jsx'));
+const Moments3D = lazy(() => import('../components/Moments3D.jsx'));
+const MomentsEquilibrium3D = lazy(() => import('../components/MomentsEquilibrium3D.jsx'));
+const SolarSystem3D = lazy(() => import('../components/SolarSystem3D.jsx'));
+const EarthStructure3D = lazy(() => import('../components/EarthStructure3D.jsx'));
+const Atmosphere3D = lazy(() => import('../components/Atmosphere3D.jsx'));
+
 // Read experiment type from URL query parameter (?type=pendulum)
 function getSimType() {
   const params = new URLSearchParams(window.location.search);
@@ -40,15 +66,39 @@ const EXPERIMENT_COMPONENTS = {
   circuit: Circuit3D,
   density: Density3D,
   pressure: Pressure3D,
-  cog: Cog3D,
+  cog: CenterOfGravity3D,
   apparatus: Apparatus3D,
   states: StatesOfMatter3D,
   separation: Separation3D,
-  litmus: Litmus3D,
+  litmus: AcidsBases3D,
   combustion: AirCombustion3D,
   water_purify: WaterPurification3D,
   cell: Cell3D,
   dna: DNA3D,
+  // New Chemistry Form 1
+  chem_apparatus: ChemApparatus3D,
+  chem_safety: ChemSafety3D,
+  diffusion: Diffusion3D,
+  evaporation: Evaporation3D,
+  co2_test: CO2Test3D,
+  solvent: Solvent3D,
+  natural_indicators: NaturalIndicators3D,
+  // New Physics Form 1
+  lab_safety: LabSafety3D,
+  sci_method: ScientificMethod3D,
+  measure_length: MeasureLength3D,
+  measure_mass: MeasureMass3D,
+  measure_volume: MeasureVolume3D,
+  measure_time: MeasureTime3D,
+  measure_weight: MeasureWeight3D,
+  equilibrium: Equilibrium3D,
+  force_motion: ForceMotion3D,
+  circular_motion: CircularMotion3D,
+  moments: Moments3D,
+  moments_eq: MomentsEquilibrium3D,
+  solar_system: SolarSystem3D,
+  earth_structure: EarthStructure3D,
+  atmosphere: Atmosphere3D,
 };
 
 function LoadingSpinner() {

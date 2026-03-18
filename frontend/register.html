@@ -31,6 +31,12 @@
             </div>
         </section>
 
+        <!-- Mobile-only brand header -->
+        <div class="auth-mobile-header" aria-hidden="true">
+            <img src="assets/logo.png" alt="Sayansi Yathu logo">
+            <span class="mobile-brand-name">Sayansi Yathu</span>
+        </div>
+
         <!-- Right: Register Form -->
         <section class="auth-panel">
             <div class="auth-card" role="form" aria-describedby="register-description">
@@ -55,8 +61,28 @@
                     </div>
 
                     <div class="field-group">
-                        <label for="studentId">Student ID (Optional)</label>
-                        <input id="studentId" name="studentId" type="text" placeholder="STU-2025-G10-001">
+                        <label for="studentId">Student ID</label>
+                        <input id="studentId" name="studentId" type="text" placeholder="STU-2025-F1-001">
+                        <span class="field-helper">If you have a school-issued Student ID (e.g. STU-2025-F1-001), enter it here.</span>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="curriculum">Curriculum</label>
+                        <select id="curriculum" name="curriculum" required aria-required="true">
+                            <option value="" disabled selected>Select your curriculum</option>
+                            <option value="new">New Curriculum (Form 1)</option>
+                            <option value="old">Old Curriculum (Grade 10–12)</option>
+                        </select>
+                    </div>
+
+                    <div class="field-group" id="gradeGroup" style="display:none;">
+                        <label for="grade">Grade</label>
+                        <select id="grade" name="grade">
+                            <option value="" disabled selected>Select your grade</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                        </select>
                     </div>
 
                     <div class="field-group">
@@ -76,24 +102,40 @@
                     </div>
 
                     <div class="auth-actions-row">
-                        <button type="submit" class="primary-button" id="registerButton" style="width: 100%;">
+                        <button type="submit" class="primary-button" id="registerButton">
                             Create Account
                         </button>
                     </div>
                 </form>
 
-                <div class="auth-footer-row" style="margin-top: 1.5rem; display: block; text-align: center;">
+                <div class="auth-footer-row">
                     <span class="auth-footnote">
                         Already have an account? <a href="login.html"
-                            style="color: var(--primary-blue); font-weight: 600;">Sign in</a>
+                            style="color: var(--auth-accent); font-weight: 600; text-decoration: none;">Sign in</a>
                     </span>
+                    <span class="auth-copyright">&copy; 2026 Sayansi Yathu</span>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
-        // Basic registration handler (frontend only - backend needed)
+        // ── Curriculum → Grade toggle ──
+        const curriculumSelect = document.getElementById('curriculum');
+        const gradeGroup = document.getElementById('gradeGroup');
+
+        curriculumSelect.addEventListener('change', () => {
+            if (curriculumSelect.value === 'old') {
+                gradeGroup.style.display = '';
+                document.getElementById('grade').required = true;
+            } else {
+                gradeGroup.style.display = 'none';
+                document.getElementById('grade').required = false;
+                document.getElementById('grade').value = '';
+            }
+        });
+
+        // ── Registration handler ──
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -102,13 +144,21 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+            const curriculum = document.getElementById('curriculum').value;
+            const grade = document.getElementById('grade').value;
 
             // Clear previous errors
             errorEl.classList.remove('visible');
 
             // Validation
-            if (!fullName || !email || !password || !confirmPassword) {
+            if (!fullName || !email || !password || !confirmPassword || !curriculum) {
                 errorEl.textContent = 'Please fill in all required fields';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            if (curriculum === 'old' && !grade) {
+                errorEl.textContent = 'Please select your grade';
                 errorEl.classList.add('visible');
                 return;
             }
@@ -140,7 +190,9 @@
                         fullName: fullName,
                         email: email,
                         password: password,
-                        studentId: document.getElementById('studentId').value.trim() || null
+                        studentId: document.getElementById('studentId').value.trim() || null,
+                        curriculum: curriculum,
+                        grade: curriculum === 'old' ? grade : null
                     })
                 });
 

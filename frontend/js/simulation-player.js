@@ -171,9 +171,6 @@ class SimulationPlayer {
                             <p style="color: #94a3b8;">This experiment does not have a defined simulation type metadata.</p>
                         </div>
                     </div>
-                    <div class="controls-overlay" style="margin-top: 1rem; text-align: center;">
-                        <p>${step.instructions}</p>
-                    </div>
                 `;
                 return;
             }
@@ -190,9 +187,6 @@ class SimulationPlayer {
                         <p style="color:#856404; font-size:16px;">⚠️ Could not load the 3D simulation. Please ensure the simulation assets are available.</p>
                         <button class="btn btn-primary" onclick="document.getElementById('react3d-iframe').src='${iframeSrc}'">Retry</button>
                     </div>
-                </div>
-                <div class="controls-overlay" style="margin-top: 1rem; text-align: center;">
-                    <p>${step.instructions}</p>
                 </div>
             `;
 
