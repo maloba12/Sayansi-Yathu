@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import AITutorPanel from '../src/components/common/AITutorPanel';
 
 export default function ExperimentShell({ 
   title, 
+  subject = "general",
   controls, 
   theory, 
   children,
@@ -10,6 +12,7 @@ export default function ExperimentShell({
 }) {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [showControlsHint, setShowControlsHint] = useState(false);
+  const [isAITutorOpen, setIsAITutorOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -55,7 +58,7 @@ export default function ExperimentShell({
           <button
             onClick={() => setIsPanelOpen(!isPanelOpen)}
             style={{
-              width: isMobile ? 'calc(100% - 60px)' : '48px',
+              width: isMobile ? 'calc(100% - 120px)' : '48px',
               height: '48px',
               borderRadius: isMobile ? '12px' : '24px',
               background: 'rgba(255, 255, 255, 0.95)',
@@ -71,6 +74,27 @@ export default function ExperimentShell({
             }}
           >
             {isPanelOpen ? (isMobile ? '🔽 Hide Panels' : '◀') : (isMobile ? '🔼 Show Controls' : '▶')}
+          </button>
+
+          <button
+            onClick={() => setIsAITutorOpen(!isAITutorOpen)}
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '24px',
+              background: isAITutorOpen ? '#3b82f6' : 'rgba(255, 255, 255, 0.95)',
+              color: isAITutorOpen ? 'white' : '#1e293b',
+              border: '1px solid #ddd',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.2rem'
+            }}
+            title="Ask AI Tutor"
+          >
+            🤖
           </button>
 
           <button
@@ -93,6 +117,12 @@ export default function ExperimentShell({
             {showControlsHint ? '✖' : '🎮'}
           </button>
       </div>
+
+      <AITutorPanel 
+        isOpen={isAITutorOpen} 
+        onClose={() => setIsAITutorOpen(false)} 
+        context={{ experiment: title, subject: subject }}
+      />
 
       {/* Main Side Panel / Bottom Sheet */}
       <AnimatePresence>

@@ -170,7 +170,7 @@ export default function Pendulum3D() {
   };
 
   return (
-    <ExperimentShell title="Pendulum" controls={controls} theory={theory}>
+    <ExperimentShell title="Pendulum" subject="physics" controls={controls} theory={theory}>
       <Canvas
         camera={{ position: [0, 2, -8], fov: 60 }}
         shadows

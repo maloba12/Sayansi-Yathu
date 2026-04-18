@@ -8,13 +8,32 @@ INSERT INTO experiments (title, subject, description, difficulty_level, simulati
 ('DNA Replication', 'biology', 'Visualize DNA replication process', 'advanced', 'threejs');
 
 -- Insert sample users
-INSERT INTO users (name, email, password, role) VALUES
-('Natasha Kalusa', 'NatashaK@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student'),
-('Mary Phiri', 'mary@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'teacher'),
-('Mpundu Maloba', 'MpunduM@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+INSERT INTO users (id, name, email, password, role) VALUES
+(1, 'Natasha Kalusa', 'NatashaK@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student'),
+(2, 'Mary Phiri', 'mary@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'teacher'),
+(3, 'Mpundu Maloba', 'MpunduM@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
+(4, 'Chanda Bwalya', 'chanda@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student'),
+(5, 'Lubasi Musonda', 'lubasi@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student'),
+(6, 'Mutinta Moomba', 'mutinta@sayansi-yathu.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'student');
+
+-- Insert sample students (linking to users)
+INSERT INTO students (student_id, grade_or_form, class, stream, enrolled_year, linked_user_id) VALUES
+('S2024001', 'Form 1', 'A', 'Science', 2024, 1),
+('S2024002', 'Form 1', 'A', 'Science', 2024, 4),
+('S2024003', 'Form 1', 'B', 'Arts', 2024, 5),
+('S2024004', 'Form 2', 'A', 'Science', 2024, 6);
 
 -- Insert sample progress
 INSERT INTO progress (user_id, experiment_id, completed_steps, total_steps, score) VALUES
 (1, 1, 5, 5, 85.50),
 (1, 2, 3, 5, 60.00),
-(1, 4, 2, 3, 75.00);
+(1, 4, 2, 3, 75.00),
+(4, 1, 5, 5, 92.00),
+(5, 1, 2, 5, 32.00),
+(6, 1, 5, 5, 78.00);
+
+-- Insert sample assignments
+INSERT INTO assignments (teacher_id, experiment_id, title, description, grade_or_form, class, due_date) VALUES
+(2, 1, 'Pendulum Basics', 'Complete the simple pendulum experiment and record results.', 'Form 1', 'A', '2024-05-15 23:59:59'),
+(2, 2, 'Circuit Verification', 'Verify Ohm\'s Law for three different resistances.', 'Form 1', 'A', '2024-05-20 23:59:59'),
+(2, 3, 'Titration Lab', 'Perform the titration experiment and submit the final concentration.', 'Form 1', 'B', '2024-05-22 23:59:59');

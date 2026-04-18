@@ -178,7 +178,7 @@ export default function FreeFall3D() {
   };
 
   return (
-    <ExperimentShell title="Free Fall" controls={controls} theory={theory}>
+    <ExperimentShell title="Free Fall" subject="physics" controls={controls} theory={theory}>
       <Canvas camera={{ position: [5, 8, 12], fov: 50 }} shadows>
         <Scene height={height} gravity={g} isDropped={isDropped} onLand={handleLand} />
       </Canvas>

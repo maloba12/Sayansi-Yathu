@@ -1,5 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
 
 // Lazy-load experiment components for code splitting
 const Pendulum3D = lazy(() => import('../components/Pendulum3D_Stable.jsx'));
@@ -153,20 +156,24 @@ function FallbackMessage({ type }) {
   );
 }
 
-function App() {
+function Main() {
   const simType = getSimType();
-  const ExperimentComponent = EXPERIMENT_COMPONENTS[simType];
-
-  if (!ExperimentComponent) {
-    return <FallbackMessage type={simType} />;
+  
+  // If we have a simType, render the simulation player
+  if (simType) {
+    const ExperimentComponent = EXPERIMENT_COMPONENTS[simType];
+    if (!ExperimentComponent) return <FallbackMessage type={simType} />;
+    
+    return (
+      <Suspense fallback={<LoadingSpinner />}>
+        <ExperimentComponent />
+      </Suspense>
+    );
   }
 
-  return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <ExperimentComponent />
-    </Suspense>
-  );
+  // Otherwise, render the main dashboard app
+  return <App />;
 }
 
 const root = ReactDOM.createRoot(document.getElementById('app'));
-root.render(<App />);
+root.render(<Main />);

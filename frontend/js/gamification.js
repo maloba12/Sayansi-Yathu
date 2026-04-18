@@ -29,6 +29,7 @@ class GamificationEngine {
 
     init() {
         this.loadUserProgress();
+        this.loadFromBackend(); // REC-Gamification: fetch persisted data from MySQL
         this.createGamificationUI();
     }
 
@@ -46,6 +47,64 @@ class GamificationEngine {
 
     saveProgress() {
         localStorage.setItem('userProgress', JSON.stringify(this.userProgress));
+        this.syncToBackend(); // REC-Gamification: persist to MySQL
+    }
+
+    // --------------------------------------------------
+    // Sync gamification state UP to the PHP backend
+    // --------------------------------------------------
+    syncToBackend() {
+        const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+        const userId = userData.id;
+        if (!userId) return; // not logged in, skip sync
+
+        const payload = {
+            user_id: userId,
+            xp: this.userProgress.xp,
+            level: this.userProgress.level,
+            streak: this.userProgress.streak,
+            badges: this.userProgress.badges,
+            experiments_completed: this.userProgress.totalExperiments
+        };
+
+        fetch('http://localhost:8000/api/gamification/sync.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).catch(() => {}); // fire-and-forget; localStorage is the source of truth
+    }
+
+    // --------------------------------------------------
+    // Load persisted gamification state FROM the backend
+    // and merge with localStorage (keeping the higher value)
+    // --------------------------------------------------
+    loadFromBackend() {
+        const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
+        const userId = userData.id;
+        if (!userId) return;
+
+        fetch(`http://localhost:8000/api/gamification/sync.php?user_id=${userId}`)
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success || !data.gamification) return;
+                const remote = data.gamification;
+                // Merge: always keep the HIGHER value to avoid data loss
+                this.userProgress.xp    = Math.max(this.userProgress.xp,    remote.xp    || 0);
+                this.userProgress.level = Math.max(this.userProgress.level,  remote.level || 1);
+                this.userProgress.streak = remote.streak || this.userProgress.streak;
+                this.userProgress.totalExperiments = Math.max(
+                    this.userProgress.totalExperiments,
+                    remote.experiments_completed || 0
+                );
+                // Merge badges: union of both badge arrays
+                if (Array.isArray(remote.badges)) {
+                    const merged = [...new Set([...this.userProgress.badges, ...remote.badges])];
+                    this.userProgress.badges = merged;
+                }
+                // Persist the merged result back to localStorage
+                localStorage.setItem('userProgress', JSON.stringify(this.userProgress));
+            })
+            .catch(() => {}); // silently ignore on network error
     }
 
     awardXP(amount, reason) {

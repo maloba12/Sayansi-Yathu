@@ -122,3 +122,21 @@ CREATE INDEX idx_security_logs_event ON security_logs(event_type);
 CREATE INDEX idx_security_logs_user ON security_logs(user_id);
 CREATE INDEX idx_experiment_subject ON experiments(subject);
 CREATE INDEX idx_progress_user ON progress(user_id);
+
+-- Assignments table
+CREATE TABLE assignments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    teacher_id INT NOT NULL,
+    experiment_id INT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    grade_or_form VARCHAR(16) NOT NULL,
+    class VARCHAR(32) NULL,
+    due_date DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_assignments_teacher FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_assignments_experiment FOREIGN KEY (experiment_id) REFERENCES experiments(id) ON DELETE SET NULL
+);
+
+CREATE INDEX idx_assignments_teacher ON assignments(teacher_id);
+CREATE INDEX idx_assignments_class ON assignments(grade_or_form, class);

@@ -2,11 +2,16 @@
 
 /* === Design Tokens === */
 :root {
-    /* Primary Colors (Blue Theme) */
-    --primary-blue: #1e40af;
+    /* Primary Colors (Premium Palette) */
+    --primary-blue: #1e3a8a;
     --primary-blue-light: #3b82f6;
-    --primary-blue-dark: #1e3a8a;
+    --primary-blue-dark: #172554;
+    --primary-vibrant: #2563eb;
+    --accent-emerald: #10b981;
     --accent-cyan: #06b6d4;
+    --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    --surface-glass: rgba(255, 255, 255, 0.9);
+    --surface-glass-dark: rgba(31, 41, 55, 0.8);
 
     /* Neutral Colors */
     --white: #ffffff;
@@ -519,16 +524,16 @@ a:hover {
 }
 
 .sidebar-nav-link:hover {
-    background: var(--gray-50);
-    color: var(--primary-blue);
-    border-left-color: var(--primary-blue);
+    background: rgba(37, 99, 235, 0.04);
+    color: var(--primary-vibrant);
+    border-left-color: var(--primary-vibrant);
 }
 
 .sidebar-nav-link.active {
-    background: rgba(30, 64, 175, 0.05);
-    color: var(--primary-blue);
-    border-left-color: var(--primary-blue);
-    font-weight: 600;
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--primary-vibrant);
+    border-left-color: var(--primary-vibrant);
+    font-weight: 700;
 }
 
 .sidebar-nav-icon {
