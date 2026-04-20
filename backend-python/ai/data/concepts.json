@@ -1,0 +1,30 @@
+[
+  {
+    "id": "pendulum_1",
+    "experiment_id": 1,
+    "concept": "Simple Harmonic Motion",
+    "description": "A repetitive movement back and forth through an equilibrium, or central, position, so that the maximum displacement on one side of this position is equal to the maximum displacement on the other side.",
+    "help": "To find the acceleration due to gravity (g), use the formula g = 4π²(L/T²). Make sure to measure length from the pivot to the center of the bob."
+  },
+  {
+    "id": "ohms_law_1",
+    "experiment_id": 2,
+    "concept": "Ohm's Law",
+    "description": "The current through a conductor between two points is directly proportional to the voltage across the two points.",
+    "help": "If your graph of V vs I is not a straight line, check for loose connections or heating of the resistor which might change its resistance."
+  },
+  {
+    "id": "titration_1",
+    "experiment_id": 3,
+    "concept": "Neutralization Reaction",
+    "description": "A chemical reaction in which an acid and a base react quantitatively with each other.",
+    "help": "The end-point is reached when the indicator just changes colour permanently. Add the titrant dropwise as you approach the end."
+  },
+  {
+    "id": "cell_structure_1",
+    "experiment_id": 5,
+    "concept": "Organelles",
+    "description": "Specialized structures within a living cell.",
+    "help": "Identify the nucleus as the large circular structure. Mitochondria appear as bean-shaped organelles with inner folds."
+  }
+]

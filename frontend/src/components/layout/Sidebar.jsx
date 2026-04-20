@@ -10,7 +10,9 @@ import {
   FlaskConical,
   BrainCircuit,
   LogOut,
-  Shield
+  Shield,
+  ClipboardList,
+  MessageCircle
 } from 'lucide-react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -20,6 +22,7 @@ const adminLinks = [
   { path: '/admin/users', icon: Users, label: 'User Management' },
   { path: '/admin/security', icon: Shield, label: 'Security Logs' },
   { path: '/admin/reports', icon: Activity, label: 'System Reports' },
+  { path: '/admin/communication', icon: MessageCircle, label: 'Communication' },
   { path: '/admin/settings', icon: Settings, label: 'Settings' }
 ];
 
@@ -27,6 +30,7 @@ const teacherLinks = [
   { path: '/teacher', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { path: '/teacher/classes', icon: Users, label: 'My Classes' },
   { path: '/teacher/assignments', icon: BookOpen, label: 'Assignments' },
+  { path: '/teacher/sba', icon: ClipboardList, label: 'SBA Reports' },
   { path: '/teacher/generator', icon: BrainCircuit, label: 'AI Generator' },
 ];
 

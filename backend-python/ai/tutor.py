@@ -183,3 +183,42 @@ Grade: {grade}
 3. Draw a labeled diagram illustrating {topic}.
 
 (To see real AI generation, please provide an OpenAI API key in the environment variables.)"""
+    def generate_quiz(self, subject: str, topic: str, count: int = 3) -> List[Dict]:
+        """Generate structured MCQs for a topic"""
+        prompt = (
+            f"Generate {count} multiple-choice questions about '{topic}' in the subject '{subject}' "
+            "for Zambian secondary school students. "
+            "Return the response ONLY as a JSON array of objects with the following keys: "
+            "question, options (array of 4 strings), correct_answer (string matching one of the options), "
+            "explanation (brief explanation why it is correct)."
+        )
+
+        if self.client:
+            try:
+                response = self.client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a Zambian Science Curriculum expert. You output only valid JSON."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.5
+                )
+                import json
+                content = response.choices[0].message.content.strip()
+                data = json.loads(content)
+                if isinstance(data, dict) and "questions" in data:
+                    return data["questions"]
+                return data if isinstance(data, list) else [data]
+            except Exception as e:
+                print(f"Quiz Generation Error: {e}")
+        
+        # Fallback Quiz Data
+        return [
+            {
+                "question": f"What is a primary concept of {topic}?",
+                "options": ["Density", "Mass", "Volume", "Gravity"],
+                "correct_answer": "Mass",
+                "explanation": f"Mass is a fundamental property related to {topic}."
+            }
+        ]

@@ -1,5 +1,6 @@
-import React from 'react';
-import { Bell, Search, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, Search, User, Mic, MicOff } from 'lucide-react';
+import voiceInput from '../../voice-input';
 
 export default function TopNav({ role }) {
   let user = null;
@@ -25,6 +26,18 @@ export default function TopNav({ role }) {
     user.name = defaultUser.name; // Reset name to default if role mismatch detected
   }
 
+  const [isListening, setIsListening] = useState(false);
+
+  const toggleVoice = () => {
+    if (isListening) {
+      voiceInput.stop();
+      setIsListening(false);
+    } else {
+      voiceInput.start();
+      setIsListening(true);
+    }
+  };
+
   return (
     <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 z-10">
       
@@ -43,7 +56,19 @@ export default function TopNav({ role }) {
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center space-x-4">
+        {/* Voice Toggle */}
+        <button 
+          onClick={toggleVoice}
+          className={`relative p-2 rounded-full transition-all ${isListening ? 'bg-primary-vibrant text-white' : 'text-gray-500 hover:text-primary-vibrant hover:bg-gray-100'}`}
+          title={isListening ? 'Stop Voice Commands' : 'Start Voice Commands'}
+        >
+          {isListening ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+          {isListening && (
+            <span className="absolute -top-1 -right-1 block h-3 w-3 rounded-full bg-red-500 border-2 border-white animate-pulse"></span>
+          )}
+        </button>
+
         {/* Notifications */}
         <button className="relative text-gray-500 hover:text-primary-vibrant transition-colors">
           <Bell className="w-6 h-6" />

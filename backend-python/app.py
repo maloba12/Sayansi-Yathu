@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 import sys
 import os
 from dotenv import load_dotenv
@@ -26,8 +27,9 @@ try:
     from simulations.chemistry_engine import ChemistryEngine
     from simulations.biology_engine import BiologyEngine
     from ai.tutor import AITutor, ECZContentGenerator
-    from ai.virtual_assistant import VirtualLabAssistant
+    from ai.lab_assistant import LabAssistant
     from ai.adaptive import AdaptiveLearningEngine
+    from ai.calibration import AdjustmentEngine
     from analytics.dashboard import AnalyticsDashboard
 except ImportError as e:
     print(f"Import error: {e}")
@@ -43,8 +45,9 @@ chemistry_engine = ChemistryEngine()
 biology_engine = BiologyEngine()
 ai_tutor = AITutor()
 ecz_gen = ECZContentGenerator()
-virtual_assistant = VirtualLabAssistant()
-adaptive_engine = AdaptiveLearningEngine(None)  # Placeholder for DB
+virtual_assistant = LabAssistant()
+adaptive_engine = AdaptiveLearningEngine(None)
+adjustment_engine = AdjustmentEngine(None)
 # Initialize analytics as a helper instance (will be updated with a real DB connection per request)
 analytics_helper = AnalyticsDashboard()
 
@@ -392,6 +395,295 @@ def get_experiments():
     except Exception as e:
         print(f"Error fetching experiments: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/ai/quiz', methods=['GET', 'POST'])
+def handle_quiz():
+    """GET: Generate a quiz for an experiment. POST: Submit quiz results."""
+    db = _get_db()
+    if not db:
+        return jsonify({"success": False, "error": "Database unavailable"}), 503
+
+    try:
+        if request.method == 'GET':
+            experiment_id = request.args.get('experiment_id')
+            if not experiment_id:
+                return jsonify({"success": False, "error": "experiment_id required"}), 400
+            
+            # Fetch experiment details
+            cursor = db.cursor(dictionary=True)
+            cursor.execute("SELECT title, subject FROM experiments WHERE id = %s", (experiment_id,))
+            exp = cursor.fetchone()
+            cursor.close()
+            
+            if not exp:
+                return jsonify({"success": False, "error": "Experiment not found"}), 404
+            
+            # Generate Quiz using ECZContentGenerator
+            quiz = ecz_gen.generate_quiz(exp['subject'], exp['title'], count=3)
+            db.close()
+            return jsonify({"success": True, "quiz": quiz})
+
+        elif request.method == 'POST':
+            data = request.json
+            user_id = data.get('user_id')
+            experiment_id = data.get('experiment_id')
+            quiz_score = data.get('score') # expected percentage
+            
+            if not all([user_id, experiment_id, quiz_score is not None]):
+                return jsonify({"success": False, "error": "Missing required fields"}), 400
+
+            # Update progress table with quiz score
+            cursor = db.cursor()
+            query = """
+                INSERT INTO progress (user_id, experiment_id, quiz_score)
+                VALUES (%s, %s, %s)
+                ON DUPLICATE KEY UPDATE quiz_score = VALUES(quiz_score)
+            """
+            cursor.execute(query, (user_id, experiment_id, quiz_score))
+            db.commit()
+            cursor.close()
+            db.close()
+            
+            return jsonify({"success": True, "message": "Quiz score saved"})
+
+    except Exception as e:
+        print(f"Quiz Endpoint Error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/ai/adaptive/recommend', methods=['GET'])
+def adaptive_recommend():
+    """Return personalized experiment recommendations for a user."""
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({"success": False, "error": "user_id required"}), 400
+    
+    db = _get_db()
+    if not db:
+        return jsonify({"success": False, "error": "Database unavailable"}), 503
+
+    try:
+        engine = AdaptiveLearningEngine(db)
+        recomms = engine.get_recommendations(int(user_id))
+        db.close()
+        return jsonify({"success": True, "recommendations": recomms})
+    except Exception as e:
+        print(f"Adaptive Recomm error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/ai/adaptive/risk', methods=['GET'])
+def adaptive_risk():
+    """Return risk assessment for a student."""
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({"success": False, "error": "user_id required"}), 400
+    
+    db = _get_db()
+    if not db:
+        return jsonify({"success": False, "error": "Database unavailable"}), 503
+
+    try:
+        engine = AdaptiveLearningEngine(db)
+        risk_data = engine.predict_risk(int(user_id))
+        db.close()
+        return jsonify({"success": True, "risk": risk_data})
+    except Exception as e:
+        print(f"Adaptive Risk error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/ai/adaptive/train', methods=['POST'])
+def adaptive_train():
+    """Trigger training of the adaptive models."""
+    db = _get_db()
+    if not db:
+        return jsonify({"success": False, "error": "Database unavailable"}), 503
+
+    try:
+        engine = AdaptiveLearningEngine(db)
+        engine.train_models()
+        db.close()
+        return jsonify({"success": True, "message": "Models trained successfully"})
+    except Exception as e:
+        print(f"Adaptive Training error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/analytics/sba', methods=['GET'])
+def get_sba_report():
+    """Return SBA curriculum alignment report for a student."""
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({"success": False, "error": "user_id required"}), 400
+    
+    db = _get_db()
+    if not db:
+        return jsonify({"success": False, "error": "Database unavailable"}), 503
+
+    try:
+        engine = AdjustmentEngine(db)
+        report = engine.generate_sba_report(int(user_id))
+        db.close()
+        return jsonify({"success": True, "report": report})
+    except Exception as e:
+        print(f"SBA Report Error: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/ai/assistant', methods=['POST'])
+def assistant_search():
+    """Handle natural language questions via semantic search LabAssistant."""
+    data = request.json
+    query = data.get('query')
+    if not query:
+        return jsonify({"success": False, "error": "query required"}), 400
+    
+    answer = virtual_assistant.get_answer(query)
+    return jsonify({"success": True, "answer": answer})
+
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/api/uploads/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/api/chat/send', methods=['POST'])
+def chat_send():
+    data = request.json
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO messages (sender_id, receiver_id, message_text, role, media_url, file_url, file_type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (data.get('sender_id'), data.get('receiver_id'), data.get('message_text'), data.get('role'), data.get('media_url'), data.get('file_url'), data.get('file_type')))
+        db.commit()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/chat/messages', methods=['GET'])
+def get_messages():
+    user_id = request.args.get('user_id')
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT * FROM messages 
+            WHERE sender_id = %s OR receiver_id = %s OR receiver_id IS NULL 
+            ORDER BY timestamp ASC
+        """, (user_id, user_id))
+        messages = cursor.fetchall()
+        return jsonify({"success": True, "messages": messages})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/chat/upload-audio', methods=['POST'])
+def upload_audio():
+    if 'audio' not in request.files:
+        return jsonify({"success": False, "error": "No audio file"}), 400
+    file = request.files['audio']
+    if file.filename == '':
+        return jsonify({"success": False, "error": "No selected file"}), 400
+    if file:
+        filename = secure_filename(file.filename) or "audio.webm"
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        return jsonify({"success": True, "url": f"/api/uploads/{filename}"})
+
+@app.route('/api/chat/upload-file', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"success": False, "error": "No file"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"success": False, "error": "No selected file"}), 400
+    if file:
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        return jsonify({"success": True, "url": f"/api/uploads/{filename}", "type": filename.split('.')[-1]})
+
+@app.route('/api/reports/submit', methods=['POST'])
+def submit_report():
+    data = request.json
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO reports (teacher_id, class_id, subject, experiments_count, period_type)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (data.get('teacher_id'), data.get('class_id'), data.get('subject'), data.get('experiments_count'), data.get('period_type')))
+        db.commit()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/reports/summary', methods=['GET'])
+def get_reports_summary():
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM reports ORDER BY created_at DESC")
+        reports = cursor.fetchall()
+        return jsonify({"success": True, "reports": reports})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/reports/auto-summary', methods=['GET'])
+def get_auto_summary():
+    period = request.args.get('period', 'monthly')
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT sum(experiments_count) as total_experiments, count(id) as reports_count FROM reports WHERE period_type = %s", (period,))
+        stats = cursor.fetchone()
+        summary_text = f"Auto Summary for {period}: {stats['total_experiments'] or 0} experiments completed across {stats['reports_count'] or 0} report submissions."
+        
+        cursor.execute("INSERT INTO report_summaries (period, summary_text) VALUES (%s, %s)", (period, summary_text))
+        db.commit()
+        return jsonify({"success": True, "summary": summary_text})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/analytics/heatmap', methods=['GET'])
+def get_heatmap():
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT e.subject, e.grade_or_form as class_name, AVG(p.score) as avg_score
+            FROM progress p
+            JOIN experiments e ON p.experiment_id = e.id
+            GROUP BY e.subject, e.grade_or_form
+        """)
+        data = cursor.fetchall()
+        return jsonify({"success": True, "heatmap": data})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
 
 
 if __name__ == '__main__':

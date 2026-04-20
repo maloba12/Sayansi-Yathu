@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Users, BookOpen, BrainCircuit, ArrowUpRight } from 'lucide-react';
+import { Users, BookOpen, BrainCircuit, ArrowUpRight, MessageCircle, FileText, CheckCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 import AITutorPanel from '../../components/common/AITutorPanel';
+import ChatPanel from '../../components/common/ChatPanel';
 import { useNavigate } from 'react-router-dom';
 
 const FALLBACK_PERFORMANCE = [
@@ -24,6 +25,11 @@ export default function TeacherDashboard() {
   const [performanceData, setPerformanceData] = useState(FALLBACK_PERFORMANCE);
   const [recentActivity, setRecentActivity]   = useState(FALLBACK_ACTIVITY);
   const [atRiskStudents, setAtRiskStudents]   = useState([]);
+  const [systemAlert, setSystemAlert]         = useState(null);
+  
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportForm, setReportForm] = useState({ class_id: 'Form 1', subject: 'Physics', experiments_count: 0, period_type: 'monthly' });
 
   useEffect(() => {
     // Fetch real class analytics from Python backend (REC-03)
@@ -53,6 +59,16 @@ export default function TeacherDashboard() {
         }
       })
       .catch(() => {}); // keep fallback data if analytics unavailable
+
+    // Fetch AI-powered risk alerts (REC-07)
+    // For demo, we are checking user_id 1 (a sample student linked to this teacher)
+    axios.get('http://localhost:5000/api/ai/adaptive/risk?user_id=1')
+      .then(r => {
+        if (r.data.success && r.data.risk.is_at_risk) {
+          setSystemAlert(`Early Warning: Student ID ${r.data.risk.user_id} is predicted to be at-risk (Low score probability: ${Math.round(r.data.risk.probability * 100)}%).`);
+        }
+      })
+      .catch(e => console.error("Risk API error:", e));
   }, []);
 
   // Open AI tutor pre-loaded with student + subject context
@@ -68,10 +84,47 @@ export default function TeacherDashboard() {
   return (
     <div className="relative p-8 max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
-        <p className="text-gray-500 mt-1">Class performance overview and AI assistants.</p>
+      <div className="flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
+          <p className="text-gray-500 mt-1">Class performance overview and AI assistants.</p>
+        </div>
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => setIsReportModalOpen(true)}
+            className="flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors gap-2"
+          >
+            <FileText className="w-4 h-4" /> Submit Report
+          </button>
+          <button 
+            onClick={() => setIsChatOpen(true)}
+            className="flex items-center px-4 py-2 bg-primary-vibrant text-white rounded-lg hover:bg-primary-dark transition-colors gap-2 shadow-vibrant"
+          >
+            <MessageCircle className="w-4 h-4" /> Academic Chat
+          </button>
+        </div>
       </div>
+
+      {/* REC-07 Early-Warning System Alert Banner */}
+      {systemAlert && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm flex items-center justify-between animate-pulse">
+          <div className="flex items-center">
+            <div className="p-2 bg-red-100 text-red-600 rounded-full mr-3">
+              <BrainCircuit className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-red-800">AI Early-Warning Alert</p>
+              <p className="text-xs text-red-700">{systemAlert}</p>
+            </div>
+          </div>
+          <button 
+            className="text-xs font-bold text-red-600 hover:text-red-800 underline"
+            onClick={() => openTutorForStudent('Student 1', 'general')}
+          >
+            Intervene with AI Tutor
+          </button>
+        </div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -204,6 +257,70 @@ export default function TeacherDashboard() {
         onClose={() => setIsTutorOpen(false)}
         context={tutorContext}
       />
+      
+      {/* Collaboration Chat Panel */}
+      <ChatPanel
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        currentUserId={1} // Static teacher ID for demo
+        role="Teacher"
+      />
+
+      {/* Report Submit Modal */}
+      {isReportModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl w-96 shadow-xl">
+            <h3 className="text-lg font-bold mb-4">Submit Lab Report</h3>
+            <div className="space-y-4 text-sm">
+              <div>
+                <label className="block text-gray-700 mb-1">Class</label>
+                <select className="w-full border rounded p-2" value={reportForm.class_id} onChange={e => setReportForm({...reportForm, class_id: e.target.value})}>
+                  <option>Form 1</option>
+                  <option>Form 2</option>
+                  <option>Form 3</option>
+                  <option>Form 4</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-1">Subject</label>
+                <select className="w-full border rounded p-2" value={reportForm.subject} onChange={e => setReportForm({...reportForm, subject: e.target.value})}>
+                  <option>Physics</option>
+                  <option>Chemistry</option>
+                  <option>Biology</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-1">Experiments Conducted</label>
+                <input type="number" min="0" className="w-full border rounded p-2" value={reportForm.experiments_count} onChange={e => setReportForm({...reportForm, experiments_count: parseInt(e.target.value) || 0})} />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-1">Period</label>
+                <select className="w-full border rounded p-2" value={reportForm.period_type} onChange={e => setReportForm({...reportForm, period_type: e.target.value})}>
+                  <option value="monthly">Monthly</option>
+                  <option value="term">Termly</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 mt-6">
+              <button className="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded" onClick={() => setIsReportModalOpen(false)}>Cancel</button>
+              <button 
+                className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 flex items-center"
+                onClick={async () => {
+                   try {
+                     await axios.post('http://localhost:5000/api/reports/submit', { ...reportForm, teacher_id: 1 });
+                     alert("Report submitted successfully!");
+                     setIsReportModalOpen(false);
+                   } catch(e) {
+                     alert("Failed to submit report");
+                   }
+                }}
+              >
+                <CheckCircle className="w-4 h-4 mr-2"/> Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

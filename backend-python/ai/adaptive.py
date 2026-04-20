@@ -1,178 +1,147 @@
 import pandas as pd
 import numpy as np
+import os
+import joblib
 from typing import Dict, List, Any
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
+MODEL_PATH = os.path.join(os.path.dirname(__file__), 'models')
+if not os.path.exists(MODEL_PATH):
+    os.makedirs(MODEL_PATH)
 
 class AdaptiveLearningEngine:
-    def __init__(self, db_connection):
+    def __init__(self, db_connection=None):
         self.db = db_connection
-        self.learning_model = RandomForestClassifier(n_estimators=100, random_state=42)
-        self.scaler = StandardScaler()
+        self.recommender = RandomForestRegressor(n_estimators=100, random_state=42)
+        self.risk_model = LogisticRegression(random_state=42)
+        self.le_subject = LabelEncoder()
         self.is_trained = False
     
-    def generate_learning_path(self, user_id: str) -> Dict[str, Any]:
-        """Generate personalized learning path for user"""
+    def train_models(self):
+        """Train both recommendation and risk models from progress data"""
+        if not self.db:
+            print("No DB connection for training")
+            return
         
-        # Get user data
-        user_profile = self.get_user_profile(user_id)
-        performance_data = self.get_performance_data(user_id)
-        
-        # Analyze learning style
-        learning_style = self.analyze_learning_style(user_profile, performance_data)
-        
-        # Determine current level
-        current_level = self.assess_current_level(performance_data)
-        
-        # Generate next steps
-        next_experiments = self.recommend_next_experiments(user_id, current_level, learning_style)
-        
-        # Calculate estimated time
-        estimated_time = self.estimate_completion_time(user_id, next_experiments)
-        
-        # Identify prerequisites
-        prerequisites = self.check_prerequisites(user_id, next_experiments)
-        
-        # Create adaptive timeline
-        timeline = self.create_adaptive_timeline(user_id, next_experiments)
-        
-        return {
-            "user_id": user_id,
-            "learning_style": learning_style,
-            "current_level": current_level,
-            "next_experiments": next_experiments,
-            "estimated_time": estimated_time,
-            "prerequisites": prerequisites,
-            "timeline": timeline,
-            "adaptation_reasons": self.explain_adaptation(user_id)
-        }
-    
-    def analyze_learning_style(self, profile: Dict, performance: pd.DataFrame) -> Dict[str, str]:
-        """Analyze student's learning preferences and style"""
-        
-        # Analyze time patterns
-        time_patterns = self.analyze_time_patterns(performance)
-        
-        # Analyze success rates by difficulty
-        difficulty_success = self.analyze_difficulty_success(performance)
-        
-        # Analyze subject preferences
-        subject_preferences = self.analyze_subject_preferences(performance)
-        
-        # Determine learning style
-        if time_patterns['prefers_short_sessions']:
-            session_style = "micro-learning"
-        elif time_patterns['prefers_long_sessions']:
-            session_style = "deep-dive"
-        else:
-            session_style = "balanced"
-        
-        if difficulty_success['improves_with_scaffolding']:
-            approach = "scaffolded"
-        else:
-            approach = "exploratory"
-        
-        return {
-            "session_style": session_style,
-            "approach": approach,
-            "strongest_subject": subject_preferences['highest_score'],
-            "weakest_subject": subject_preferences['lowest_score'],
-            "preferred_difficulty": difficulty_success['optimal_difficulty']
-        }
-    
-    def assess_current_level(self, performance: pd.DataFrame) -> Dict[str, Any]:
-        """Assess student's current competency level"""
-        
-        if performance.empty:
-            return {"level": 1, "confidence": "high", "description": "Beginner"}
-        
-        # Calculate composite score
-        avg_score = performance['score'].mean()
-        completion_rate = (performance['completed_steps'] / performance['total_steps']).mean()
-        
-        # Subject-specific levels
-        subject_levels = {}
-        for subject in ['physics', 'chemistry', 'biology']:
-            subject_data = performance[performance['subject'] == subject]
-            if not subject_data.empty:
-                subject_levels[subject] = self.calculate_subject_level(subject_data)
-        
-        # Overall level
-        overall_level = self.calculate_overall_level(avg_score, completion_rate, subject_levels)
-        
-        return {
-            "overall_level": overall_level,
-            "subject_levels": subject_levels,
-            "avg_score": avg_score,
-            "completion_rate": completion_rate
-        }
-    
-    def recommend_next_experiments(self, user_id: str, current_level: Dict, learning_style: Dict) -> List[Dict[str, Any]]:
-        """Recommend next experiments based on analysis"""
-        
-        # Get available experiments
-        available_experiments = self.get_available_experiments(current_level['overall_level'])
-        
-        # Score experiments based on user profile
-        scored_experiments = []
-        for experiment in available_experiments:
-            score = self.score_experiment(user_id, experiment, learning_style)
-            scored_experiments.append({**experiment, "recommendation_score": score})
-        
-        # Sort by score and return top 5
-        scored_experiments.sort(key=lambda x: x['recommendation_score'], reverse=True)
-        return scored_experiments[:5]
-    
-    def create_adaptive_timeline(self, user_id: str, experiments: List[Dict]) -> Dict[str, Any]:
-        """Create personalized timeline based on learning patterns"""
-        
-        user_patterns = self.get_user_learning_patterns(user_id)
-        
-        timeline = []
-        cumulative_hours = 0
-        
-        for experiment in experiments:
-            # Estimate time based on user patterns
-            estimated_time = self.estimate_experiment_time(user_id, experiment)
+        try:
+            query = """
+                SELECT p.*, e.subject, e.difficulty_level 
+                FROM progress p 
+                JOIN experiments e ON p.experiment_id = e.id
+            """
+            df = pd.read_sql(query, self.db)
             
-            # Adjust based on difficulty and user skill
-            difficulty_factor = self.get_difficulty_factor(experiment['difficulty_level'], user_id)
-            adjusted_time = estimated_time * difficulty_factor
+            if len(df) < 5:
+                print("Insufficient data for ML training")
+                return
+
+            # Preprocessing
+            df['subject_enc'] = self.le_subject.fit_transform(df['subject'])
             
-            timeline.append({
-                "experiment_id": experiment['id'],
-                "experiment_name": experiment['title'],
-                "estimated_hours": adjusted_time,
-                "start_time": cumulative_hours,
-                "end_time": cumulative_hours + adjusted_time,
-                "difficulty": experiment['difficulty_level'],
-                "prerequisites": experiment.get('prerequisites', [])
-            })
+            # 1. Train Recommender (Predict score based on subject + progress)
+            # Use score as target
+            X = df[['subject_enc', 'completed_steps', 'time_spent']]
+            y = df['score']
+            self.recommender.fit(X, y)
             
-            cumulative_hours += adjusted_time
-        
-        return {
-            "total_estimated_hours": cumulative_hours,
-            "timeline": timeline,
-            "weekly_breakdown": self.create_weekly_breakdown(timeline, user_patterns)
-        }
-    
-    def predict_performance(self, user_id: str, experiment_id: str) -> Dict[str, float]:
-        """Predict performance on a new experiment"""
-        
+            # 2. Train Risk Model (Predict if score < 50)
+            y_risk = (df['score'] < 50).astype(int)
+            self.risk_model.fit(X, y_risk)
+            
+            # Save models
+            joblib.dump(self.recommender, os.path.join(MODEL_PATH, 'recommender.joblib'))
+            joblib.dump(self.risk_model, os.path.join(MODEL_PATH, 'risk_model.joblib'))
+            joblib.dump(self.le_subject, os.path.join(MODEL_PATH, 'le_subject.joblib'))
+            
+            self.is_trained = True
+            print("Adaptive models trained successfully")
+        except Exception as e:
+            print(f"Training error: {e}")
+
+    def get_recommendations(self, user_id: int) -> List[Dict]:
+        """Recommend experiments the user hasn't done yet"""
         if not self.is_trained:
-            self.train_model()
+            self.load_models()
         
-        user_features = self.extract_user_features(user_id)
-        experiment_features = self.extract_experiment_features(experiment_id)
-        
-        features = np.array([user_features + experiment_features])
-        features_scaled = self.scaler.transform(features)
-        
-        prediction = self.learning_model.predict_proba(features_scaled)[0]
-        
-        return {
-            "predicted_score": float(prediction[1] * 100),
-            "confidence": float(max(prediction)),
-            "estimated_completion_time": self.predict_completion_time(user_id, experiment_id)
-        }
+        try:
+            cursor = self.db.cursor(dictionary=True)
+            # Get experiments not done by user
+            cursor.execute("""
+                SELECT id, title, subject, difficulty_level 
+                FROM experiments 
+                WHERE id NOT IN (SELECT experiment_id FROM progress WHERE user_id = %s)
+            """, (user_id,))
+            available = cursor.fetchall()
+            cursor.close()
+            
+            if not available or not self.is_trained:
+                return []
+
+            recommendations = []
+            for exp in available:
+                # Predict score for this experiment (simplified features)
+                # subject_enc, completed_steps (avg), time_spent (avg)
+                sub_enc = self.le_subject.transform([exp['subject']])[0]
+                features = np.array([[sub_enc, 5, 300]]) # placeholders for typical steps/time
+                pred_score = self.recommender.predict(features)[0]
+                
+                recommendations.append({
+                    "experiment_id": exp['id'],
+                    "title": exp['title'],
+                    "subject": exp['subject'],
+                    "predicted_score": round(float(pred_score), 1),
+                    "reason": f"Matches your competency in {exp['subject']}"
+                })
+            
+            # Sort by predicted score (recommend things they will do well in)
+            return sorted(recommendations, key=lambda x: x['predicted_score'], reverse=True)[:3]
+            
+        except Exception as e:
+            print(f"Recommendation error: {e}")
+            return []
+
+    def predict_risk(self, user_id: int) -> Dict:
+        """Predict if a student is at risk (low scores predicted or actual)"""
+        if not self.is_trained:
+            self.load_models()
+
+        try:
+            cursor = self.db.cursor(dictionary=True)
+            cursor.execute("SELECT score, subject FROM progress WHERE user_id = %s", (user_id,))
+            recent = cursor.fetchall()
+            cursor.close()
+
+            if not recent:
+                return {"is_at_risk": False, "probability": 0.0}
+
+            # Use average of recent performance
+            df_recent = pd.DataFrame(recent)
+            sub_enc = self.le_subject.transform(df_recent['subject']).mean()
+            features = np.array([[sub_enc, 5, 300]])
+            
+            risk_prob = self.risk_model.predict_proba(features)[0][1]
+            actual_avg = df_recent['score'].mean()
+            
+            is_at_risk = bool(risk_prob > 0.5 or actual_avg < 50)
+            
+            return {
+                "user_id": user_id,
+                "is_at_risk": is_at_risk,
+                "probability": round(float(risk_prob), 2),
+                "actual_avg_score": float(actual_avg)
+            }
+        except Exception as e:
+            print(f"Risk prediction error: {e}")
+            return {"is_at_risk": False, "error": str(e)}
+
+    def load_models(self):
+        """Load trained models from disk"""
+        try:
+            self.recommender = joblib.load(os.path.join(MODEL_PATH, 'recommender.joblib'))
+            self.risk_model = joblib.load(os.path.join(MODEL_PATH, 'risk_model.joblib'))
+            self.le_subject = joblib.load(os.path.join(MODEL_PATH, 'le_subject.joblib'))
+            self.is_trained = True
+        except:
+            self.is_trained = False

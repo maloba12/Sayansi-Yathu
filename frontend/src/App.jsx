@@ -10,7 +10,9 @@ import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import ContentGenerator from './pages/teacher/ContentGenerator';
 import TeacherClasses from './pages/teacher/TeacherClasses';
 import TeacherAssignments from './pages/teacher/TeacherAssignments';
+import TeacherSBAReports from './pages/teacher/TeacherSBAReports';
 import AdminReports from './pages/admin/AdminReports';
+import AdminCommunication from './pages/admin/AdminCommunication';
 import AdminSettings from './pages/admin/AdminSettings';
 import StudentDashboard from './pages/student/StudentDashboard';
 import LabLibrary from './pages/student/LabLibrary';
@@ -47,6 +49,7 @@ function App() {
               <Route path="users" element={<UserManagement />} />
               <Route path="security" element={<SecurityLogs />} />
               <Route path="reports" element={<AdminReports />} />
+              <Route path="communication" element={<AdminCommunication />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </MainLayout>
@@ -58,6 +61,7 @@ function App() {
               <Route path="classes" element={<TeacherClasses />} />
               <Route path="assignments" element={<TeacherAssignments />} />
               <Route path="generator" element={<ContentGenerator />} />
+              <Route path="sba" element={<TeacherSBAReports />} />
             </Routes>
           </MainLayout>
         } />
