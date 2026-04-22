@@ -32,6 +32,7 @@ const teacherLinks = [
   { path: '/teacher/assignments', icon: BookOpen, label: 'Assignments' },
   { path: '/teacher/sba', icon: ClipboardList, label: 'SBA Reports' },
   { path: '/teacher/generator', icon: BrainCircuit, label: 'AI Generator' },
+  { path: '/teacher/communication', icon: MessageCircle, label: 'Communication Hub' },
 ];
 
 const studentLinks = [

@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import ExperimentShell from './components/common/ExperimentShell';
 
 
 // Lazy-load experiment components for code splitting
@@ -166,7 +167,11 @@ function Main() {
     
     return (
       <Suspense fallback={<LoadingSpinner />}>
-        <ExperimentComponent />
+        <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+          <ExperimentShell simType={simType}>
+            <ExperimentComponent />
+          </ExperimentShell>
+        </div>
       </Suspense>
     );
   }

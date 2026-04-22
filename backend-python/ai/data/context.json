@@ -1,0 +1,22 @@
+{
+  "pendulum": {
+    "context": "In many rural Zambian schools, understanding the physics behind a pendulum helps explain the swing of a traditional maize pounder (Mtondo) or playground swings made from old tires.",
+    "theme": "Local Zambian Mechanics"
+  },
+  "circuit": {
+    "context": "Zambia frequently faces load-shedding. Understanding circuits helps students learn how to safely wire a solar panel to a battery for lighting homes during power outages.",
+    "theme": "Solar Energy & Load Shedding"
+  },
+  "diffusion": {
+    "context": "When storing harvested maize with traditional herbs to prevent weevils, the smell spreads throughout the storage bin. This is an everyday example of diffusion.",
+    "theme": "Agriculture & Preservation"
+  },
+  "water_purify": {
+    "context": "During the rainy season, ensuring clean drinking water is vital to prevent cholera. Water purification using local sand, gravel, and charcoal filters is a crucial real-world application.",
+    "theme": "Public Health & Safety"
+  },
+  "combustion": {
+    "context": "Using a traditional brazier (Mbaula) shows how air is needed to keep the charcoal burning brightly. Regulating the air flow changes how fast the charcoal burns.",
+    "theme": "Domestic Energy Use"
+  }
+}

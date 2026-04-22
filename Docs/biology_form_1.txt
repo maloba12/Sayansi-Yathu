@@ -1,0 +1,188 @@
+SAYANSI YATHU – FORM 1 BIOLOGY EXPERIMENTS
+Aligned to Zambia Biology Syllabus O-Level Form 1-4 (CDC, 2024)
+==================================================
+TOPIC 1.1.0: CONCEPTS AND METHODS IN BIOLOGY
+Experiment 1: Scientific Inquiry Method
+Topic: Nature of Science Inquiry in Biology
+Form: 1
+Aim: To apply the scientific inquiry method in carrying out scientific investigations.
+Materials: Notebook, pen, simple objects from the local environment (e.g., plant leaf, stone, insect).
+Procedure:
+
+Observe a biological phenomenon in the surroundings.
+Identify a problem or question.
+Form a hypothesis.
+Test the hypothesis through simple experimentation or observation.
+Record and analyse data.
+Form a conclusion and share findings with peers.
+Observation: Stages of inquiry followed; data recorded clearly.
+Conclusion: Scientific inquiry method leads to reliable understanding of biological facts.
+Safety Precautions: Handle living or sharp objects carefully; work in a clean area.
+
+Experiment 2: Characteristics of Living Things
+Topic: Characteristics of Living Things
+Form: 1
+Aim: To investigate the characteristics of living things.
+Materials: Living specimens (e.g., plant, insect, earthworm) and non-living objects (e.g., stone).
+Procedure:
+
+Observe living and non-living specimens.
+Test for each characteristic (feeding/nutrition, respiration, excretion, reproduction, sensitivity/irritability, movement/locomotion, growth).
+Distinguish living things from non-living things.
+Observation: Living things show all seven characteristics; non-living things do not.
+Conclusion: Living organisms exhibit nutrition, respiration, excretion, reproduction, sensitivity, movement, and growth.
+Safety Precautions: Do not harm living organisms; wash hands after handling specimens.
+
+==================================================
+TOPIC 1.2.0: PRINCIPLES OF CELLULAR LIFE
+Experiment 3: Use of Microscopes
+Topic: Microscopes
+Form: 1
+Aim: To use different types of microscopes to examine specimens.
+Materials: Compound microscope, prepared slides or simple specimens (e.g., onion epidermis), glass slides, cover slips, water, dropper.
+Procedure:
+
+Identify parts of the compound microscope and their functions.
+Prepare a wet mount specimen slide.
+Mount the slide, focus under low and high power.
+Observe and calculate magnification.
+Observation: Cells and structures become visible at different magnifications.
+Conclusion: Microscopes allow detailed examination of small biological specimens.
+Safety Precautions: Handle microscope and glass slides carefully to avoid breakage or eye injury.
+
+Experiment 4: Basic Cell Structure
+Topic: Basic Cell Structure
+Form: 1
+Aim: To explore the basic cell structure.
+Materials: Microscope, onion epidermis or cheek cells, slides, cover slips, methylene blue or iodine stain.
+Procedure:
+
+Prepare a wet mount of plant or animal cells.
+Stain and observe under microscope.
+Illustrate and label the basic structures.
+Create a simple model of a cell.
+Observation: Plant cells show cell wall and chloroplasts; animal cells show nucleus and cytoplasm.
+Conclusion: Cells have basic structures that perform life functions.
+Safety Precautions: Use stains carefully; avoid direct contact with eyes.
+
+Experiment 5: Types of Cells (Eukaryotic vs Prokaryotic)
+Topic: Types of Cells
+Form: 1
+Aim: To distinguish between eukaryotic and prokaryotic cells.
+Materials: Microscope, prepared slides of plant/animal cells and bacterial cells (or simple bacterial smear).
+Procedure:
+
+Observe eukaryotic cells (plant, animal, fungi, amoeba).
+Observe prokaryotic cells (bacterial).
+Compare structures and functions of organelles.
+Observation: Eukaryotic cells have nucleus and membrane-bound organelles; prokaryotic cells do not.
+Conclusion: Eukaryotic and prokaryotic cells differ in structure and complexity.
+Safety Precautions: Handle microscope slides gently.
+
+Experiment 6: Specialised Cells
+Topic: Cell Specialisation
+Form: 1
+Aim: To relate adaptive features of specialised cells to their functions.
+Materials: Microscope, slides or pictures/models of specialised cells (root hair, palisade, guard, nerve, blood, muscle, sperm cells).
+Procedure:
+
+Observe adaptive features of each specialised cell.
+Relate features to their specific functions.
+Observation: Each cell has unique structures suited to its role (e.g., root hair cell has long extension for absorption).
+Conclusion: Specialised cells have adaptive features that enable them to perform specific functions efficiently.
+Safety Precautions: Handle slides and models with care.
+
+==================================================
+TOPIC 1.3.0: MAINTENANCE OF THE ORGANISM
+Experiment 7: Nutritional Deficiency Diseases and Disorders
+Topic: Nutritional Deficiency Diseases and Disorders
+Form: 1
+Aim: To investigate nutritional deficiency diseases and disorders in plants and human beings.
+Materials: Pictures or real examples of deficient plants (e.g., yellow leaves for chlorosis), charts of human deficiency symptoms.
+Procedure:
+
+Observe symptoms of deficiencies in plants and humans.
+Identify missing nutrients (e.g., nitrogen, iron, vitamins).
+Recommend corrective nutrients or treatments.
+Observation: Specific symptoms linked to lack of particular nutrients.
+Conclusion: Appropriate nutrients can address deficiency diseases in plants and humans.
+Safety Precautions: Do not consume any experimental materials.
+
+==================================================
+TOPIC 1.4.0: CONTINUITY OF LIFE
+Experiment 8: Reproduction in Living Organisms
+Topic: Reproduction in Living Organisms
+Form: 1
+Aim: To demonstrate understanding of how living organisms reproduce.
+Materials: Seeds, spores (e.g., from ferns), vegetative parts (e.g., potato tuber, onion bulb), Rhizopus/Mucor on bread.
+Procedure:
+
+Demonstrate asexual reproduction using vegetative parts, spores, and seeds.
+Demonstrate sexual reproduction using seeds.
+Compare asexual and sexual reproduction.
+Grow fungi (Rhizopus/Mucor) on food to observe structure.
+Observation: New plants/organisms grow from vegetative parts or spores without gametes; fungi show spore formation.
+Conclusion: Living organisms reproduce asexually or sexually; fungi reproduce by spores.
+Safety Precautions: Do not eat mouldy food; wash hands after handling.
+
+==================================================
+TOPIC 1.5.0: COORDINATION AND RESPONSE
+Experiment 9: Tropisms in Plants
+Topic: Coordination and Response in Plants
+Form: 1
+Aim: To explore tropisms in plants and their relevance.
+Materials: Young seedlings (beans or maize), boxes with light from one side, water, chemicals (e.g., salt solution), pots.
+Procedure:
+
+Set up shoots and roots for phototropism (light from one side).
+Set up for geotropism (gravity).
+Set up for hydrotropism (water) and chemotropism (chemicals).
+Observe and record direction of growth over days.
+Observation: Shoots grow towards light; roots grow towards gravity/water/chemicals.
+Conclusion: Tropisms help plants respond to environmental stimuli for survival.
+Safety Precautions: Use safe, non-toxic chemicals; water plants regularly.
+
+Experiment 10: Taxic Responses in Invertebrates
+Topic: Coordination and Response in Animals
+Form: 1
+Aim: To explore taxic responses in invertebrates and their relevance.
+Materials: Woodlice, cockroaches or earthworms, simple choice chamber or dark/light setup, chemicals.
+Procedure:
+
+Place invertebrates in setups with light vs dark, moist vs dry, or chemical gradients.
+Record direction of movement (phototaxis, geotaxis, chemotaxis).
+Evaluate relevance to survival.
+Observation: Invertebrates move towards or away from stimuli (e.g., woodlice prefer dark/moist).
+Conclusion: Taxic responses help invertebrates avoid danger or find favourable conditions.
+Safety Precautions: Handle invertebrates gently and release them unharmed.
+
+==================================================
+TOPIC 1.6.0: ECOLOGICAL RELATIONSHIPS AND EVOLUTION
+Experiment 11: Features of Ecosystems
+Topic: Ecosystem
+Form: 1
+Aim: To explore features of ecosystems in the local environment.
+Materials: Notebook, measuring tape, quadrat (if available) or marked area in school ground/pond.
+Procedure:
+
+Visit a local terrestrial or aquatic ecosystem.
+Observe and record biotic and abiotic features.
+Construct a simple model of the ecosystem.
+Observation: Presence of producers, consumers, decomposers, soil, water, light, etc.
+Conclusion: Ecosystems consist of interacting biotic and abiotic components.
+Safety Precautions: Stay in safe areas; do not disturb habitats unnecessarily.
+
+Experiment 12: Soil Composition and Fertility
+Topic: The Soil – Composition and Fertility
+Form: 1
+Aim: To analyse soil composition and fertility.
+Materials: Soil samples (clay, sandy, loamy), water, beakers, filter paper, potted plants or seeds.
+Procedure:
+
+Examine soil components (particles, air, humus, microorganisms).
+Test properties (capillarity, drainage, particle size).
+Compare crop/seed growth in different soil types.
+Investigate ways to improve fertility.
+Observation: Loamy soil shows best drainage and plant growth; different soils have different textures and fertility.
+Conclusion: Soil fertility depends on composition; it can be improved through good practices.
+Safety Precautions: Wash hands after handling soil; use clean equipment.

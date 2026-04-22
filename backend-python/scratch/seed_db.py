@@ -29,13 +29,25 @@ def seed():
         
         # 1. Experiments
         experiments_sql = """
-        INSERT INTO experiments (id, title, subject, description, difficulty_level, simulation_type) VALUES
-        (1, 'Simple Pendulum', 'physics', 'Study the motion of a simple pendulum', 'beginner', 'threejs'),
-        (2, 'Ohm\\'s Law Circuit', 'physics', 'Verify Ohm\\'s law using virtual circuits', 'intermediate', 'threejs'),
-        (3, 'Acid-Base Titration', 'chemistry', 'Perform acid-base titration experiment', 'intermediate', 'p5js'),
-        (4, 'Chemical Reactions', 'chemistry', 'Observe different types of chemical reactions', 'beginner', 'p5js'),
-        (5, 'Cell Structure', 'biology', 'Explore animal and plant cell structures', 'beginner', 'threejs'),
-        (6, 'DNA Replication', 'biology', 'Visualize DNA replication process', 'advanced', 'threejs');
+        INSERT INTO experiments (id, title, subject, description, difficulty_level, simulation_type, curriculum, grade_or_form) VALUES
+        (1, 'Simple Pendulum', 'physics', 'Study the motion of a simple pendulum', 'beginner', 'threejs', 'new', 'Form 1'),
+        (2, 'Ohm\\'s Law Circuit', 'physics', 'Verify Ohm\\'s law using virtual circuits', 'intermediate', 'threejs', 'new', 'Form 1'),
+        (3, 'Acid-Base Titration', 'chemistry', 'Perform acid-base titration experiment', 'intermediate', 'p5js', 'new', 'Form 1'),
+        (4, 'Chemical Reactions', 'chemistry', 'Observe different types of chemical reactions', 'beginner', 'p5js', 'new', 'Form 1'),
+        (5, 'Cell Structure', 'biology', 'Explore animal and plant cell structures', 'beginner', 'threejs', 'new', 'Form 1'),
+        (6, 'DNA Replication', 'biology', 'Visualize DNA replication process', 'advanced', 'threejs', 'new', 'Form 1'),
+        (7, 'Scientific Inquiry Method', 'biology', 'To apply the scientific inquiry method in carrying out scientific investigations.', 'beginner', 'threejs', 'new', 'Form 1'),
+        (8, 'Characteristics of Living Things', 'biology', 'To investigate the characteristics of living things.', 'beginner', 'threejs', 'new', 'Form 1'),
+        (9, 'Use of Microscopes', 'biology', 'To use different types of microscopes to examine specimens.', 'beginner', 'threejs', 'new', 'Form 1'),
+        (10, 'Basic Cell Structure', 'biology', 'To explore the basic cell structure of plant and animal cells.', 'beginner', 'threejs', 'new', 'Form 1'),
+        (11, 'Types of Cells (Eukaryotic vs Prokaryotic)', 'biology', 'To distinguish between eukaryotic and prokaryotic cells.', 'intermediate', 'threejs', 'new', 'Form 1'),
+        (12, 'Specialised Cells', 'biology', 'To relate adaptive features of specialised cells to their functions.', 'intermediate', 'threejs', 'new', 'Form 1'),
+        (13, 'Nutritional Deficiency Diseases and Disorders', 'biology', 'To investigate nutritional deficiency diseases and disorders in plants and humans.', 'intermediate', 'threejs', 'new', 'Form 1'),
+        (14, 'Reproduction in Living Organisms', 'biology', 'To demonstrate understanding of how living organisms reproduce.', 'intermediate', 'threejs', 'new', 'Form 1'),
+        (15, 'Tropisms in Plants', 'biology', 'To explore tropisms in plants and their relevance to survival.', 'advanced', 'threejs', 'new', 'Form 1'),
+        (16, 'Taxic Responses in Invertebrates', 'biology', 'To explore taxic responses in invertebrates such as woodlice and earthworms.', 'advanced', 'threejs', 'new', 'Form 1'),
+        (17, 'Features of Ecosystems', 'biology', 'To explore features of ecosystems in the local environment.', 'advanced', 'threejs', 'new', 'Form 1'),
+        (18, 'Soil Composition and Fertility', 'biology', 'To analyse soil composition and fertility using different soil samples.', 'advanced', 'threejs', 'new', 'Form 1');
         """
         cursor.execute(experiments_sql)
         

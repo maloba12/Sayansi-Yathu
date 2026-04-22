@@ -10,6 +10,7 @@ export default function StudentDashboard() {
   const [studentStats, setStudentStats] = useState({
     experiments_completed: 0, avg_score: 0
   });
+  const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     let userId = null;
@@ -29,11 +30,12 @@ export default function StudentDashboard() {
       try {
         const response = await axios.get('http://localhost:8000/api/simulations/list.php');
         if (response.data && response.data.success) {
-          const formattedLabs = response.data.simulations.slice(0, 4).map(dbLab => ({
-            id: dbLab.simulation_type,
+          const formattedLabs = response.data.simulations.map(dbLab => ({
+            id: dbLab.id,
+            simType: dbLab.simulation_type,
             title: dbLab.title,
             subject: dbLab.subject ? dbLab.subject.charAt(0).toUpperCase() + dbLab.subject.slice(1) : '',
-            difficulty: dbLab.difficulty || 'Medium',
+            difficulty: dbLab.difficulty || 'beginner',
             time: '20 mins'
           }));
           setRecommendedLabs(formattedLabs);
@@ -52,6 +54,14 @@ export default function StudentDashboard() {
         })
         .catch(() => {}); // silently ignore if analytics not yet connected
     }
+    
+    // Fetch gamification leaderboard
+    axios.get('http://localhost:5000/api/gamification/leaderboard')
+      .then(res => {
+        if (res.data.success) setLeaderboard(res.data.leaderboard);
+      })
+      .catch(e => console.error('Leaderboard fetch failed', e));
+
   }, []);
 
   return (
@@ -90,7 +100,7 @@ export default function StudentDashboard() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-bold text-gray-900">Recommended Labs</h3>
-            <button className="text-sm text-primary-vibrant font-medium hover:underline">View Library &rarr;</button>
+            <button onClick={() => window.location.href='#/student/library'} className="text-sm text-primary-vibrant font-medium hover:underline">View Library &rarr;</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {recommendedLabs.map((lab) => (
@@ -111,6 +121,33 @@ export default function StudentDashboard() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Gamification Hub */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+             <h3 className="text-lg font-bold text-gray-900">National Leaderboard</h3>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="p-4 bg-amber-50 border-b border-amber-100 flex items-center justify-between">
+               <span className="font-bold text-amber-900 text-sm">Top Scientists (XP)</span>
+               <Trophy className="w-5 h-5 text-amber-500" />
+            </div>
+            <ul className="divide-y divide-gray-100 p-2">
+              {leaderboard.length === 0 ? <li className="p-4 text-sm text-gray-500 text-center">No scores yet.</li> : leaderboard.map((player, idx) => (
+                <li key={idx} className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <span className="font-bold text-gray-400 w-4">{idx + 1}.</span>
+                    <div>
+                      <p className="font-bold text-gray-800 text-sm">{player.name}</p>
+                      <p className="text-xs text-gray-500">Lvl {player.level} • {player.experiments_completed} Labs</p>
+                    </div>
+                  </div>
+                  <span className="font-bold text-emerald-600">{player.xp} XP</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 

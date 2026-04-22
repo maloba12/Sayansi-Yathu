@@ -1,0 +1,22 @@
+{
+  "name": "Sayansi Yathu Virtual Lab",
+  "short_name": "Sayansi Yathu",
+  "description": "Zambian AI-powered Virtual Science Laboratory",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

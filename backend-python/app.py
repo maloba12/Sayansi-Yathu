@@ -30,7 +30,10 @@ try:
     from ai.lab_assistant import LabAssistant
     from ai.adaptive import AdaptiveLearningEngine
     from ai.calibration import AdjustmentEngine
+    from ai.translation import multilingual_engine
+    from ai.language_detector import detector_instance
     from analytics.dashboard import AnalyticsDashboard
+    import json
 except ImportError as e:
     print(f"Import error: {e}")
     print("Please install required packages: pip install flask flask-cors pandas scikit-learn numpy")
@@ -101,13 +104,23 @@ def simulate_biology():
 @app.route('/api/ai/tutor', methods=['POST'])
 def ai_tutor_response():
     data = request.json
-    session_id = data.get('session_id')  # optional; enables conversation memory
+    session_id = data.get('session_id')  
+    question = data.get('question', '')
+    
+    # Auto-detect language
+    detected_lang = detector_instance.detect(question)
+    
     response = ai_tutor.get_response(
-        data['question'],
+        question,
         data.get('context', {}),
         session_id=session_id
     )
-    return jsonify({"response": response, "session_id": session_id})
+    
+    # Translate natively if it isn't English
+    if detected_lang != 'english':
+        response = multilingual_engine.translate(response, detected_lang)
+        
+    return jsonify({"response": response, "session_id": session_id, "detected_language": detected_lang})
 
 
 @app.route('/api/ai/tutor/clear', methods=['POST'])
@@ -684,6 +697,124 @@ def get_heatmap():
         return jsonify({"success": False, "error": str(e)}), 500
     finally:
         db.close()
+
+
+CONTEXT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ai', 'data', 'context.json')
+
+@app.route('/api/context/<sim_type>', methods=['GET'])
+def get_sim_context(sim_type):
+    try:
+        with open(CONTEXT_FILE, 'r') as f:
+            contexts = json.load(f)
+            return jsonify({"success": True, "data": contexts.get(sim_type, None)})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/ai/translate', methods=['POST'])
+def translate_text():
+    data = request.json
+    text = data.get('text')
+    lang = data.get('language', 'english')
+    if not text: return jsonify({"success": False, "error": "Missing text"}), 400
+    translated = multilingual_engine.translate(text, lang)
+    return jsonify({"success": True, "original": text, "translated": translated})
+
+@app.route('/api/ai/log_interaction', methods=['POST'])
+def log_interaction():
+    data = request.json
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO ai_interactions (student_id, experiment_id, query, response) VALUES (%s, %s, %s, %s)", 
+                       (data.get('student_id', 1), data.get('experiment_id', 'unknown'), data.get('query', ''), data.get('response', '')))
+        
+        # Gamification: Award XP
+        cursor.execute("UPDATE gamification SET xp = xp + 10 WHERE user_id = %s", (data.get('student_id', 1),))
+        db.commit()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/gamification/leaderboard', methods=['GET'])
+def get_leaderboard():
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT u.name, g.xp, g.level, g.experiments_completed 
+            FROM gamification g
+            JOIN users u ON g.user_id = u.id
+            ORDER BY g.xp DESC LIMIT 10
+        """)
+        leaderboard = cursor.fetchall()
+        return jsonify({"success": True, "leaderboard": leaderboard})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+# ---------------------------------------------------------------------------
+# Phase 5: Privacy, Consent & MoE Integration
+# ---------------------------------------------------------------------------
+
+@app.route('/api/user/consent', methods=['POST'])
+def update_consent():
+    data = request.json
+    user_id = data.get('user_id')
+    consent = data.get('consent', False)
+    
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor()
+        cursor.execute("UPDATE users SET consent_status = %s WHERE id = %s", (consent, user_id))
+        db.commit()
+        return jsonify({"success": True, "message": "Consent updated"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+
+@app.route('/api/moe/analytics', methods=['GET'])
+def moe_analytics():
+    """Anonymized aggregated data stripped of PII for Ministry APIs."""
+    db = _get_db()
+    if not db: return jsonify({"success": False, "error": "DB unavailable"}), 503
+    try:
+        cursor = db.cursor(dictionary=True)
+        # We only aggregate records where consent_status = 1 (or we anonymize all explicitly)
+        # Using a left join simulation for anonymized averages
+        query = """
+            SELECT e.subject, COUNT(p.id) as completion_count, AVG(p.score) as class_avg
+            FROM progress p
+            JOIN experiments e ON p.experiment_id = e.id
+            JOIN users u ON p.user_id = u.id
+            WHERE u.consent_status = 1
+            GROUP BY e.subject
+        """
+        cursor.execute(query)
+        data = cursor.fetchall()
+        return jsonify({"success": True, "anonymized_data": data})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/integration/performance', methods=['GET'])
+def integration_hooks():
+    # Placeholder for the Zambia Digital Curriculum Platform JSON hooks
+    return jsonify({
+        "success": True,
+        "standardFormat": "ZDEP-v1.0",
+        "district": "Lusaka",
+        "total_active_schools": 5,
+        "status": "Ready for ZDCP Handshake"
+    })
 
 
 if __name__ == '__main__':

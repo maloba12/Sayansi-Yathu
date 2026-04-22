@@ -1,7 +1,7 @@
-import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/layout/Sidebar';
 import TopNav from './components/layout/TopNav';
+import ConsentModal from './components/common/ConsentModal';
 
 import DashboardHome from './pages/admin/DashboardHome';
 import UserManagement from './pages/admin/UserManagement';
@@ -12,7 +12,7 @@ import TeacherClasses from './pages/teacher/TeacherClasses';
 import TeacherAssignments from './pages/teacher/TeacherAssignments';
 import TeacherSBAReports from './pages/teacher/TeacherSBAReports';
 import AdminReports from './pages/admin/AdminReports';
-import AdminCommunication from './pages/admin/AdminCommunication';
+import CommunicationHub from './pages/communication/CommunicationHub';
 import AdminSettings from './pages/admin/AdminSettings';
 import StudentDashboard from './pages/student/StudentDashboard';
 import LabLibrary from './pages/student/LabLibrary';
@@ -25,6 +25,7 @@ const MainLayout = ({ children, role }) => (
       <main className="flex-1 overflow-y-auto">
         {children}
       </main>
+      <ConsentModal />
     </div>
   </div>
 );
@@ -49,7 +50,7 @@ function App() {
               <Route path="users" element={<UserManagement />} />
               <Route path="security" element={<SecurityLogs />} />
               <Route path="reports" element={<AdminReports />} />
-              <Route path="communication" element={<AdminCommunication />} />
+              <Route path="communication" element={<CommunicationHub role="admin" />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </MainLayout>
@@ -62,6 +63,7 @@ function App() {
               <Route path="assignments" element={<TeacherAssignments />} />
               <Route path="generator" element={<ContentGenerator />} />
               <Route path="sba" element={<TeacherSBAReports />} />
+              <Route path="communication" element={<CommunicationHub role="teacher" />} />
             </Routes>
           </MainLayout>
         } />

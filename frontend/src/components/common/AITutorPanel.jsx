@@ -29,6 +29,7 @@ export default function AITutorPanel({ isOpen, onClose, context }) {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [language, setLanguage] = useState('english');
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -54,9 +55,23 @@ export default function AITutorPanel({ isOpen, onClose, context }) {
         session_id: SESSION_ID   // enables conversation memory (REC-02)
       });
 
+      let aiResponseText = response.data.response || "I'm sorry, I couldn't process that. Please try again.";
+
+      // Zambian Context Translation Fallback
+      if (language !== 'english') {
+        try {
+          const transRes = await axios.post('http://localhost:5000/api/ai/translate', { text: aiResponseText, language });
+          if (transRes.data.success) {
+            aiResponseText = transRes.data.translated;
+          }
+        } catch (error) {
+          console.error("Translation error", error);
+        }
+      }
+
       const aiResponse = {
         role: 'ai',
-        text: response.data.response || "I'm sorry, I couldn't process that. Please try again."
+        text: aiResponseText
       };
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
@@ -105,36 +120,53 @@ export default function AITutorPanel({ isOpen, onClose, context }) {
             backdropFilter: 'blur(10px)'
           }}
         >
-          {/* Header */}
           <div style={{
             padding: '16px',
             background: '#3b82f6',
             color: 'white',
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
+            flexDirection: 'column',
+            gap: '8px'
           }}>
-            <span style={{ fontWeight: 'bold' }}>🧪 Science AI Tutor</span>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <button
-                onClick={handleNewChat}
-                title="Start a new conversation"
-                style={{
-                  background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white',
-                  cursor: 'pointer', fontSize: '0.7rem', padding: '4px 8px',
-                  borderRadius: '6px', fontWeight: '600'
-                }}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 'bold' }}>🧪 Science AI Tutor</span>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <button
+                  onClick={handleNewChat}
+                  title="Start a new conversation"
+                  style={{
+                    background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white',
+                    cursor: 'pointer', fontSize: '0.7rem', padding: '4px 8px',
+                    borderRadius: '6px', fontWeight: '600'
+                  }}
+                >
+                  New Chat
+                </button>
+                <button
+                  onClick={onClose}
+                  style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.2rem' }}
+                >
+                  ✖
+                </button>
+              </div>
+            </div>
+            
+            {/* Translation Settings */}
+            <div style={{ display: 'flex', alignItems: 'center', fontSize: '0.8rem', gap: '8px' }}>
+              <span>Language:</span>
+              <select 
+                 value={language} 
+                 onChange={e => setLanguage(e.target.value)}
+                 style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none', borderRadius: '4px', padding: '2px 4px', fontSize: '0.75rem', outline: 'none' }}
               >
-                New Chat
-              </button>
-              <button
-                onClick={onClose}
-                style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.2rem' }}
-              >
-                ✖
-              </button>
+                 <option value="english" style={{color: 'black'}}>English</option>
+                 <option value="bemba" style={{color: 'black'}}>Bemba</option>
+                 <option value="nyanja" style={{color: 'black'}}>Nyanja</option>
+                 <option value="tonga" style={{color: 'black'}}>Tonga</option>
+              </select>
             </div>
           </div>
+
 
           {/* Messages Area */}
           <div style={{
