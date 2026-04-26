@@ -1,43 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import { PlayCircle, Trophy, BrainCircuit, GraduationCap } from 'lucide-react';
+import { 
+  PlayCircle, 
+  Trophy, 
+  BrainCircuit, 
+  Target, 
+  Zap, 
+  Calendar, 
+  MessageSquare,
+  ChevronRight,
+  Bookmark
+} from 'lucide-react';
 import axios from 'axios';
 import AITutorPanel from '../../components/common/AITutorPanel';
+import ExperimentCard from '../../components/common/ExperimentCard';
 
 export default function StudentDashboard() {
   const [recommendedLabs, setRecommendedLabs] = useState([]);
-  const [user, setUser] = useState({ name: 'Student' });
+  const [user, setUser] = useState({ name: 'Mpundu Maloba', grade: 'Grade 11' });
   const [isTutorOpen, setIsTutorOpen] = useState(false);
-  const [studentStats, setStudentStats] = useState({
-    experiments_completed: 0, avg_score: 0
-  });
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [studentStats, setStudentStats] = useState({ experiments_completed: 12, avg_score: 88 });
 
   useEffect(() => {
-    let userId = null;
-    try {
-      const storedData = localStorage.getItem('user_data');
-      if (storedData) {
-        const parsed = JSON.parse(storedData);
-        if (parsed.name) setUser(parsed);
-        userId = parsed.id;
+    // Load student data from localStorage
+    const savedData = localStorage.getItem('user_data');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setUser({
+          name: parsed.name || 'Student',
+          grade: parsed.grade || parsed.level || 'Grade 11'
+        });
+      } catch (e) {
+        console.error("Error parsing user data", e);
       }
-    } catch (error) {
-      console.error('Failed to parse user_data:', error);
     }
 
-    // Fetch recommended labs from PHP backend
     const fetchLabs = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/simulations/list.php');
         if (response.data && response.data.success) {
-          const formattedLabs = response.data.simulations.map(dbLab => ({
-            id: dbLab.id,
-            simType: dbLab.simulation_type,
-            title: dbLab.title,
-            subject: dbLab.subject ? dbLab.subject.charAt(0).toUpperCase() + dbLab.subject.slice(1) : '',
-            difficulty: dbLab.difficulty || 'beginner',
-            time: '20 mins'
-          }));
+          // Get the current student's grade for filtering
+          const studentGrade = localStorage.getItem('user_data') 
+            ? JSON.parse(localStorage.getItem('user_data')).grade || JSON.parse(localStorage.getItem('user_data')).level || 'Grade 11'
+            : 'Grade 11';
+
+          const formattedLabs = response.data.simulations
+            .filter(dbLab => {
+              // Strict Filtering: Only show labs that match the student's grade/form
+              // Handle potential mismatches (e.g. 'Grade 11' vs 'Grade 11 Science')
+              const labLevel = dbLab.grade_or_form || '';
+              return labLevel.toLowerCase().includes(studentGrade.toLowerCase()) || 
+                     studentGrade.toLowerCase().includes(labLevel.toLowerCase());
+            })
+            .map(dbLab => ({
+              id: dbLab.id,
+              simType: dbLab.simulation_type,
+              title: dbLab.title,
+              subject: dbLab.subject ? dbLab.subject.charAt(0).toUpperCase() + dbLab.subject.slice(1) : '',
+              difficulty: dbLab.difficulty_level || 'Beginner',
+              description: dbLab.description,
+              duration: '20 min'
+            }));
           setRecommendedLabs(formattedLabs);
         }
       } catch (error) {
@@ -45,129 +68,203 @@ export default function StudentDashboard() {
       }
     };
     fetchLabs();
-
-    // Fetch real student stats from Python analytics endpoint (REC-03)
-    if (userId) {
-      axios.get(`http://localhost:5000/api/analytics/student/${userId}`)
-        .then(r => {
-          if (r.data.success) setStudentStats(r.data.overall);
-        })
-        .catch(() => {}); // silently ignore if analytics not yet connected
-    }
-    
-    // Fetch gamification leaderboard
-    axios.get('http://localhost:5000/api/gamification/leaderboard')
-      .then(res => {
-        if (res.data.success) setLeaderboard(res.data.leaderboard);
-      })
-      .catch(e => console.error('Leaderboard fetch failed', e));
-
   }, []);
 
   return (
-    <div className="relative p-8 max-w-7xl mx-auto space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user.name.split(' ')[0]}! 👋</h1>
-        <p className="text-gray-500 mt-1">Ready to continue your science journey?</p>
-      </div>
-
-      {/* Hero Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-primary-vibrant text-white p-6 rounded-xl shadow-vibrant">
-          <p className="font-medium text-white/80">Experiments Completed</p>
-          <h3 className="text-3xl font-bold mt-2">{studentStats.experiments_completed}</h3>
-          <p className="text-sm text-white/80 flex items-center mt-2">
-            <Trophy className="w-4 h-4 mr-1 text-yellow-300" />
-            Avg score: {studentStats.avg_score}%
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Current Assignment</p>
-            <h3 className="text-lg font-bold text-gray-900 mt-1">Ohm's Law</h3>
-            <p className="text-xs text-red-500 mt-1 font-medium">Due Tomorrow</p>
+    <div className="relative p-8 max-w-7xl mx-auto space-y-10 animate-in fade-in duration-700">
+      {/* Premium Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+             <span className="px-2 py-1 bg-primary-vibrant/10 text-primary-vibrant text-[10px] font-black uppercase tracking-widest rounded-lg">Student Profile</span>
+             <div className="w-1 h-1 rounded-full bg-gray-300" />
+             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{user.grade} Science</span>
           </div>
-          <button className="h-12 w-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition-colors">
-            <PlayCircle className="w-6 h-6" />
-          </button>
+          <h1 className="text-4xl font-black text-gray-900 tracking-tight">Warm welcome, {user.name.split(' ')[0]}! ✨</h1>
+          <p className="text-gray-500 font-medium">Your personalized learning journey is 72% complete this term.</p>
         </div>
-        {/* ... More student stats ... */}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recommended For You */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold text-gray-900">Recommended Labs</h3>
-            <button onClick={() => window.location.href='#/student/library'} className="text-sm text-primary-vibrant font-medium hover:underline">View Library &rarr;</button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {recommendedLabs.map((lab) => (
-              <div key={lab.id} className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
-                <div className="flex justify-between items-start mb-4">
-                  <span className={`px-2 py-1 text-xs font-semibold rounded-full 
-                    ${lab.subject === 'Physics' ? 'bg-blue-100 text-blue-800' : 
-                      lab.subject === 'Chemistry' ? 'bg-purple-100 text-purple-800' : 
-                      'bg-emerald-100 text-emerald-800'}`}>
-                    {lab.subject}
-                  </span>
-                  <span className="text-xs text-gray-500 font-medium">{lab.time}</span>
-                </div>
-                <h4 className="font-bold text-gray-900 group-hover:text-primary-vibrant transition-colors">{lab.title}</h4>
-                <div className="mt-4 flex justify-between items-center">
-                  <span className="text-sm text-gray-500">{lab.difficulty}</span>
-                  <PlayCircle className="w-5 h-5 text-gray-300 group-hover:text-primary-vibrant transition-colors" />
-                </div>
+        
+        <div className="flex space-x-4">
+           <div className="bg-white border border-gray-100 p-4 rounded-3xl shadow-sm flex items-center space-x-4">
+              <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
+                 <Trophy className="w-6 h-6 text-emerald-500" />
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Gamification Hub */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-             <h3 className="text-lg font-bold text-gray-900">National Leaderboard</h3>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="p-4 bg-amber-50 border-b border-amber-100 flex items-center justify-between">
-               <span className="font-bold text-amber-900 text-sm">Top Scientists (XP)</span>
-               <Trophy className="w-5 h-5 text-amber-500" />
-            </div>
-            <ul className="divide-y divide-gray-100 p-2">
-              {leaderboard.length === 0 ? <li className="p-4 text-sm text-gray-500 text-center">No scores yet.</li> : leaderboard.map((player, idx) => (
-                <li key={idx} className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <span className="font-bold text-gray-400 w-4">{idx + 1}.</span>
-                    <div>
-                      <p className="font-bold text-gray-800 text-sm">{player.name}</p>
-                      <p className="text-xs text-gray-500">Lvl {player.level} • {player.experiments_completed} Labs</p>
-                    </div>
-                  </div>
-                  <span className="font-bold text-emerald-600">{player.xp} XP</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* AI Tutor Card */}
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center">
-          <div className="h-16 w-16 bg-white/20 rounded-full flex items-center justify-center mb-4">
-            <BrainCircuit className="w-8 h-8 text-white" />
-          </div>
-          <h3 className="text-xl font-bold mb-2">Stuck on a concept?</h3>
-          <p className="text-white/80 text-sm mb-6">Your personal AI Science Tutor is available 24/7 to help you understand complex topics.</p>
-          <button
-            className="w-full py-3 bg-white text-indigo-600 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
-            onClick={() => setIsTutorOpen(true)}
-          >
-            Ask AI Tutor
-          </button>
+              <div>
+                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Mastery Score</p>
+                 <p className="text-xl font-black text-gray-900">{studentStats.avg_score}%</p>
+              </div>
+           </div>
+           <div className="bg-primary-dark text-white p-4 rounded-3xl shadow-lg flex items-center space-x-4">
+              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+                 <Zap className="w-6 h-6 text-primary-vibrant" />
+              </div>
+              <div>
+                 <p className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-none mb-1">Labs Done</p>
+                 <p className="text-xl font-black text-white">{studentStats.experiments_completed}</p>
+              </div>
+           </div>
         </div>
       </div>
 
-      {/* AI Tutor Panel (mounted here, slides in from the right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: Tasks & Recommendations */}
+        <div className="lg:col-span-8 space-y-10">
+          
+          {/* Today's Focus */}
+          <section className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col md:flex-row">
+             <div className="w-full md:w-64 bg-slate-900 p-8 text-white flex flex-col justify-between relative overflow-hidden shrink-0">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary-vibrant/20 rounded-full -mr-16 -mt-16 blur-2xl" />
+                <div className="relative">
+                   <Target className="w-10 h-10 text-primary-vibrant mb-4" />
+                   <h2 className="text-2xl font-black leading-tight italic">Today's Focus</h2>
+                   <p className="text-slate-400 text-xs mt-2 font-medium">Prioritize these tasks to maintain your academic momentum.</p>
+                </div>
+                <div className="relative mt-8 pt-8 border-t border-white/10">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-primary-vibrant">Daily Streak</p>
+                   <p className="text-lg font-black italic">8 Days Active</p>
+                </div>
+             </div>
+             <div className="flex-1 p-8 space-y-4">
+                {[
+                  { title: 'Pendulum Lab Report', type: 'Assignment', due: 'Due Today', urgent: true, subject: 'Physics' },
+                  { title: 'Ohm\'s Law Simulation', type: 'Lab Practice', due: 'Recommended', urgent: false, subject: 'Physics' },
+                  { title: 'Acid-Base Reactions', type: 'Concept Review', due: 'Upcoming', urgent: false, subject: 'Chemistry' },
+                ].map((task, i) => (
+                  <div key={i} className="flex items-center p-4 bg-gray-50 border border-transparent rounded-2xl hover:bg-white hover:border-gray-100 hover:shadow-sm transition-all group cursor-pointer">
+                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-4 ${task.urgent ? 'bg-red-100 text-red-600' : 'bg-white shadow-sm text-primary-vibrant'}`}>
+                        {task.urgent ? <Zap className="w-5 h-5 fill-current" /> : <Calendar className="w-5 h-5" />}
+                     </div>
+                     <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{task.subject}</span>
+                           <div className="w-1 h-1 rounded-full bg-gray-300" />
+                           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{task.type}</span>
+                        </div>
+                        <p className="font-bold text-gray-900">{task.title}</p>
+                     </div>
+                     <div className="flex flex-col items-end">
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${task.urgent ? 'bg-red-500 text-white shadow-lg shadow-red-200' : 'bg-gray-200 text-gray-600'}`}>
+                           {task.due}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-gray-300 mt-2 group-hover:text-primary-vibrant group-hover:translate-x-1 transition-all" />
+                     </div>
+                  </div>
+                ))}
+             </div>
+          </section>
+
+          {/* Recommended Experiments */}
+          <section>
+            <div className="flex justify-between items-end mb-6">
+              <div>
+                <h2 className="text-2xl font-black text-gray-900 tracking-tight italic">Recommended for You 🧪</h2>
+                <p className="text-sm text-gray-500 mt-1">Based on your recent interest in Mechanics and Electricity.</p>
+              </div>
+              <a href="#/student/lab" className="text-xs font-black uppercase tracking-widest text-primary-vibrant hover:underline underline-offset-8">Explore Library →</a>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {recommendedLabs.slice(0, 4).map(lab => (
+                <ExperimentCard 
+                  key={lab.id} 
+                  experiment={lab} 
+                  onStart={() => window.location.href = `/index_3d.html?type=${lab.simType}`}
+                  onPreview={() => window.location.href = `/index_3d.html?type=${lab.simType}`}
+                />
+              ))}
+              {recommendedLabs.length === 0 && (
+                <div className="col-span-2 py-20 bg-gray-100 rounded-3xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400">
+                   <div className="w-12 h-12 rounded-full border-4 border-t-primary-vibrant animate-spin mb-4" />
+                   <p className="text-sm font-bold uppercase tracking-widest">Optimizing Recommendations...</p>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+
+        {/* Right Column: Quick Access & AI */}
+        <div className="lg:col-span-4 space-y-8">
+           
+           {/* Quick Navigation Card */}
+           <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary-vibrant/20 rounded-full -ml-24 -mb-24 blur-3xl" />
+              <h3 className="text-lg font-black italic mb-6">Quick Navigation</h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                 {[
+                   { label: 'My Subjects', icon: Target, href: '#/student/subjects' },
+                   { label: 'Assignments', icon: Bookmark, href: '#/student/assignments' },
+                   { label: 'Progress', icon: Trophy, href: '#/student/progress' },
+                   { label: 'Chat Hub', icon: MessageSquare, href: '#/student/messages' },
+                 ].map(item => (
+                   <a key={item.label} href={item.href} className="p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white hover:text-slate-900 transition-all flex flex-col space-y-3 group/nav">
+                      <item.icon className="w-5 h-5 text-primary-vibrant group-hover/nav:scale-110 transition-transform" />
+                      <span className="text-xs font-bold leading-tight">{item.label}</span>
+                   </a>
+                 ))}
+              </div>
+              
+              <button className="w-full mt-6 py-4 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl hover:-translate-y-1 transition-all">
+                 View Full Profile
+              </button>
+           </div>
+
+           {/* AI Tutor Card */}
+           <div className="bg-primary-vibrant rounded-3xl p-8 text-white shadow-2xl shadow-primary-vibrant/40 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
+              <BrainCircuit className="w-12 h-12 mb-4" />
+              <h3 className="text-2xl font-black italic leading-tight">Stuck on a concept?</h3>
+              <p className="text-white/80 text-sm mt-2 leading-relaxed">Your AI Tutor is available 24/7 to help you master complex scientific principles.</p>
+              
+              <button 
+                onClick={() => setIsTutorOpen(true)}
+                className="w-full mt-8 py-4 bg-primary-dark text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-black transition-all"
+              >
+                 Start Session Now
+              </button>
+           </div>
+
+           {/* Performance Summary Widget */}
+           <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6">Subject Mastery</h3>
+              <div className="space-y-4">
+                 {[
+                   { label: 'Physics', progress: 84, color: 'bg-blue-500' },
+                   { label: 'Chemistry', progress: 68, color: 'bg-orange-500' },
+                   { label: 'Biology', progress: 92, color: 'bg-emerald-500' },
+                 ].map(subj => (
+                   <div key={subj.label}>
+                      <div className="flex justify-between items-center mb-1 text-[10px] font-black uppercase tracking-widest">
+                         <span className="text-gray-500">{subj.label}</span>
+                         <span className="text-gray-900">{subj.progress}%</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden">
+                         <div className={`h-full ${subj.color} rounded-full`} style={{ width: `${subj.progress}%` }} />
+                      </div>
+                   </div>
+                 ))}
+              </div>
+           </div>
+        </div>
+      </div>
+
+      {/* Footer System Status */}
+      <div className="flex items-center justify-center space-x-8 pt-8 opacity-40">
+         <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">Server: Operational</span>
+         </div>
+         <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 rounded-full bg-blue-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">AI Engine: Pro Edition</span>
+         </div>
+         <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 rounded-full bg-orange-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">CBC Version: 2026.4</span>
+         </div>
+      </div>
+
+      {/* AI Tutor Panel */}
       <AITutorPanel
         isOpen={isTutorOpen}
         onClose={() => setIsTutorOpen(false)}

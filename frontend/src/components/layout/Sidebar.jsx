@@ -20,8 +20,9 @@ import { twMerge } from 'tailwind-merge';
 const adminLinks = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { path: '/admin/users', icon: Users, label: 'User Management' },
-  { path: '/admin/security', icon: Shield, label: 'Security Logs' },
+  {path: '/admin/security', icon: Shield, label: 'Security Logs' },
   { path: '/admin/reports', icon: Activity, label: 'System Reports' },
+  { path: '/admin/labs', icon: FlaskConical, label: 'Lab Management' },
   { path: '/admin/communication', icon: MessageCircle, label: 'Communication' },
   { path: '/admin/settings', icon: Settings, label: 'Settings' }
 ];
@@ -29,20 +30,34 @@ const adminLinks = [
 const teacherLinks = [
   { path: '/teacher', icon: LayoutDashboard, label: 'Dashboard', end: true },
   { path: '/teacher/classes', icon: Users, label: 'My Classes' },
+  { path: '/teacher/students', icon: GraduationCap, label: 'Students' },
   { path: '/teacher/assignments', icon: BookOpen, label: 'Assignments' },
   { path: '/teacher/sba', icon: ClipboardList, label: 'SBA Reports' },
+  { path: '/teacher/labs', icon: FlaskConical, label: 'Virtual Lab' },
   { path: '/teacher/generator', icon: BrainCircuit, label: 'AI Generator' },
   { path: '/teacher/communication', icon: MessageCircle, label: 'Communication Hub' },
 ];
 
-const studentLinks = [
-  { path: '/student', icon: LayoutDashboard, label: 'My Hub', end: true },
-  { path: '/student/library', icon: FlaskConical, label: 'Virtual Lab' },
-  { path: '/student/progress', icon: GraduationCap, label: 'My Progress' },
+const hodLinks = [
+  { path: '/hod', icon: LayoutDashboard, label: 'Performance', end: true },
+  { path: '/hod/teachers', icon: Users, label: 'Teacher Activity' },
+  { path: '/hod/curriculum', icon: ClipboardList, label: 'Curriculum Tracking' },
+  { path: '/hod/reports', icon: Activity, label: 'Insights' },
 ];
 
-export default function Sidebar({ role }) {
-  const links = role === 'admin' ? adminLinks : role === 'teacher' ? teacherLinks : studentLinks;
+const studentLinks = [
+  { path: '/student', icon: LayoutDashboard, label: 'My Dashboard', end: true },
+  { path: '/student/lab', icon: FlaskConical, label: 'Virtual Lab' },
+  { path: '/student/subjects', icon: BookOpen, label: 'My Subjects' },
+  { path: '/student/assignments', icon: ClipboardList, label: 'Assignments' },
+  { path: '/student/progress', icon: GraduationCap, label: 'Progress Tracker' },
+  { path: '/student/history', icon: Activity, label: 'Experiment History' },
+  { path: '/student/notes', icon: Settings, label: 'Notes & Resources' },
+  { path: '/student/messages', icon: MessageCircle, label: 'Messages' },
+];
+
+export default function Sidebar({ role, toggleTheme }) {
+  const links = role === 'admin' ? adminLinks : role === 'hod' ? hodLinks : role === 'teacher' ? teacherLinks : studentLinks;
 
   const handleLogout = () => {
     localStorage.clear();
@@ -84,7 +99,14 @@ export default function Sidebar({ role }) {
       </nav>
 
       {/* Footer / Logout */}
-      <div className="p-4 border-t border-gray-100">
+      <div className="p-4 border-t border-gray-100 space-y-2">
+        <button 
+          onClick={toggleTheme}
+          className="flex items-center w-full px-4 py-3 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <div className="w-5 h-5 mr-3 flex items-center justify-center">🌓</div>
+          Switch Theme
+        </button>
         <button 
           onClick={handleLogout}
           className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors"

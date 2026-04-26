@@ -1,0 +1,320 @@
+VIRTUAL SCIENCE LAB – PHYSICS EXPERIMENTS DATABASE (GRADE 10–12)
+STANDARD SYSTEM FORMAT:
+
+Each experiment includes:
+
+Experiment ID
+Grade
+Title
+Subject Area
+Topic
+Objective
+Apparatus / Materials
+Procedure Summary
+Expected Outcome
+Simulation Type
+Difficulty Level
+GRADE 10 PHYSICS EXPERIMENTS
+PHY-G10-001
+
+Title: Measuring Length Using Vernier Calipers and Micrometer Screw Gauge
+Subject Area: General Physics
+Topic: Measurement
+Objective: Measure length/diameter accurately using precision instruments.
+Apparatus: Vernier calipers, micrometer screw gauge, ruler, objects
+Procedure Summary: Measure dimensions of objects using each tool and compare accuracy.
+Expected Outcome: Learners understand precision measurement and error differences.
+Simulation Type: Interactive Measurement Tool
+Difficulty: Beginner
+
+PHY-G10-002
+
+Title: Determining the Period of a Simple Pendulum
+Subject Area: Mechanics
+Topic: Time and Motion
+Objective: Investigate factors affecting pendulum period.
+Apparatus: String, bob, stopwatch, retort stand
+Procedure Summary: Vary string length and measure oscillation time.
+Expected Outcome: Period depends on length, not mass.
+Simulation Type: Pendulum Motion Simulation
+Difficulty: Beginner
+
+PHY-G10-003
+
+Title: Measuring Mass and Weight
+Subject Area: General Physics
+Topic: Mass and Weight
+Objective: Distinguish between mass and weight practically.
+Apparatus: Beam balance, spring balance
+Procedure Summary: Measure same object using both balances.
+Expected Outcome: Mass constant, weight depends on gravity.
+Simulation Type: Digital Lab Instrument
+Difficulty: Beginner
+
+PHY-G10-004
+
+Title: Locating the Centre of Mass of an Irregular Lamina
+Subject Area: Mechanics
+Topic: Equilibrium
+Objective: Determine centre of gravity of irregular shapes.
+Apparatus: Cardboard lamina, pin, plumb line
+Procedure Summary: Suspend lamina from different points and mark lines.
+Expected Outcome: Intersection gives centre of mass.
+Simulation Type: Virtual Balance Simulation
+Difficulty: Intermediate
+
+PHY-G10-005
+
+Title: Verification of Hooke’s Law
+Subject Area: Forces
+Topic: Elasticity
+Objective: Investigate extension proportional to force.
+Apparatus: Spring, weights, ruler
+Procedure Summary: Add weights progressively and record extension.
+Expected Outcome: Linear graph confirms Hooke’s Law.
+Simulation Type: Spring Extension Simulation
+Difficulty: Intermediate
+
+PHY-G10-006
+
+Title: Investigating Friction on Different Surfaces
+Subject Area: Forces
+Topic: Friction
+Objective: Compare frictional forces on surfaces.
+Apparatus: Wooden block, spring balance, rough/smooth surfaces
+Procedure Summary: Pull block across surfaces and compare force.
+Expected Outcome: Rougher surfaces produce greater friction.
+Simulation Type: Friction Force Simulation
+Difficulty: Beginner
+
+PHY-G10-007
+
+Title: Principle of Moments Using a Metre Rule
+Subject Area: Moments
+Topic: Turning Effect of Forces
+Objective: Verify clockwise moment = anticlockwise moment.
+Apparatus: Metre rule, pivot, weights
+Procedure Summary: Balance weights at different distances.
+Expected Outcome: Principle of moments verified.
+Simulation Type: Lever Balance Simulation
+Difficulty: Intermediate
+
+PHY-G10-008
+
+Title: Work Done and Power Calculation
+Subject Area: Energy
+Topic: Work, Energy, Power
+Objective: Determine work done and power output.
+Apparatus: Weights, stopwatch, height scale
+Procedure Summary: Lift object through height and time it.
+Expected Outcome: Practical understanding of work and power formulas.
+Simulation Type: Energy Calculator
+Difficulty: Beginner
+
+PHY-G10-009
+
+Title: Mechanical Advantage of Simple Machines
+Subject Area: Machines
+Topic: Levers and Pulleys
+Objective: Calculate MA, VR, and efficiency.
+Apparatus: Pulley system, lever, weights
+Procedure Summary: Compare load and effort.
+Expected Outcome: Efficiency less than 100% due to losses.
+Simulation Type: Machine Efficiency Simulation
+Difficulty: Intermediate
+
+GRADE 11 PHYSICS EXPERIMENTS
+PHY-G11-001
+
+Title: Brownian Motion Demonstration
+Subject Area: Thermal Physics
+Topic: Kinetic Theory
+Objective: Observe random particle movement.
+Apparatus: Smoke cell, microscope
+Procedure Summary: Observe smoke particles in random motion.
+Expected Outcome: Supports kinetic theory.
+Simulation Type: Particle Motion Simulation
+Difficulty: Intermediate
+
+PHY-G11-002
+
+Title: Calibration of a Thermometer
+Subject Area: Temperature
+Topic: Thermometry
+Objective: Construct and calibrate thermometer scale.
+Apparatus: Thermometric liquid, tube, ice point, steam point
+Procedure Summary: Mark fixed points and divide scale.
+Expected Outcome: Accurate temperature scale.
+Simulation Type: Thermometer Builder
+Difficulty: Intermediate
+
+PHY-G11-003
+
+Title: Linear Expansion of Solids
+Subject Area: Heat
+Topic: Expansion
+Objective: Demonstrate solid expansion when heated.
+Apparatus: Ball and ring apparatus
+Procedure Summary: Heat metal ball and test passage.
+Expected Outcome: Heated solids expand.
+Simulation Type: Thermal Expansion Simulation
+Difficulty: Beginner
+
+PHY-G11-004
+
+Title: Verification of Boyle’s Law
+Subject Area: Gas Laws
+Topic: Pressure and Volume
+Objective: Show pressure inversely proportional to volume.
+Apparatus: Boyle’s law apparatus
+Procedure Summary: Change pressure and record volume.
+Expected Outcome: PV = constant.
+Simulation Type: Gas Pressure Simulation
+Difficulty: Advanced
+
+PHY-G11-005
+
+Title: Heat Transfer by Conduction
+Subject Area: Thermal Physics
+Topic: Heat Transfer
+Objective: Compare thermal conductivity of materials.
+Apparatus: Metal rods, wax, heat source
+Procedure Summary: Heat rods and observe wax melting.
+Expected Outcome: Metals conduct at different rates.
+Simulation Type: Heat Flow Simulation
+Difficulty: Beginner
+
+PHY-G11-006
+
+Title: Wave Motion on a Rope
+Subject Area: Waves
+Topic: Wave Properties
+Objective: Demonstrate wavelength, amplitude, frequency.
+Apparatus: Rope, oscillator
+Procedure Summary: Generate transverse waves.
+Expected Outcome: Understand wave characteristics.
+Simulation Type: Wave Generator
+Difficulty: Beginner
+
+PHY-G11-007
+
+Title: Reflection of Light Using Plane Mirror
+Subject Area: Light
+Topic: Reflection
+Objective: Verify laws of reflection.
+Apparatus: Plane mirror, ray box, protractor
+Procedure Summary: Measure angles of incidence/reflection.
+Expected Outcome: i = r
+Simulation Type: Ray Diagram Simulation
+Difficulty: Beginner
+
+PHY-G11-008
+
+Title: Refraction Through Glass Block
+Subject Area: Light
+Topic: Refraction
+Objective: Determine refractive index.
+Apparatus: Glass block, pins, paper
+Procedure Summary: Trace refracted ray path.
+Expected Outcome: Snell’s law verified.
+Simulation Type: Refraction Lab
+Difficulty: Intermediate
+
+PHY-G11-009
+
+Title: Magnetic Field Lines Around a Magnet
+Subject Area: Magnetism
+Topic: Magnetic Fields
+Objective: Plot magnetic field patterns.
+Apparatus: Bar magnet, iron filings, paper
+Procedure Summary: Sprinkle filings and observe pattern.
+Expected Outcome: Field lines from North to South.
+Simulation Type: Magnet Field Visualizer
+Difficulty: Beginner
+
+GRADE 12 PHYSICS EXPERIMENTS
+PHY-G12-001
+
+Title: Charging by Friction and Electroscope Detection
+Subject Area: Static Electricity
+Topic: Electrostatics
+Objective: Detect and identify electric charges.
+Apparatus: Rods, cloth, electroscope
+Procedure Summary: Charge objects and test with electroscope.
+Expected Outcome: Like charges repel, unlike attract.
+Simulation Type: Electrostatics Simulator
+Difficulty: Beginner
+
+PHY-G12-002
+
+Title: Measuring Current and Voltage in a Circuit
+Subject Area: Current Electricity
+Topic: Electrical Measurements
+Objective: Use ammeter and voltmeter correctly.
+Apparatus: Battery, resistor, ammeter, voltmeter
+Procedure Summary: Connect circuit and record values.
+Expected Outcome: Understand circuit measurement.
+Simulation Type: Circuit Builder
+Difficulty: Beginner
+
+PHY-G12-003
+
+Title: Verification of Ohm’s Law
+Subject Area: Electricity
+Topic: Resistance
+Objective: Show V ∝ I
+Apparatus: Resistor, ammeter, voltmeter
+Procedure Summary: Vary voltage and record current.
+Expected Outcome: Straight-line graph.
+Simulation Type: Resistance Graph Simulation
+Difficulty: Intermediate
+
+PHY-G12-004
+
+Title: Electromagnetic Induction
+Subject Area: Electromagnetism
+Topic: Induction
+Objective: Generate induced current.
+Apparatus: Coil, magnet, galvanometer
+Procedure Summary: Move magnet through coil.
+Expected Outcome: EMF induced by changing magnetic field.
+Simulation Type: Induction Generator
+Difficulty: Advanced
+
+PHY-G12-005
+
+Title: Transformer Principle
+Subject Area: Electromagnetic Induction
+Topic: Transformers
+Objective: Demonstrate step-up and step-down action.
+Apparatus: Iron core, coils, AC supply
+Procedure Summary: Compare input and output voltages.
+Expected Outcome: Voltage depends on turns ratio.
+Simulation Type: Transformer Simulation
+Difficulty: Advanced
+
+SYSTEM DATABASE CATEGORY TAGS:
+
+Physics > Grade > Topic > Experiment > Simulation
+
+Suggested Categories:
+Measurements
+Mechanics
+Thermal Physics
+Waves
+Sound
+Light
+Magnetism
+Electricity
+Electromagnetic Induction
+BONUS FOR SAYANSI YATHU:
+
+For each experiment page, include:
+
+Experiment Image
+3D Simulation
+Safety Precautions
+Viva Questions
+Quiz Mode
+Teacher Notes
+Student Performance Tracking

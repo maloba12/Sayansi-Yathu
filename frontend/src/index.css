@@ -4,9 +4,30 @@
 
 @layer base {
   body {
-    @apply font-sans antialiased bg-gray-50 text-slate-900;
+    @apply font-sans antialiased bg-gray-50 text-slate-900 transition-colors duration-300;
   }
 }
+
+[data-theme="dark"] body {
+  @apply bg-slate-950 text-white;
+}
+
+[data-theme="dark"] aside, 
+[data-theme="dark"] header {
+  @apply bg-slate-900 border-slate-800 text-white;
+}
+
+[data-theme="dark"] .card-premium,
+[data-theme="dark"] .bg-white {
+  @apply bg-slate-900 border-slate-800 text-white;
+}
+
+[data-theme="dark"] .text-gray-900 { @apply text-white; }
+[data-theme="dark"] .text-gray-600, 
+[data-theme="dark"] .text-gray-500 { @apply text-slate-400; }
+[data-theme="dark"] .bg-gray-50 { @apply bg-slate-950; }
+[data-theme="dark"] .border-gray-200,
+[data-theme="dark"] .border-gray-100 { @apply border-slate-800; }
 
 @layer components {
   .btn-premium {

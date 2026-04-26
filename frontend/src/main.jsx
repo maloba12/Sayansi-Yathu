@@ -28,6 +28,17 @@ const WaterPurification3D = lazy(() => import('../components/WaterPurification3D
 const Cell3D = lazy(() => import('../components/Cell3D.jsx'));
 const DNA3D = lazy(() => import('../components/DNA3D.jsx'));
 
+// New Biology Form 1 components
+const Microscope3D = lazy(() => import('../components/Microscope3D.jsx'));
+const LivingThings3D = lazy(() => import('../components/LivingThings3D.jsx'));
+const CellTypes3D = lazy(() => import('../components/CellTypes3D.jsx'));
+const SpecialisedCells3D = lazy(() => import('../components/SpecialisedCells3D.jsx'));
+const NutritionalDeficiency3D = lazy(() => import('../components/NutritionalDeficiency3D.jsx'));
+const Tropisms3D = lazy(() => import('../components/Tropisms3D.jsx'));
+const TaxicResponses3D = lazy(() => import('../components/TaxicResponses3D.jsx'));
+const Ecosystem3D = lazy(() => import('../components/Ecosystem3D.jsx'));
+const Soil3D = lazy(() => import('../components/Soil3D.jsx'));
+
 // Chemistry Form 1 components
 const ChemApparatus3D = lazy(() => import('../components/ChemApparatus3D.jsx'));
 const ChemSafety3D = lazy(() => import('../components/ChemSafety3D.jsx'));
@@ -103,6 +114,16 @@ const EXPERIMENT_COMPONENTS = {
   solar_system: SolarSystem3D,
   earth_structure: EarthStructure3D,
   atmosphere: Atmosphere3D,
+  // New Biology Form 1
+  microscope: Microscope3D,
+  living_things: LivingThings3D,
+  cell_types: CellTypes3D,
+  specialised_cells: SpecialisedCells3D,
+  nutritional: NutritionalDeficiency3D,
+  tropisms: Tropisms3D,
+  taxic: TaxicResponses3D,
+  ecosystem: Ecosystem3D,
+  soil: Soil3D,
 };
 
 function LoadingSpinner() {
