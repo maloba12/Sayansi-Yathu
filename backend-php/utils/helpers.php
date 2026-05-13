@@ -88,6 +88,7 @@ function getDashboardRouteForRole(string $role): string {
  * Validate and parse a Student ID of the form: STU-2025-G10-001
  */
 function parseStudentId(string $studentId): ?array {
+    // Supporting 3 to 5 digits in the index part
     $pattern = '/^STU-(\d{4})-(G9|G10|G11|G12|F1|F2)-(\d{3,5})$/';
     if (!preg_match($pattern, strtoupper($studentId), $matches)) {
         return null;
@@ -115,6 +116,30 @@ function parseStudentId(string $studentId): ?array {
         'grade_or_form' => $gradeOrForm,
         'index' => $index,
     ];
+}
+
+/**
+ * Generate a new Student ID
+ */
+function generateStudentId($db, $year, $gradeOrForm) {
+    // Normalize gradeOrForm to GXX format for the ID string
+    $code = is_numeric($gradeOrForm) ? "G" . $gradeOrForm : $gradeOrForm;
+    
+    // Find the last index for this year and grade
+    $query = "SELECT student_id FROM students WHERE student_id LIKE :prefix ORDER BY id DESC LIMIT 1";
+    $prefix = "STU-" . $year . "-" . $code . "-%";
+    $stmt = $db->prepare($query);
+    $stmt->execute([':prefix' => $prefix]);
+    $lastId = $stmt->fetchColumn();
+
+    $nextIndex = 1;
+    if ($lastId) {
+        $parts = explode('-', $lastId);
+        $nextIndex = (int) end($parts) + 1;
+    }
+
+    // Return format: STU-YYYY-GXX-001 (padded to at least 3 digits)
+    return sprintf("STU-%d-%s-%03d", $year, $code, $nextIndex);
 }
 
 /**

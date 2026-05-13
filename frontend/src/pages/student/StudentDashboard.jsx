@@ -18,39 +18,75 @@ export default function StudentDashboard() {
   const [recommendedLabs, setRecommendedLabs] = useState([]);
   const [user, setUser] = useState({ name: 'Mpundu Maloba', grade: 'Grade 11' });
   const [isTutorOpen, setIsTutorOpen] = useState(false);
-  const [studentStats, setStudentStats] = useState({ experiments_completed: 12, avg_score: 88 });
+  const [studentStats, setStudentStats] = useState({ experiments_completed: 0, avg_score: 0 });
+  const [todayFocus, setTodayFocus] = useState([]);
+  const [subjectMastery, setSubjectMastery] = useState([
+    { label: 'Physics', progress: 0, color: 'bg-blue-500' },
+    { label: 'Chemistry', progress: 0, color: 'bg-orange-500' },
+    { label: 'Biology', progress: 0, color: 'bg-emerald-500' },
+  ]);
 
   useEffect(() => {
-    // Load student data from localStorage
     const savedData = localStorage.getItem('user_data');
+    let userId = 0;
+    let studentGrade = 'Grade 11';
+
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
+        userId = parsed.id;
+        studentGrade = parsed.profile?.grade_or_form || parsed.grade || parsed.level || 'Grade 11';
         setUser({
           name: parsed.name || 'Student',
-          grade: parsed.grade || parsed.level || 'Grade 11'
+          grade: studentGrade
         });
       } catch (e) {
         console.error("Error parsing user data", e);
       }
     }
 
+    const fetchDashboardData = async () => {
+      if (!userId) return;
+      try {
+        const response = await axios.get(`http://localhost:8000/api/student/dashboard_stats.php?user_id=${userId}`);
+        if (response.data && response.data.success) {
+          setStudentStats(response.data.stats);
+          setTodayFocus(response.data.focus);
+          
+          if (response.data.mastery && response.data.mastery.length > 0) {
+             const colors = { 'physics': 'bg-blue-500', 'chemistry': 'bg-orange-500', 'biology': 'bg-emerald-500' };
+             const mappedMastery = response.data.mastery.map(m => ({
+                label: m.subject.charAt(0).toUpperCase() + m.subject.slice(1),
+                progress: parseInt(m.mastery),
+                color: colors[m.subject.toLowerCase()] || 'bg-gray-500'
+             }));
+             setSubjectMastery(mappedMastery);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch dashboard stats:', error);
+      }
+    };
+
     const fetchLabs = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/simulations/list.php');
         if (response.data && response.data.success) {
-          // Get the current student's grade for filtering
-          const studentGrade = localStorage.getItem('user_data') 
-            ? JSON.parse(localStorage.getItem('user_data')).grade || JSON.parse(localStorage.getItem('user_data')).level || 'Grade 11'
-            : 'Grade 11';
-
           const formattedLabs = response.data.simulations
             .filter(dbLab => {
-              // Strict Filtering: Only show labs that match the student's grade/form
-              // Handle potential mismatches (e.g. 'Grade 11' vs 'Grade 11 Science')
               const labLevel = dbLab.grade_or_form || '';
-              return labLevel.toLowerCase().includes(studentGrade.toLowerCase()) || 
-                     studentGrade.toLowerCase().includes(labLevel.toLowerCase());
+              const sGrade = String(studentGrade).toLowerCase();
+              const lLevel = String(labLevel).toLowerCase();
+              
+              // More robust filtering: 
+              // Match "Grade 11" with "11", "G11", "Form 1" with "F1", etc.
+              const extractNum = (str) => str.match(/\d+/) ? str.match(/\d+/)[0] : str;
+              const sNum = extractNum(sGrade);
+              const lNum = extractNum(lLevel);
+
+              return lLevel.includes(sGrade) || 
+                     sGrade.includes(lLevel) || 
+                     (sNum === lNum && sNum !== '');
             })
             .map(dbLab => ({
               id: dbLab.id,
@@ -67,6 +103,8 @@ export default function StudentDashboard() {
         console.error('Failed to fetch simulations:', error);
       }
     };
+
+    fetchDashboardData();
     fetchLabs();
   }, []);
 
@@ -125,11 +163,7 @@ export default function StudentDashboard() {
                 </div>
              </div>
              <div className="flex-1 p-8 space-y-4">
-                {[
-                  { title: 'Pendulum Lab Report', type: 'Assignment', due: 'Due Today', urgent: true, subject: 'Physics' },
-                  { title: 'Ohm\'s Law Simulation', type: 'Lab Practice', due: 'Recommended', urgent: false, subject: 'Physics' },
-                  { title: 'Acid-Base Reactions', type: 'Concept Review', due: 'Upcoming', urgent: false, subject: 'Chemistry' },
-                ].map((task, i) => (
+              {todayFocus.map((task, i) => (
                   <div key={i} className="flex items-center p-4 bg-gray-50 border border-transparent rounded-2xl hover:bg-white hover:border-gray-100 hover:shadow-sm transition-all group cursor-pointer">
                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-4 ${task.urgent ? 'bg-red-100 text-red-600' : 'bg-white shadow-sm text-primary-vibrant'}`}>
                         {task.urgent ? <Zap className="w-5 h-5 fill-current" /> : <Calendar className="w-5 h-5" />}
@@ -228,21 +262,17 @@ export default function StudentDashboard() {
            <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
               <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6">Subject Mastery</h3>
               <div className="space-y-4">
-                 {[
-                   { label: 'Physics', progress: 84, color: 'bg-blue-500' },
-                   { label: 'Chemistry', progress: 68, color: 'bg-orange-500' },
-                   { label: 'Biology', progress: 92, color: 'bg-emerald-500' },
-                 ].map(subj => (
-                   <div key={subj.label}>
-                      <div className="flex justify-between items-center mb-1 text-[10px] font-black uppercase tracking-widest">
-                         <span className="text-gray-500">{subj.label}</span>
-                         <span className="text-gray-900">{subj.progress}%</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden">
-                         <div className={`h-full ${subj.color} rounded-full`} style={{ width: `${subj.progress}%` }} />
-                      </div>
-                   </div>
-                 ))}
+                 {subjectMastery.map(subj => (
+                    <div key={subj.label}>
+                       <div className="flex justify-between items-center mb-1 text-[10px] font-black uppercase tracking-widest">
+                          <span className="text-gray-500">{subj.label}</span>
+                          <span className="text-gray-900">{subj.progress}%</span>
+                       </div>
+                       <div className="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden">
+                          <div className={`h-full ${subj.color} rounded-full`} style={{ width: `${subj.progress}%` }} />
+                       </div>
+                    </div>
+                  ))}
               </div>
            </div>
         </div>
