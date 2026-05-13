@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sayansi-yathu-cache-v1';
+const CACHE_NAME = 'sayansi-yathu-cache-v2';
 const OFFLINE_URL = '/index.html';
 
 const ASSETS_TO_CACHE = [

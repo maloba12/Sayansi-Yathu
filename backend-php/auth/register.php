@@ -75,7 +75,7 @@ try {
 
     $studentId = null;
     if ($role === 'student') {
-        $grade = $data->grade ?? 11;
+        $grade = $data->grade ?? '11';
         $class = $data->class ?? 'A';
         $year = date('Y');
         

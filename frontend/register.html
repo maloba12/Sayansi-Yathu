@@ -118,6 +118,26 @@
             </div>
         </section>
     </main>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <div class="modal-icon-wrapper">
+                ✓
+            </div>
+            <h2 id="modal-title" class="modal-title">Account Created!</h2>
+            <p class="modal-text">
+                Your registration was successful. Please use the Student ID below to log in:
+            </p>
+            <div id="generatedStudentId" style="background: #f8fafc; border: 2px dashed #cbd5e1; padding: 1rem; border-radius: 12px; font-family: monospace; font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 2rem;">
+                <!-- ID will be inserted here -->
+            </div>
+            <button id="modalLoginBtn" class="modal-button">
+                Continue to Login
+            </button>
+        </div>
+    </div>
+
 
     <script>
         // ── Curriculum → Grade toggle ──
@@ -192,15 +212,28 @@
                         password: password,
                         studentId: document.getElementById('studentId').value.trim() || null,
                         curriculum: curriculum,
-                        grade: curriculum === 'old' ? grade : null
+                        grade: curriculum === 'old' ? grade : 'F1'
                     })
                 });
 
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    alert('Registration successful! You can now log in with your credentials.');
-                    window.location.href = 'login.html';
+                    const modal = document.getElementById('successModal');
+                    const modalBtn = document.getElementById('modalLoginBtn');
+                    const idDisplay = document.getElementById('generatedStudentId');
+                    
+                    if (data.student_id) {
+                        idDisplay.textContent = data.student_id;
+                    } else {
+                        idDisplay.style.display = 'none';
+                    }
+                    
+                    modal.classList.add('visible');
+                    
+                    modalBtn.onclick = () => {
+                        window.location.href = 'login.html';
+                    };
                 } else {
                     errorEl.textContent = data.message || 'Registration failed';
                     errorEl.classList.add('visible');
