@@ -98,6 +98,28 @@ export default function LabLibrary() {
         </div>
       )}
 
+      {/* Chemistry Module Invitation (Special Case) */}
+      {(filter === 'All' || filter === 'Chemistry') && (
+        <div className="bg-gradient-to-r from-orange-600 to-amber-600 rounded-3xl p-10 text-white flex flex-col lg:flex-row items-center justify-between gap-8 shadow-2xl border border-white/5 overflow-hidden relative group">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400/20 rounded-full -mr-48 -mt-48 blur-3xl group-hover:scale-110 transition-transform duration-1000" />
+          <div className="relative z-10 flex items-center space-x-8">
+            <div className="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20 shadow-inner">
+               <TestTube2 className="w-10 h-10 text-white" />
+            </div>
+            <div>
+               <h2 className="text-3xl font-black italic tracking-tight">Chemistry Virtual Lab</h2>
+               <p className="text-orange-100 mt-2 max-w-lg leading-relaxed text-sm">Explore the Grade 10-12 curriculum library with 20 experiments, interactive 3D simulations, and assessments.</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => window.location.hash = '#/student/lab/chemistry'}
+            className="relative z-10 px-10 py-4 bg-white text-orange-600 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:shadow-white/40 hover:-translate-y-1 transition-all whitespace-nowrap"
+          >
+            Browse Curriculum →
+          </button>
+        </div>
+      )}
+
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {filteredLabs.map(lab => (

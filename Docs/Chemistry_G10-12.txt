@@ -1,0 +1,375 @@
+VIRTUAL SCIENCE LAB – CHEMISTRY EXPERIMENTS DATABASE (GRADE 10–12)
+
+Extracted and structured from the Zambia Chemistry Syllabus for direct integration into the Sayansi Yathu Virtual Science Lab System.
+
+STANDARD SYSTEM FORMAT
+
+Each experiment contains:
+
+Experiment ID
+Grade
+Title
+Subject Area
+Topic
+Objective
+Apparatus / Materials
+Procedure Summary
+Expected Outcome
+Simulation Type
+Difficulty Level
+GRADE 10 CHEMISTRY EXPERIMENTS
+CHE-G10-001
+
+Title: Model Construction of Atomic Structure
+Subject Area: Atomic Structure
+Topic: Atoms and Elements
+Objective: Demonstrate arrangement of electrons in shells.
+Apparatus: Atomic model kit, charts, beads
+Procedure Summary: Arrange electrons into shells for different elements.
+Expected Outcome: Learners understand electronic configuration.
+Simulation Type: 3D Atom Builder
+Difficulty: Beginner
+
+CHE-G10-002
+
+Title: Formation of Ionic Bonds
+Subject Area: Chemical Bonding
+Topic: Ionic Bonding
+Objective: Demonstrate electron transfer between atoms.
+Apparatus: Atomic models, charts
+Procedure Summary: Simulate electron loss and gain using models.
+Expected Outcome: Formation of cations and anions observed.
+Simulation Type: Bond Formation Simulator
+Difficulty: Beginner
+
+CHE-G10-003
+
+Title: Formation of Covalent Bonds
+Subject Area: Chemical Bonding
+Topic: Covalent Bonding
+Objective: Demonstrate sharing of electrons.
+Apparatus: Molecular model kits
+Procedure Summary: Build molecules like H₂O, CH₄, NH₃.
+Expected Outcome: Learners understand covalent structures.
+Simulation Type: Molecular Structure Simulator
+Difficulty: Beginner
+
+CHE-G10-004
+
+Title: Comparing Ionic and Covalent Compounds
+Subject Area: Chemical Bonding
+Topic: Properties of Compounds
+Objective: Investigate physical properties of compounds.
+Apparatus: Salt, sugar, conductivity tester, heat source
+Procedure Summary: Compare conductivity, melting behavior, and solubility.
+Expected Outcome: Ionic and covalent compounds differentiated.
+Simulation Type: Compound Property Analyzer
+Difficulty: Intermediate
+
+CHE-G10-005
+
+Title: Deducing Valency of Elements
+Subject Area: Chemical Formulae
+Topic: Valency
+Objective: Determine valency from compounds.
+Apparatus: Charts, periodic table, formulas
+Procedure Summary: Analyze formulas to determine combining powers.
+Expected Outcome: Accurate determination of valency.
+Simulation Type: Formula Builder
+Difficulty: Beginner
+
+CHE-G10-006
+
+Title: Formulating and Balancing Chemical Equations
+Subject Area: Chemical Reactions
+Topic: Equations
+Objective: Balance chemical equations correctly.
+Apparatus: Equation cards, charts
+Procedure Summary: Construct and balance equations by inspection.
+Expected Outcome: Conservation of matter demonstrated.
+Simulation Type: Equation Balancer
+Difficulty: Intermediate
+
+CHE-G10-007
+
+Title: Investigation of Metallic Conductivity
+Subject Area: Metallic Bonding
+Topic: Metals
+Objective: Demonstrate electrical and thermal conductivity of metals.
+Apparatus: Metal rods, bulb, battery, heat source
+Procedure Summary: Test conductivity of various metals.
+Expected Outcome: Metals conduct heat and electricity effectively.
+Simulation Type: Conductivity Simulation
+Difficulty: Beginner
+
+CHE-G10-008
+
+Title: Properties of Graphite and Diamond
+Subject Area: Macromolecules
+Topic: Carbon Structures
+Objective: Compare structures and properties of graphite and diamond.
+Apparatus: Graphite, diamond images/models
+Procedure Summary: Observe physical properties and relate to structure.
+Expected Outcome: Structural differences explain properties.
+Simulation Type: Crystal Structure Viewer
+Difficulty: Intermediate
+
+GRADE 11 CHEMISTRY EXPERIMENTS
+CHE-G11-001
+
+Title: Testing Acids and Bases Using Indicators
+Subject Area: Acids and Bases
+Topic: Indicators and pH
+Objective: Identify acidic and alkaline substances.
+Apparatus: Litmus paper, universal indicator, solutions
+Procedure Summary: Test substances and record color changes.
+Expected Outcome: Substances classified by pH.
+Simulation Type: Virtual Indicator Lab
+Difficulty: Beginner
+
+CHE-G11-002
+
+Title: Determining pH of Solutions
+Subject Area: Acids and Bases
+Topic: pH Scale
+Objective: Measure pH values accurately.
+Apparatus: pH meter, indicators, solutions
+Procedure Summary: Test different solutions using indicators and pH meter.
+Expected Outcome: Accurate pH determination.
+Simulation Type: pH Meter Simulation
+Difficulty: Beginner
+
+CHE-G11-003
+
+Title: Reactions of Acids with Metals and Carbonates
+Subject Area: Acids and Bases
+Topic: Acid Reactions
+Objective: Observe characteristic reactions of acids.
+Apparatus: Dilute acids, metals, carbonates
+Procedure Summary: React acids with substances and observe gas evolution.
+Expected Outcome: Hydrogen and carbon dioxide production observed.
+Simulation Type: Reaction Observation Simulator
+Difficulty: Intermediate
+
+CHE-G11-004
+
+Title: Preparation of Insoluble Salts
+Subject Area: Salts
+Topic: Salt Preparation
+Objective: Prepare insoluble salts by precipitation.
+Apparatus: Silver nitrate, sodium chloride, filter paper
+Procedure Summary: Mix solutions and filter precipitate.
+Expected Outcome: Insoluble salt formed successfully.
+Simulation Type: Precipitation Lab
+Difficulty: Intermediate
+
+CHE-G11-005
+
+Title: Preparation of Soluble Salts
+Subject Area: Salts
+Topic: Crystallization
+Objective: Prepare soluble salts by crystallization.
+Apparatus: Acid, base, evaporating dish
+Procedure Summary: Neutralize solution and evaporate to form crystals.
+Expected Outcome: Pure crystals formed.
+Simulation Type: Crystallization Simulator
+Difficulty: Intermediate
+
+CHE-G11-006
+
+Title: Acid–Base Titration
+Subject Area: Quantitative Chemistry
+Topic: Titration
+Objective: Determine concentration of solutions.
+Apparatus: Burette, pipette, indicator, acid, alkali
+Procedure Summary: Perform titration to end point.
+Expected Outcome: Accurate concentration calculated.
+Simulation Type: Virtual Titration Lab
+Difficulty: Advanced
+
+CHE-G11-007
+
+Title: Identification of Cations and Anions
+Subject Area: Qualitative Analysis
+Topic: Ion Identification
+Objective: Identify ions using chemical tests.
+Apparatus: Sodium hydroxide, ammonia solution, test solutions
+Procedure Summary: Add reagents and observe precipitates/color changes.
+Expected Outcome: Correct ions identified.
+Simulation Type: Qualitative Analysis Simulator
+Difficulty: Advanced
+
+CHE-G11-008
+
+Title: Identification of Gases
+Subject Area: Qualitative Analysis
+Topic: Gas Tests
+Objective: Test and identify gases.
+Apparatus: Gas jars, splints, limewater
+Procedure Summary: Perform standard gas tests.
+Expected Outcome: Gases correctly identified.
+Simulation Type: Gas Test Simulation
+Difficulty: Intermediate
+
+CHE-G11-009
+
+Title: Investigating Factors Affecting Reaction Rates
+Subject Area: Chemical Reactions
+Topic: Rates of Reaction
+Objective: Determine factors affecting reaction speed.
+Apparatus: Marble chips, acid, stopwatch
+Procedure Summary: Change temperature, concentration, and surface area.
+Expected Outcome: Reaction rates vary with conditions.
+Simulation Type: Reaction Rate Simulator
+Difficulty: Advanced
+
+CHE-G11-010
+
+Title: Endothermic and Exothermic Reactions
+Subject Area: Energetics
+Topic: Energy Changes
+Objective: Observe temperature changes during reactions.
+Apparatus: Thermometer, chemicals, beaker
+Procedure Summary: Mix chemicals and record temperature change.
+Expected Outcome: Heat absorbed or released observed.
+Simulation Type: Energy Change Simulation
+Difficulty: Intermediate
+
+CHE-G11-011
+
+Title: Redox Reactions and Oxidation Numbers
+Subject Area: Redox Chemistry
+Topic: Oxidation and Reduction
+Objective: Determine oxidation and reduction processes.
+Apparatus: Potassium permanganate, reducing agents
+Procedure Summary: Observe color changes and electron transfer.
+Expected Outcome: Redox processes identified.
+Simulation Type: Redox Analyzer
+Difficulty: Advanced
+
+CHE-G11-012
+
+Title: Investigating Chemical Equilibrium
+Subject Area: Equilibrium
+Topic: Reversible Reactions
+Objective: Observe effects of changing conditions on equilibrium.
+Apparatus: Equilibrium setup, heating apparatus
+Procedure Summary: Change concentration and temperature.
+Expected Outcome: Equilibrium shifts observed.
+Simulation Type: Equilibrium Shift Simulator
+Difficulty: Advanced
+
+GRADE 12 CHEMISTRY EXPERIMENTS
+CHE-G12-001
+
+Title: Testing Conductors and Non-Conductors
+Subject Area: Chemistry and Electricity
+Topic: Conductivity
+Objective: Classify materials by conductivity.
+Apparatus: Battery, bulb, wires, substances
+Procedure Summary: Test materials in electrical circuit.
+Expected Outcome: Conductors and insulators identified.
+Simulation Type: Conductivity Tester
+Difficulty: Beginner
+
+CHE-G12-002
+
+Title: Electrolysis of Molten Lead Bromide
+Subject Area: Electrolysis
+Topic: Electrolytic Cells
+Objective: Observe decomposition by electricity.
+Apparatus: Electrolysis cell, electrodes, lead bromide
+Procedure Summary: Pass current through molten compound.
+Expected Outcome: Metal and non-metal products formed.
+Simulation Type: Electrolysis Simulator
+Difficulty: Advanced
+
+CHE-G12-003
+
+Title: Electrolysis of Copper Sulphate Solution
+Subject Area: Electrolysis
+Topic: Electrolysis of Aqueous Solutions
+Objective: Identify products at electrodes.
+Apparatus: Copper sulphate solution, electrodes, power supply
+Procedure Summary: Perform electrolysis and observe electrode changes.
+Expected Outcome: Copper deposited at cathode.
+Simulation Type: Electroplating Simulation
+Difficulty: Advanced
+
+CHE-G12-004
+
+Title: Construction of a Simple Chemical Cell
+Subject Area: Electrochemistry
+Topic: Simple Cells
+Objective: Generate electricity using chemical reactions.
+Apparatus: Zinc, copper, electrolyte, voltmeter
+Procedure Summary: Assemble simple cell and measure voltage.
+Expected Outcome: Electricity produced chemically.
+Simulation Type: Cell Builder Simulation
+Difficulty: Intermediate
+
+CHE-G12-005
+
+Title: Determining the Reactivity Series of Metals
+Subject Area: Metals
+Topic: Reactivity Series
+Objective: Arrange metals by reactivity.
+Apparatus: Metal strips, salt solutions
+Procedure Summary: Observe displacement reactions.
+Expected Outcome: Reactivity order determined.
+Simulation Type: Reactivity Comparator
+Difficulty: Intermediate
+
+CHE-G12-006
+
+Title: Thermal Decomposition of Metal Salts
+Subject Area: Metals
+Topic: Effects of Heat on Salts
+Objective: Observe decomposition of salts by heating.
+Apparatus: Test tubes, Bunsen burner, salts
+Procedure Summary: Heat salts and observe products.
+Expected Outcome: Different decomposition behaviors observed.
+Simulation Type: Thermal Decomposition Lab
+Difficulty: Intermediate
+
+CHE-G12-007
+
+Title: Investigation of Corrosion and Rust Prevention
+Subject Area: Metals
+Topic: Corrosion
+Objective: Study rusting conditions and prevention methods.
+Apparatus: Iron nails, water, oil, paint
+Procedure Summary: Expose metals to different environments.
+Expected Outcome: Corrosion factors identified.
+Simulation Type: Corrosion Prevention Simulator
+Difficulty: Intermediate
+
+CHE-G12-008
+
+Title: Laboratory Preparation and Test for Hydrogen Gas
+Subject Area: Non-Metals
+Topic: Hydrogen
+Objective: Prepare and identify hydrogen gas.
+Apparatus: Zinc, dilute acid, delivery tube
+Procedure Summary: React zinc with acid and test gas with splint.
+Expected Outcome: ‘Pop’ sound confirms hydrogen.
+Simulation Type: Gas Preparation Lab
+Difficulty: Beginner
+
+SYSTEM CATEGORY TAGS
+
+Chemistry → Grade → Topic → Experiment → Simulation
+
+Suggested Categories:
+Atomic Structure
+Bonding
+Acids and Bases
+Salts
+Mole Concept
+Rates of Reaction
+Equilibrium
+Redox Reactions
+Energetics
+Electrolysis
+Metals
+Non-Metals

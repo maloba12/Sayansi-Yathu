@@ -20,7 +20,12 @@ class ChemistryLabEngine {
 
     getExperimentId() {
         const params = new URLSearchParams(window.location.search);
-        return parseInt(params.get('id')) || 1;
+        const idParam = params.get('id');
+        // Return string if it's a CHE- ID, otherwise try parsing as int, fallback to 1
+        if (idParam && idParam.startsWith('CHE-')) {
+            return idParam;
+        }
+        return parseInt(idParam) || 1;
     }
 
     async init() {
@@ -32,9 +37,23 @@ class ChemistryLabEngine {
 
     async loadExperimentData() {
         try {
-            const response = await fetch('data/chemistry_form1.json');
+            // Determine which JSON file to load based on ID
+            let jsonFile = 'data/chemistry_form1.json';
+            let isG10_12 = false;
+            
+            if (typeof this.experimentId === 'string' && this.experimentId.startsWith('CHE-')) {
+                jsonFile = 'data/chemistry_grades10_12.json';
+                isG10_12 = true;
+            }
+
+            const response = await fetch(jsonFile);
             const data = await response.json();
-            this.experiment = data.find(e => e.id === this.experimentId);
+            
+            if (isG10_12) {
+                this.experiment = data.find(e => e.id_code === this.experimentId);
+            } else {
+                this.experiment = data.find(e => e.id === this.experimentId);
+            }
             
             if (this.experiment) {
                 this.updateSidebars();
@@ -46,15 +65,25 @@ class ChemistryLabEngine {
 
     updateSidebars() {
         document.getElementById('experimentTitle').textContent = this.experiment.title;
-        document.getElementById('expAim').textContent = this.experiment.aim;
-        document.getElementById('expSafety').querySelector('span').textContent = this.experiment.safety_precautions;
-        document.getElementById('cdcTag').textContent = `Syllabus: ${this.experiment.curriculum_link}`;
+        document.getElementById('expAim').textContent = this.experiment.aim || this.experiment.objective;
+        
+        const safetyEl = document.getElementById('expSafety');
+        if (safetyEl && safetyEl.querySelector('span')) {
+             safetyEl.querySelector('span').textContent = this.experiment.safety_precautions || this.experiment.safety;
+        }
+        
+        const cdcTag = document.getElementById('cdcTag');
+        if (cdcTag) {
+            cdcTag.textContent = `Syllabus: ${this.experiment.curriculum_link || this.experiment.grade}`;
+        }
 
         // Render procedure
         const procList = document.getElementById('expProcedure');
-        procList.innerHTML = this.experiment.procedure.map((step, i) => 
-            `<li class="${i === 0 ? 'active' : ''}">${step}</li>`
-        ).join('');
+        if (procList) {
+            procList.innerHTML = this.experiment.procedure.map((step, i) => 
+                `<li class="${i === 0 ? 'active' : ''}">${step}</li>`
+            ).join('');
+        }
 
         // Render materials in sidebar
         const materialsGrid = document.getElementById('materialsGrid');

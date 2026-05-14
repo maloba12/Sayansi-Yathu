@@ -26,10 +26,161 @@ function loadChemistryExperiment(type) {
         currentP5Instance = new p5(createTitrationSketch(), 'chemistry-canvas');
     } else if (type === 'reaction') {
         currentP5Instance = new p5(createReactionSketch(), 'chemistry-canvas');
+    } else if (type === '3d_atom_builder') {
+        currentP5Instance = new p5(createAtomBuilderSketch(), 'chemistry-canvas');
+    } else if (type === 'indicator_lab') {
+        currentP5Instance = new p5(createIndicatorSketch(), 'chemistry-canvas');
+    } else if (type === 'reaction_rate_sim') {
+        currentP5Instance = new p5(createReactionRateSketch(), 'chemistry-canvas');
+    } else if (type === 'electrolysis_sim') {
+        currentP5Instance = new p5(createElectrolysisSketch(), 'chemistry-canvas');
+    } else if (type === 'corrosion_sim') {
+        currentP5Instance = new p5(createCorrosionSketch(), 'chemistry-canvas');
+    } else if (type === 'gas_prep_lab') {
+        currentP5Instance = new p5(createGasPrepSketch(), 'chemistry-canvas');
+    } else if (type === 'bond_formation') {
+        currentP5Instance = new p5(createBondFormationSketch(), 'chemistry-canvas');
+    } else if (type === 'molecular_builder') {
+        currentP5Instance = new p5(createMolecularBuilderSketch(), 'chemistry-canvas');
     } else {
-        document.getElementById('chemistry-canvas').innerHTML = '<p style="padding:20px;">Experiment under construction 🚧</p>';
+        document.getElementById('chemistry-canvas').innerHTML = `
+            <div style="padding: 40px; text-align: center; color: var(--gray-600);">
+                <h3>🧪 Interactive Simulation</h3>
+                <p>This simulation is currently being upgraded. Use the Lab Bench for free-form experimentation.</p>
+                <button class="btn btn-primary mt-md" onclick="window.location.href='chemistry-lab.html'">Go to Open Lab Bench</button>
+            </div>
+        `;
     }
 }
+
+// ==========================================
+// NEW G10-12 SIMULATIONS
+// ==========================================
+
+function createAtomBuilderSketch() {
+    return (p) => {
+        let electrons = [];
+        p.setup = () => {
+            p.createCanvas(600, 400);
+            for(let i=0; i<11; i++) electrons.push({ angle: p.random(p.TWO_PI), radius: i<2 ? 40 : (i<10 ? 80 : 120), speed: 0.02 });
+        };
+        p.draw = () => {
+            p.background(240);
+            p.translate(p.width/2, p.height/2);
+            // Nucleus
+            p.fill(220, 50, 50); p.noStroke(); p.ellipse(0, 0, 30);
+            // Shells
+            p.noFill(); p.stroke(200); p.strokeWeight(2);
+            p.ellipse(0, 0, 80); p.ellipse(0, 0, 160); p.ellipse(0, 0, 240);
+            // Electrons
+            p.fill(50, 150, 250); p.noStroke();
+            electrons.forEach(e => {
+                e.angle += e.speed;
+                let x = p.cos(e.angle) * e.radius;
+                let y = p.sin(e.angle) * e.radius;
+                p.ellipse(x, y, 12);
+            });
+            p.fill(50); p.textAlign(p.CENTER); p.textSize(16);
+            p.text("Sodium (Na) Atom Model", 0, -180);
+        };
+    };
+}
+
+function createIndicatorSketch() {
+    return (p) => {
+        let ph = 7;
+        p.setup = () => { p.createCanvas(600, 400); p.colorMode(p.HSB); };
+        p.draw = () => {
+            p.background(240);
+            // Slider mockup (in real app, bound to HTML slider)
+            ph = p.map(p.mouseX, 0, p.width, 1, 14, true);
+            let hue = p.map(ph, 1, 14, 0, 300);
+            
+            p.translate(p.width/2, p.height/2);
+            p.fill(200, 20); p.stroke(150); p.strokeWeight(4);
+            p.rect(-60, -80, 120, 160, 10, 10, 20, 20); // Beaker
+            
+            p.fill(hue, 80, 90, 0.8); p.noStroke();
+            p.rect(-56, 0, 112, 76, 0, 0, 15, 15); // Liquid
+            
+            p.fill(50); p.textAlign(p.CENTER); p.textSize(20);
+            p.text(`pH: ${ph.toFixed(1)}`, 0, -100);
+            p.textSize(14); p.text("Move mouse left/right to change pH", 0, 120);
+        };
+    };
+}
+
+function createReactionRateSketch() {
+    return (p) => {
+        let particles = [];
+        p.setup = () => {
+            p.createCanvas(600, 400);
+            for(let i=0; i<50; i++) particles.push({ x: p.random(p.width), y: p.random(p.height), vx: p.random(-2, 2), vy: p.random(-2, 2) });
+        };
+        p.draw = () => {
+            p.background(240);
+            let speedMult = p.map(p.mouseX, 0, p.width, 0.5, 3, true);
+            p.fill(50); p.textAlign(p.CENTER); p.textSize(18);
+            p.text(`Temperature/Rate Multiplier: ${speedMult.toFixed(1)}x`, p.width/2, 30);
+            
+            p.fill(200, 100, 50); p.noStroke();
+            particles.forEach(pt => {
+                pt.x += pt.vx * speedMult; pt.y += pt.vy * speedMult;
+                if(pt.x < 0 || pt.x > p.width) pt.vx *= -1;
+                if(pt.y < 50 || pt.y > p.height) pt.vy *= -1;
+                p.ellipse(pt.x, pt.y, 8);
+            });
+        };
+    };
+}
+
+function createElectrolysisSketch() {
+    return (p) => {
+        let bubbles = [];
+        p.setup = () => { p.createCanvas(600, 400); };
+        p.draw = () => {
+            p.background(240);
+            p.translate(p.width/2, p.height/2 + 50);
+            
+            // Beaker
+            p.fill(200, 20); p.stroke(150); p.strokeWeight(4);
+            p.rect(-100, -100, 200, 150, 10, 10, 20, 20);
+            // Liquid
+            p.fill(50, 150, 250, 100); p.noStroke();
+            p.rect(-96, -60, 192, 106, 0, 0, 15, 15);
+            
+            // Electrodes
+            p.fill(80); p.rect(-60, -120, 20, 140); // Anode
+            p.rect(40, -120, 20, 140);  // Cathode
+            
+            // Battery wires
+            p.stroke(200, 50, 50); p.strokeWeight(3); p.line(-50, -120, -50, -160); p.line(-50, -160, -20, -160);
+            p.stroke(50, 50, 200); p.line(50, -120, 50, -160); p.line(50, -160, 20, -160);
+            p.fill(50); p.noStroke(); p.rect(-20, -180, 40, 40); // Battery
+            
+            // Generate Bubbles
+            if (p.frameCount % 5 === 0) {
+                bubbles.push({ x: -50 + p.random(-10, 10), y: 0 }); // Anode bubbles
+                bubbles.push({ x: 50 + p.random(-10, 10), y: 0 });  // Cathode bubbles
+            }
+            p.fill(255, 150);
+            for(let i=bubbles.length-1; i>=0; i--) {
+                let b = bubbles[i];
+                b.y -= 2;
+                p.ellipse(b.x, b.y, 4);
+                if (b.y < -60) bubbles.splice(i, 1);
+            }
+            
+            p.fill(50); p.textAlign(p.CENTER); p.textSize(20);
+            p.text("Electrolysis", 0, -200);
+        };
+    };
+}
+
+function createCorrosionSketch() { return createReactionRateSketch(); /* Stub */ }
+function createGasPrepSketch() { return createElectrolysisSketch(); /* Stub */ }
+function createBondFormationSketch() { return createAtomBuilderSketch(); /* Stub */ }
+function createMolecularBuilderSketch() { return createAtomBuilderSketch(); /* Stub */ }
 
 // ==========================================
 // TITRATION SIMULATION

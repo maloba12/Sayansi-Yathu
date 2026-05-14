@@ -29,6 +29,9 @@ import Messages from './pages/student/Messages';
 import PhysicsGradeSelection from './pages/student/PhysicsGradeSelection';
 import PhysicsTopicSelection from './pages/student/PhysicsTopicSelection';
 import PhysicsExperimentDetail from './pages/student/PhysicsExperimentDetail';
+import ChemistryGradeSelection from './pages/student/ChemistryGradeSelection';
+import ChemistryTopicSelection from './pages/student/ChemistryTopicSelection';
+import ChemistryExperimentDetail from './pages/student/ChemistryExperimentDetail';
 import { useEffect, useState } from 'react';
 
 const MainLayout = ({ children, role, toggleTheme }) => (
@@ -117,6 +120,9 @@ function App() {
               <Route path="lab/physics" element={<PhysicsGradeSelection />} />
               <Route path="lab/physics/:grade" element={<PhysicsTopicSelection />} />
               <Route path="lab/physics/experiment/:id" element={<PhysicsExperimentDetail />} />
+              <Route path="lab/chemistry" element={<ChemistryGradeSelection />} />
+              <Route path="lab/chemistry/:grade" element={<ChemistryTopicSelection />} />
+              <Route path="lab/chemistry/experiment/:id" element={<ChemistryExperimentDetail />} />
             </Routes>
           </MainLayout>
         } />
